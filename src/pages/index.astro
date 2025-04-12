@@ -1,0 +1,127 @@
+---
+import Icon from "../components/Icon.astro";
+import Layout from "../layouts/Layout.astro";
+import {
+  EDUCATION,
+  PAST_EXPERIENCE_HOMEPAGE,
+  HIGHLIGHTS_HOMEPAGE,
+} from "../utils/constants";
+import { marked } from "marked";
+---
+
+<Layout>
+  <div class="space-y-20">
+    <div>
+      <h2 class="text-lg font-bold uppercase tracking-widest">Highlights</h2>
+      <ul class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        {
+          HIGHLIGHTS_HOMEPAGE.map((highlight, idx) => (
+            <div
+              class={`card w-fit flex flex-col gap-2 ${
+                idx === 0 ? "md:col-span-2" : "col-span-1"
+              }`}
+            >
+              <p class="font-bold">{highlight.title}</p>
+              <p class="text-sm">{highlight.description}</p>
+              <a
+                class="link text-sm mt-auto self-end"
+                href={highlight.url}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                Read more
+              </a>
+            </div>
+          ))
+        }
+      </ul>
+    </div>
+    <div>
+      <h2 class="text-lg font-bold uppercase tracking-widest">
+        Job Experience
+      </h2>
+      <ul class="mt-6 space-y-6">
+        {
+          PAST_EXPERIENCE_HOMEPAGE.map((experience) => (
+            <li>
+              <div class="flex gap-2 flex-col">
+                <h3 class="text-base font-semibold flex flex-col md:flex-row gap-1 md:items-center">
+                  {experience.title}{" "}
+                  {experience.place &&
+                    (experience.placeUrl ? (
+                      <a
+                        href={experience.placeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-sm font-normal relative w-fit"
+                      >
+                        @ {experience.place}{" "}
+                        <Icon
+                          id="material-symbols-open-in-new-rounded"
+                          className="h-2.5 w-2.5 absolute top-0.5 -right-3"
+                        />
+                      </a>
+                    ) : (
+                      <span class="text-sm font-normal">
+                        @ {experience.place}
+                      </span>
+                    ))}
+                </h3>
+                <p class="text-xs text-zinc-500">{experience.date}</p>
+              </div>
+              <article
+                class="my-2 prose dark:prose-invert prose-sm max-w-none prose-a:link"
+                set:html={marked(experience.description)}
+              />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div>
+      <h2 class="text-lg font-bold uppercase tracking-widest">Education</h2>
+      <ul class="mt-6 space-y-6">
+        {
+          EDUCATION.map((education) => (
+            <li>
+              <div class="flex gap-2 flex-col">
+                <h3 class="text-base font-semibold flex flex-col md:flex-row gap-1 md:items-center">
+                  {education.title}{" "}
+                  {education.place &&
+                    (education.placeUrl ? (
+                      <a
+                        href={education.placeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-sm font-normal relative w-fit"
+                      >
+                        @ {education.place}{" "}
+                        <Icon
+                          id="material-symbols-open-in-new-rounded"
+                          className="h-2.5 w-2.5 absolute top-0.5 -right-3"
+                        />
+                      </a>
+                    ) : (
+                      <span class="text-sm font-normal">
+                        @ {education.place}
+                      </span>
+                    ))}
+                </h3>
+                <p class="text-xs text-zinc-500">{education.date}</p>
+              </div>
+              {/*
+              <article
+                class="my-2 prose dark:prose-invert prose-sm max-w-none"
+                dangerouslySetInnerHTML={{
+                  __html: render(
+                    education.description,
+                  ),
+                }}
+              />*/}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</Layout>

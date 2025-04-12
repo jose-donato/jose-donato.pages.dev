@@ -1,0 +1,12 @@
+---
+import { twMerge } from "tailwind-merge";
+interface Props {
+    id: string;
+    className?: string;
+}
+const { id, className = "" } = Astro.props;
+---
+
+<svg class={twMerge("w-4 h-4", className)}>
+    <use href={`/sprite.svg#${id}`}></use>
+</svg>

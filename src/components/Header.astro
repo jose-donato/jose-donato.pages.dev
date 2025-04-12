@@ -1,0 +1,52 @@
+---
+import Icon from "./Icon.astro";
+import { SOCIALS } from "../utils/constants";
+import Floater from "./Floater.astro";
+---
+
+<Floater />
+{/*<Navbar activeUrl={route} />*/}
+<div class="flex flex-col md:flex-row items-center gap-10">
+  <div class="flex flex-col">
+    <h1 class="text-xl tracking-wide">
+      Hello! My name is
+      {" "}
+      <span class="font-bold">José Donato</span>{" "}<span class="wave">👋</span>
+    </h1>
+    <p class="text-xs text-zinc-500 dark:text-zinc-300 mt-4">
+      I'm a Fullstack Engineer from Portugal with a master's degree in
+      Informatics Security and bachelor in Computer Science. Currently working
+      remotely at OpenBB. I frequently post about web, crypto, AI, and open source on
+      <a href="https://twitter.com/josedonato__" target="_blank" rel="noopener noreferrer" class="link">Twitter</a>
+      and
+      <a href="https://www.linkedin.com/in/jose-donato" target="_blank" rel="noopener noreferrer" class="link">LinkedIn</a>.
+      Follow me there to stay updated!
+      <br /> Want to have a quick chat? You can DM me on Twitter or LinkedIn, or
+      <a href="mailto:zmcdonato@gmail.com" target="_blank" rel="noopener noreferrer" class="link">email me</a>.
+    </p>
+    <div class="flex gap-3 mt-4 items-end">
+      {
+        SOCIALS.map((social) => (
+          <a
+            aria-label={social.name}
+            class="icon-btn"
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon id={social.icon} />
+          </a>
+        ))
+      }
+    </div>
+  </div>
+  <div class="flex md:min-w-[20%]">
+    <img
+      src="/avatar.webp"
+      class="rounded-md h-40 object-cover shadow-lg"
+      alt="me"
+      loading="eager"
+    />
+  </div>
+</div>
+<div class="h-[1px] w-full bg-zinc-600/30 dark:bg-zinc-300/50 my-10"></div>

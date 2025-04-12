@@ -1,0 +1,92 @@
+---
+import { SEO, type Props as SEOProps } from "astro-seo";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+
+interface Props {
+  seo?: SEOProps;
+  ogImage?: {
+    template: string;
+    data?: Record<string, any>;
+  };
+}
+
+const { seo, ogImage } = Astro.props;
+
+const ogImageUrl = "/og_image.png";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script is:inline>
+      // Immediately set the theme based on local storage or system preference
+      const theme =
+        localStorage.getItem("theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light");
+      document.documentElement.classList.toggle("dark", theme === "dark");
+      // This ensures the theme is applied as early as possible, reducing flicker
+    </script>
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="keywords" content="josé, donato, fullstack, openbb" />
+    <SEO
+      {...seo}
+      title={seo?.title ?? "José Donato"}
+      description={seo?.description ??
+        "I'm a Fullstack Engineer from Portugal with a master's degree in Informatics Security and bachelor in Computer Science. Currently working remotely at OpenBB."}
+      openGraph={{
+        basic: {
+          type: "website",
+          title: seo?.title ?? "José Donato",
+          image: ogImageUrl,
+          url: seo?.canonical,
+        },
+      }}
+      twitter={{
+        card: "summary_large_image",
+        image: ogImageUrl,
+      }}
+    />
+    <script
+      src="https://beamanalytics.b-cdn.net/beam.min.js"
+      data-token="e9cd5cf6-7481-47ba-9cfd-9e92573aedfb"
+      async></script>
+  </head>
+  <body>
+    <div class="_bg-effect"></div>
+    <main class="mx-auto max-w-(--breakpoint-md) px-4 sm:px-6 md:px-8 my-12 md:my-20">
+      <Header />
+      <div class="min-h-[40vh]">
+        <slot />
+      </div>
+      <Footer />
+    </main>
+  </body>
+</html>

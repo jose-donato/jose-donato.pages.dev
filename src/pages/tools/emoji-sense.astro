@@ -1,0 +1,165 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { generateText } from "ai";
+
+const googleGenerativeAI = createGoogleGenerativeAI({
+	apiKey: import.meta.env.GOOGLE_API_KEY,
+});
+
+let result = "";
+let error = "";
+
+if (Astro.request.method === "POST") {
+	const formData = await Astro.request.formData();
+	const text = formData.get("text");
+	const emojiCount = formData.get("emojiCount") || "auto";
+
+	if (!text || typeof text !== "string") {
+		error = "No text provided";
+	} else {
+		try {
+			const model = googleGenerativeAI("gemini-1.5-flash");
+			const response = await generateText({
+				model: model,
+				prompt: `You are an emoji suggester.
+You will be given a text and a number of emojis you should suggest.
+
+
+Guidelines:
+- The number may be "auto" or a number. If it is "auto", you should suggest as many emojis as possible to describe the text. If it is a number, you should suggest that many emojis.
+- Only include the emojis in your response ALWAYS.
+- NEVER INCLUDE TEXT IN YOUR RESPONSE.
+
+Example:
+Text: I'm so happy to see you!
+Emoji count: 2
+Response: 😊👋
+
+Text: Hello, world!
+Emoji count: 2
+Response: 🌍👋
+
+Text: I'm so happy to see you!
+Emoji count: auto
+Response: 😊👋
+
+Text: Today I built a new website!
+Emoji count: 1
+Response: 🌐
+
+Text: ${text}
+Emoji count: ${emojiCount}`,
+				maxTokens: 50,
+			});
+
+			console.log(response);
+
+			result = response?.text;
+		} catch (apiError) {
+			console.error("Error generating emoji suggestions:", apiError);
+			error = "Failed to generate emoji suggestions";
+		}
+	}
+}
+---
+
+<Layout seo={{ title: "EmojiSense - AI-powered Emoji Suggestions" }}>
+  <div class="max-w-[700px] mx-auto">
+    <h1 class="text-3xl font-bold mb-4 text-center">
+      <span class="underline-animation">Emoji</span>Sense
+    </h1>
+
+    <div class="flex justify-center items-center flex-col gap-2 my-5">
+      <p>Get AI-powered emoji suggestions for your text.</p>
+    </div>
+
+    <div class="card p-6">
+      <form method="POST" id="emojiForm">
+        <div class="mb-4">
+          <label for="text" class="block text-sm font-medium mb-1">
+            Enter your text (max 500 characters)
+          </label>
+          <textarea
+            id="text"
+            name="text"
+            rows="4"
+            maxlength="500"
+            placeholder="Type your text here..."
+            class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
+          ></textarea>
+          <p class="text-xs text-gray-500 mt-1" id="charCount">0/500 characters</p>
+        </div>
+        
+        <div class="mb-4">
+          <label for="emojiCount" class="block text-sm font-medium mb-1">
+            Number of emojis
+          </label>
+          <select
+            id="emojiCount"
+            name="emojiCount"
+            class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
+          >
+            <option value="auto">Auto</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </div>
+        
+        <button 
+          type="submit" 
+          id="submitBtn"
+          class="btn w-full"
+          disabled
+        >
+          Suggest Emojis
+        </button>
+      </form>
+      
+      <div class="mt-6">
+        <h2 class="text-lg font-semibold mb-2">Suggested Emojis</h2>
+        <div id="result" class="h-16 flex items-center justify-center">
+          {error ? (
+            <div class="text-red-500">{error}</div>
+          ) : result ? (
+            <div class="text-4xl transition-all duration-300 ease-in-out">{result}</div>
+          ) : (
+            <div class="text-center text-gray-500">
+              Your suggested emojis will appear here
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+    
+    <div class="card p-6 mt-6">
+      <h2 class="font-bold text-lg mb-4">How it works</h2>
+      <p>EmojiSense uses advanced AI to analyze your text and suggest the most appropriate emojis. The algorithm considers:</p>
+      <ul class="list-disc list-inside space-y-2 mt-2">
+        <li>The sentiment of your message</li>
+        <li>Key topics and themes</li>
+        <li>Context and intended audience</li>
+      </ul>
+      <p class="mt-4">You can specify how many emojis you want, or let the AI decide the optimal number.</p>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const textArea = document.getElementById('text') as HTMLTextAreaElement;
+    const charCount = document.getElementById('charCount') as HTMLElement;
+    const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
+    
+    if (textArea) {
+      textArea.addEventListener('input', () => {
+        const count = textArea.value.length;
+        charCount.textContent = `${count}/500 characters`;
+        
+        // Enable/disable submit button based on text content
+        submitBtn.disabled = count === 0;
+      });
+    }
+  });
+</script>

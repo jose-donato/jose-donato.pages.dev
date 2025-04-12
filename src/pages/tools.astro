@@ -1,0 +1,25 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { TOOLS } from "../utils/constants";
+---
+
+<Layout>
+  <div>
+    <h1 class="text-3xl font-bold mb-8">Tools</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {
+        TOOLS.map((tool) => (
+          <a
+            href={`/tools/${tool.slug}`}
+            class="card p-6 hover:scale-[1.02] transition-transform"
+          >
+            <h2 class="text-xl font-semibold mb-2">{tool.title}</h2>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400">
+              {tool.description}
+            </p>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,350 @@
+---
+import Icon from "../../components/Icon.astro";
+import { optimize } from "svgo";
+import Layout from "../../layouts/Layout.astro";
+
+// Server-side form handling
+let result = '';
+let error = '';
+
+if (Astro.request.method === "POST") {
+  try {
+    const formData = await Astro.request.formData();
+    const svg = formData.get("svg");
+    const slug = formData.get("slug");
+    const includeSvg = formData.get("includeSvgTag") === "on";
+    const replaceColors = formData.get("replaceColors") === "on";
+    const keepDimensions = formData.get("keepDimensions") === "on";
+
+    if (!svg || typeof svg !== "string") {
+      error = "No SVG provided";
+    } else if (!validateSvg(svg)) {
+      error = "Invalid SVG provided";
+    } else {
+      result = treatSvg(
+        svg,
+        slug ? slug.toString() : generateRandomId(),
+        includeSvg,
+        replaceColors,
+        keepDimensions
+      );
+    }
+  } catch (e) {
+    error = "An error occurred while processing your request";
+  }
+}
+
+// Helper functions from the original code
+function generateRandomId() {
+  return Math.random().toString(36).substring(2, 15) + 
+         Math.random().toString(36).substring(2, 15);
+}
+
+function validateSvg(svg: string) {
+  return /<svg[^>]+>/.test(svg);
+}
+
+// Add these type definitions and functions before your component frontmatter
+type OptimizationOptions = {
+  plugins: Array<{
+    name: string;
+    params?: {
+      overrides: Record<string, any>;
+    };
+    active?: boolean;
+  }>;
+};
+
+function optimizeSVG(svg: string, options: OptimizationOptions): string {
+  return optimize(svg, options).data.trim();
+}
+
+function wrapWithSymbol(svg: string, id: string): string {
+  return svg
+    .replace(/^<svg/, `<symbol id="${id}"`)
+    .replace(/<\/svg>$/, "</symbol>");
+}
+
+function replaceSVGColors(svg: string): string {
+  return svg
+    .replace(/fill="(?![^"]*none)[^"]+"/g, 'fill="currentColor"')
+    .replace(/stroke="[^"]+"/g, 'stroke="currentColor"');
+}
+
+function treatSvg(
+  svg: string,
+  id: string,
+  wrapSymbolWithSvg = false,
+  replaceColors = false,
+  keepDimensions = false,
+): string {
+  const optimizationOptions: OptimizationOptions = {
+    plugins: [
+      {
+        name: "preset-default",
+        params: {
+          overrides: {
+            mergePaths: {},
+            removeUselessStrokeAndFill: {},
+            removeViewBox: false,
+            removeHiddenElems: false,
+            collapseGroups: false,
+            removeNonInheritableGroupAttrs: false,
+            cleanupIds: {
+              remove: false,
+            },
+            cleanupAttrs: {},
+            convertPathData: {
+              removeUseless: true,
+              lineShorthands: true,
+              applyTransforms: true,
+            },
+          },
+        },
+      },
+      ...(keepDimensions
+        ? []
+        : [
+            {
+              name: "removeDimensions",
+              active: !keepDimensions,
+            },
+          ]),
+    ],
+  };
+
+  let svgString = optimizeSVG(svg, optimizationOptions);
+  svgString = wrapWithSymbol(svgString, id);
+
+  if (replaceColors) {
+    svgString = replaceSVGColors(svgString);
+  }
+
+  if (wrapSymbolWithSvg) {
+    svgString = `<svg>${svgString}</svg>`;
+  }
+
+  return svgString;
+}
+---
+
+<Layout>
+  <div class="max-w-[700px] mx-auto">
+    <h1 class="text-3xl font-bold mb-4 text-center">
+      <span class="underline-animation">Sprite</span> your SVGs
+    </h1>
+
+    <div class="flex justify-center items-center flex-col gap-2 my-5">
+        <p>Paste your SVG code below to generate an optimized sprite. Why?</p>
+        <ul class="flex flex-col justify-start items-start">
+          <li>
+            <Icon id="checkmark-icon" className="w-3 h-3 inline-block mr-1 text-purple-400" />
+            <span>Improved Performance: Fewer HTTP requests</span>
+          </li>
+          <li>
+            <Icon id="checkmark-icon" className="w-3 h-3 inline-block mr-1 text-purple-400" />
+            <span>Styling Flexibility: CSS-stylable icons</span>
+          </li>
+          <li>
+            <Icon id="checkmark-icon" className="w-3 h-3 inline-block mr-1 text-purple-400" />
+            <span>Smaller JS Bundle: Externalizes icon data</span>
+          </li>
+        </ul>
+        <p class="text-xs text-zinc-500 dark:text-zinc-300">
+          Still not convinced? Read more about it on
+          <a
+            href="https://benadam.me/thoughts/react-svg-sprites/"
+            class="link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ben Adam blog post
+          </a>,
+          <a
+            href="https://www.jacobparis.com/content/svg-icons"
+            class="link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Jacob Paris blog post
+          </a>
+          or
+          <a
+            href="https://github.com/epicweb-dev/epic-stack/blob/2c2a65d7e8d27c0e4e9bb00534d136a43a9d804d/docs/decisions/020-icons.md"
+            class="link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Kent C. Dodds' Epic Stack documentation
+          </a>
+        </p>
+      </div>
+    </div>
+    
+    <!-- Form section -->
+    <form method="POST" class="card p-6 space-y-4">
+      <div class="space-y-2">
+        <label class="block text-sm font-medium">
+          SVG (paste or drag and drop here)
+          <textarea
+            name="svg"
+            required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+            rows="4"
+          />
+        </label>
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-sm font-medium">
+          Icon slug (optional)
+          <input
+            type="text"
+            name="slug"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+          />
+        </label>
+      </div>
+
+      <div class="space-y-2">
+        <label class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            name="includeSvgTag"
+            class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+          />
+          <span class="text-sm">Include svg tag</span>
+        </label>
+
+        <label class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            name="replaceColors"
+            class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+          />
+          <span class="text-sm">Replace colors with currentColor</span>
+        </label>
+
+        <label class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            name="keepDimensions"
+            checked
+            class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+          />
+          <span class="text-sm">Keep width/height attributes</span>
+        </label>
+      </div>
+      
+      <div class="flex justify-end">
+        <button type="submit" class="btn">
+          Convert
+        </button>
+      </div>
+    </form>
+
+    {error && <div class="mt-4 text-red-500">{error}</div>}
+    
+    {result && (
+      <div class="card p-6 mt-6">
+        <h2 class="font-bold text-lg mb-4">Result</h2>
+        <pre class="bg-gray-50 rounded p-4 overflow-x-auto">
+          <code class="language-xml">{result}</code>
+        </pre>
+        <div class="flex justify-end mt-4">
+          <button 
+            class="btn"
+            data-copy
+            data-content={result}
+          >
+            Copy
+          </button>
+        </div>
+      </div>
+    )}
+
+<div class="card p-6 mt-6">
+    <h2 class="font-bold text-lg mb-4">How to use it?</h2>
+    <ol class="list-decimal list-inside space-y-4 pl-2">
+      <li>Paste your svg to be optimized and converted to a symbol</li>
+      <li>
+        Copy the generated code above and paste it in a file called 
+        <code class="bg-gray-50 rounded p-1 border border-gray-200">sprite.svg</code> 
+        in the public folder of your project.
+      </li>
+      <li>
+        Use the svg on your project like this:
+        <pre class="bg-gray-50 rounded p-2 border border-gray-200 mt-2 overflow-x-auto">
+          <code class="language-xml">{`<svg class="w-6 h-6">
+  <use href="/sprite.svg#icon-name" />
+</svg>`}</code>
+        </pre>
+      </li>
+      <li>
+        <strong>Bonus:</strong> Create a reusable Icon component in your framework of choice:
+        <pre class="bg-gray-50 rounded p-2 border border-gray-200 mt-4 overflow-x-auto">
+          <code class="language-javascript">{`// Icon component (adapt to your framework's syntax)
+function Icon({ name, className, ...props }) {
+  return (
+    <svg className={className} {...props}>
+      <use href={\`/sprite.svg#\${name}\`} />
+    </svg>
+  );
+}`}</code>
+        </pre>
+        
+        <p class="mt-4">Then use it like this:</p>
+        <pre class="bg-gray-50 rounded p-2 border border-gray-200 mt-2 overflow-x-auto">
+          <code class="language-jsx">{`<Icon name="icon-name" className="w-6 h-6" />`}</code>
+        </pre>
+      </li>
+    </ol>
+  </div>
+  </div>
+</Layout>
+
+<script>
+  // Client-side functionality
+  document.querySelectorAll('[data-copy]').forEach(button => {
+    button.addEventListener('click', () => {
+      const content = button.getAttribute('data-content');
+      if (content) {
+        navigator.clipboard.writeText(content);
+        // Add toast notification if desired
+      }
+    });
+  });
+
+  // Add drag and drop functionality
+  // Add SVG validation
+  // Add other client-side features
+</script>
+
+<style>
+  .underline-animation {
+    position: relative;
+    padding-bottom: 5px;
+  }
+
+  .underline-animation::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background-image: linear-gradient(transparent, transparent), 
+                     linear-gradient(rgb(147 51 234), rgb(147 51 234));
+    background-size: 100% 5px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.5s ease-in-out;
+    rotate: -2deg;
+    animation: animateUnderline 1s;
+  }
+
+  @keyframes animateUnderline {
+    0% { background-size: 0% 5px; }
+    50% { background-size: 100% 5px; }
+  }
+</style> 

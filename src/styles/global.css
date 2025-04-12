@@ -1,0 +1,150 @@
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-satoshi: Satoshi, sans-serif;
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@utility btn {
+  @apply text-zinc-900 bg-white hover:bg-zinc-100 border border-zinc-200 focus:ring-4 focus:ring-zinc-100 font-medium rounded-lg text-sm px-3 py-1.5 text-center inline-flex items-center dark:focus:ring-zinc-600 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white dark:hover:bg-zinc-700;
+}
+
+@utility btn-outline {
+  @apply text-zinc-900 bg-transparent hover:bg-zinc-100 border border-zinc-200 focus:ring-4 focus:ring-zinc-100 font-medium rounded-lg text-sm px-3 py-1.5 text-center inline-flex items-center dark:focus:ring-zinc-600 dark:border-zinc-700 dark:text-white dark:hover:bg-zinc-700;
+}
+
+@utility icon-btn {
+  @apply btn;
+  @apply aspect-square h-10 w-10 p-0 flex items-center justify-center;
+}
+
+@utility card {
+  @apply bg-white dark:bg-zinc-900 rounded-lg overflow-hidden p-2 border border-zinc-200 dark:border-zinc-700;
+}
+
+@utility link {
+  @apply text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500 hover:underline transition-colors duration-200 ease-in-out;
+}
+
+@layer base {
+  body {
+    @apply bg-white dark:bg-black font-satoshi font-[420] tracking-wide text-zinc-900 dark:text-zinc-100;
+  }
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Variable.ttf") format("truetype-variations");
+  font-weight: 1 999;
+}
+
+body {
+  transition: background 0.5s, color 0.5s;
+}
+
+.wave {
+  animation-name: wave-animation;
+  animation-duration: 2.5s;
+  animation-iteration-count: infinite;
+  transform-origin: 70% 70%;
+  display: inline-block;
+}
+
+@keyframes wave-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(14deg);
+  }
+  20% {
+    transform: rotate(-8deg);
+  }
+  30% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.reveal-image {
+  animation-name: mask-animation;
+  animation-duration: 2.5s;
+}
+
+@keyframes mask-animation {
+  0% {
+    mask: linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 150% 0 /
+      400% no-repeat;
+    opacity: 0.2;
+  }
+  100% {
+    mask: linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 0 / 400%
+      no-repeat;
+    opacity: 1;
+  }
+}
+
+._bg-effect {
+  z-index: -1;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  opacity: 0.15;
+  background-image: conic-gradient(
+    at 92% 8%,
+    rgb(32, 33, 40) 90deg,
+    transparent 0deg,
+    transparent 225deg,
+    transparent 0deg
+  );
+  background-size: 15px 15px;
+  background-position: 0px 0px;
+  pointer-events: none;
+}
+
+.dark ._bg-effect {
+  background-image: conic-gradient(
+    at 92% 8%,
+    rgb(255, 255, 255) 90deg,
+    /* Lighter color for contrast */ transparent 0deg,
+    transparent 225deg,
+    transparent 0deg
+  );
+  background-size: 15px 15px;
+  background-position: 0px 0px;
+  opacity: 0.15; /* Adjust opacity for subtlety */
+}
