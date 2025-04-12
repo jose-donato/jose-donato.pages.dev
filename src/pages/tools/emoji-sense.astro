@@ -53,8 +53,6 @@ Emoji count: ${emojiCount}`,
 				maxTokens: 50,
 			});
 
-			console.log(response);
-
 			result = response?.text;
 		} catch (apiError) {
 			console.error("Error generating emoji suggestions:", apiError);

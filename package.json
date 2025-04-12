@@ -3,10 +3,8 @@
 	"type": "module",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "astro dev",
-		"start": "astro dev",
-		"build": "astro check && astro build",
-		"preview": "deno run --allow-net --allow-read --allow-env ./dist/server/entry.mjs",
+		"dev": "npx astro build && npx wrangler pages dev ./dist",
+		"build": "npx astro build && npx wrangler pages deploy ./dist",
 		"astro": "astro"
 	},
 	"dependencies": {
