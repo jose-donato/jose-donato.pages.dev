@@ -24,6 +24,7 @@ export default defineConfig({
 		resolve: {
 			alias: {
 				os: "rollup-plugin-node-polyfills/polyfills/os",
+				fs: "rollup-plugin-node-polyfills/polyfills/fs",
 			},
 		},
 	},
