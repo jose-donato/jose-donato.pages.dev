@@ -21,5 +21,10 @@ export default defineConfig({
 	},
 	vite: {
 		plugins: [tailwindcss()],
+		resolve: {
+			alias: {
+				os: "rollup-plugin-node-polyfills/polyfills/os",
+			},
+		},
 	},
 });
