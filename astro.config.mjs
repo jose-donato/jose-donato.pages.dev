@@ -1,7 +1,6 @@
+import cloudflare from "@astrojs/cloudflare";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, envField, passthroughImageService } from "astro/config";
-
-import cloudflare from "@astrojs/cloudflare";
 
 export default defineConfig({
 	env: {
