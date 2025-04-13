@@ -1,6 +1,7 @@
 import cloudflare from "@astrojs/cloudflare";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, envField, passthroughImageService } from "astro/config";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig({
 	env: {
@@ -20,12 +21,6 @@ export default defineConfig({
 		enabled: false,
 	},
 	vite: {
-		plugins: [tailwindcss()],
-		resolve: {
-			alias: {
-				os: "rollup-plugin-node-polyfills/polyfills/os",
-				fs: "rollup-plugin-node-polyfills/polyfills/fs",
-			},
-		},
+		plugins: [tailwindcss(), nodePolyfills()],
 	},
 });
