@@ -28,6 +28,9 @@ export default defineConfig({
 		],
 		build: {
 			minify: false,
+			rollupOptions: {
+				external: ["@solana/web3.js"],
+			},
 		},
 	},
 	integrations: [mdx()],

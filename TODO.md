@@ -8,3 +8,4 @@
 - [ ] bring xmas investing with a locker
 - [ ] add snippet to each blog post
 - [ ] navbar add active on tools & blog
+- [ ] add pyth video
