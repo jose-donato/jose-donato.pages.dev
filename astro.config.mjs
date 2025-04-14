@@ -31,7 +31,4 @@ export default defineConfig({
 		},
 	},
 	integrations: [mdx()],
-	experimental: {
-		svg: true,
-	},
 });
