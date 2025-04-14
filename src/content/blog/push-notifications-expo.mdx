@@ -1,0 +1,208 @@
+---
+title: Minimalist Approach to send Push Notifications with Expo
+type: post
+snippet: Example on how to send push notifications with Expo
+coverImage: '/add-notification-blog.png'
+date: '28.01.2020'
+topics: '#reactnative #react #node #javascript #expo'
+---
+
+___
+
+**Small tutorial to help you understand and send push notifications with Expo.**
+
+I developed a simple open source web application that helps sending push notifications with Expo. React and Material-UI were used and all the source code is available on [github](https://github.com/jose-donato/expo-notifications-tool). Live demo: [https://expo-notifications-tool.now.sh/](https://expo-notifications-tool.now.sh/).
+
+Before diving into the web application, we need to understand push notifications and setup the backend server.
+
+![Expo backend image](https://i.imgur.com/wIVQJjm.png)
+
+Reading [expo documentation](https://docs.expo.io/versions/latest/guides/push-notifications/) we need two main things to use Expo Push Notifications:
+
+1. **Getting a user's Expo Push Token:**
+We achieve this by calling an endpoint (/token) on our server (explained below) when the expo mobile app is launched.
+2. **Calling Expo's Push API with the token when you want to send a notification:**
+It was to facilitate the process in this step that I developed the web app. This web app calls another endpoint (/message) of the backend server and the backend server sends the notifications for all the devices.
+
+
+
+
+The backend developed with NodeJS and [expo-server-sdk-node](https://github.com/expo/expo-server-sdk-node) is running in [https://glitch.com/~easy-soup](https://glitch.com/~easy-soup). Note that we need the endpoint available in a public URL to send the notifications. Glitch (❤️) makes this as simple as it gets. 
+
+```javascript
+const express = require("express");
+const { Expo } = require("expo-server-sdk");
+const app = express();
+const expo = new Expo();
+const cors = require("cors");
+
+app.use(cors());
+let savedPushTokens = [];
+const PORT_NUMBER = 3000;
+
+const handlePushTokens = ({ title, body }) => {
+  let notifications = [];
+  for (let pushToken of savedPushTokens) {
+    if (!Expo.isExpoPushToken(pushToken)) {
+      console.error(`Push token ${pushToken} is not a valid Expo push token`);
+      continue;
+    }
+
+    notifications.push({
+      to: pushToken,
+      sound: "default",
+      title: title,
+      body: body,
+      data: { body }
+    });
+  }
+  
+  let chunks = expo.chunkPushNotifications(notifications);
+
+  (async () => {
+    for (let chunk of chunks) {
+      try {
+        let receipts = await expo.sendPushNotificationsAsync(chunk);
+        console.log(receipts);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  })();
+};
+
+const saveToken = token => {
+  console.log(token, savedPushTokens);
+  const exists = savedPushTokens.find(t => t === token);
+  if (!exists) {
+    savedPushTokens.push(token);
+  }
+};
+
+app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.send("Push Notification Server Running");
+});
+
+app.post("/token", (req, res) => {
+  saveToken(req.body.token.value);
+  console.log(`Received push token, ${req.body.token.value}`);
+  res.send(`Received push token, ${req.body.token.value}`);
+});
+
+app.post("/message", (req, res) => {
+  handlePushTokens(req.body);
+  console.log(`Received message, with title: ${req.body.title}`);
+  res.send(`Received message, with title: ${req.body.title}`);
+});
+
+app.listen(PORT_NUMBER, () => {
+  console.log(`Server Online on Port ${PORT_NUMBER}`);
+});
+```
+Basically, on the server we have two endpoints listening to POST requests:
+1. https://easy-soup.glitch.me/token
+2. https://easy-soup.glitch.me/message
+
+The first one receives and saves the tokens sent from each device running the expo app.
+The second one handles the requests that will be received from the [expo notifications tool](https://expo-notifications-tool.now.sh/), i.e., receives the title and body of the notification from the web app and sends the notification with this content for each device.
+
+Now that we have the endpoints up and running on the URL [https://easy-soup.glitch.me](https://easy-soup.glitch.me) we can set it up on expo mobile app and expo notification tool.
+
+
+Configuring expo mobile app to register the tokens:
+
+First we need to create the function that will push the token when the app is started. Note that the **PUSH_ENDPOINT** contains the URL of the glitch endpoint.
+
+```javascript
+//registerForPushNotifications.js
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
+
+const PUSH_ENDPOINT = 'https://easy-soup.glitch.me/token';
+
+const registerForPushNotifications = async () => {
+  const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+  if (status !== 'granted') {
+    alert('No notification permissions!');
+    return;
+  }
+
+  // Get the token that identifies this device
+  let token = await Notifications.getExpoPushTokenAsync();
+
+  // POST the token to your backend server from where you can retrieve it to send push notifications.
+  return fetch(PUSH_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      token: {
+        value: token,
+      }
+    }),
+  });
+}
+export default registerForPushNotifications;
+```
+
+After, we need to call the function we created when the application mounts.
+
+```javascript
+//App.js
+import React, {useEffect} from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import registerForPushNotifications from './registerForPushNotifications';
+
+
+const App = () => {
+  useEffect(() => {
+    registerForPushNotifications()
+  }, []);
+  return (
+    <View style={styles.container}>
+      <Text>Notifications Example</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+export default App;
+```
+
+[Snack](https://snack.expo.io/ry81q7pWI) containing the application code (also available in the [github repo](https://github.com/jose-donato/expo-notifications-tool)).
+
+When the application is started and mounts, the glitch endpoint will be called and the token will be saved in the glitch server. The following image is a log in the glitch server telling that received the push token from the expo app.
+
+![token registered](https://i.imgur.com/KBEdFkg.png)
+
+
+
+Now we are ready to launch the [expo notifications tool](https://expo-notifications-tool.now.sh/) and start sending some notifications. 
+
+In the web app we just need to input the title and the body that we want to appear in the notification.
+
+![Expo notification tool](https://i.imgur.com/V5Sr9qU.png)
+
+After we press the "send notifications" button, the web app will send a post request to the glitch endpoint /message with the title and the body. The glitch server goes through all the tokens saved and sends the notification for each one.
+
+If everything works as expected, the notification will be received in all mobile phones that launched the expo application.
+
+![Android notification confirmed](https://i.imgur.com/TOj96c7.png)
+
+
+Please note that the server code hosted on glitch is minimalist and needs some improvement to be used in real applications. 
+I tried to make it as simple as possible because the main goal is to focus on how to send the notifications (with the web app tool) and not on how the tokens are stored.
+
+It was my first "tutorial", hope you guys like it and help me improve it 😀

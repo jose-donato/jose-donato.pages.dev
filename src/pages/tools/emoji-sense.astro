@@ -2,27 +2,27 @@
 import Layout from "../../layouts/Layout.astro";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
+import { action } from "../../utils/form";
 
 const googleGenerativeAI = createGoogleGenerativeAI({
 	apiKey: import.meta.env.GOOGLE_API_KEY,
 });
+const model = googleGenerativeAI("gemini-1.5-flash");
 
-let result = "";
-let error = "";
-
-if (Astro.request.method === "POST") {
+// Use the action utility to handle form submissions
+const { data, response } = await action(Astro, async () => {
 	const formData = await Astro.request.formData();
 	const text = formData.get("text");
 	const emojiCount = formData.get("emojiCount") || "auto";
 
 	if (!text || typeof text !== "string") {
-		error = "No text provided";
-	} else {
-		try {
-			const model = googleGenerativeAI("gemini-1.5-flash");
-			const response = await generateText({
-				model: model,
-				prompt: `You are an emoji suggester.
+		return { error: "No text provided", result: "" };
+	}
+
+	try {
+		const response = await generateText({
+			model: model,
+			prompt: `You are an emoji suggester.
 You will be given a text and a number of emojis you should suggest.
 
 
@@ -50,16 +50,22 @@ Response: 🌐
 
 Text: ${text}
 Emoji count: ${emojiCount}`,
-				maxTokens: 50,
-			});
+			maxTokens: 50,
+		});
 
-			result = response?.text;
-		} catch (apiError) {
-			console.error("Error generating emoji suggestions:", apiError);
-			error = "Failed to generate emoji suggestions";
-		}
+		return { error: "", result: response?.text };
+	} catch (apiError) {
+		console.error("Error generating emoji suggestions:", apiError);
+		return { error: "Failed to generate emoji suggestions", result: "" };
 	}
-}
+});
+
+// Early return for client-side requests
+if (response) return response;
+
+// Extract data for server-side rendering
+const error = data?.error || "";
+const result = data?.result || "";
 ---
 
 <Layout seo={{ title: "EmojiSense - AI-powered Emoji Suggestions" }}>
@@ -105,25 +111,25 @@ Emoji count: ${emojiCount}`,
           </select>
         </div>
         
+        <div class="flex justify-end">
         <button 
           type="submit" 
           id="submitBtn"
-          class="btn w-full"
+          class="btn"
           disabled
-        >
-          Suggest Emojis
-        </button>
+          >
+            Suggest Emojis
+          </button>
+        </div>
       </form>
       
       <div class="mt-6">
         <h2 class="text-lg font-semibold mb-2">Suggested Emojis</h2>
         <div id="result" class="h-16 flex items-center justify-center">
-          {error ? (
-            <div class="text-red-500">{error}</div>
-          ) : result ? (
-            <div class="text-4xl transition-all duration-300 ease-in-out">{result}</div>
-          ) : (
-            <div class="text-center text-gray-500">
+          <div data-form-id="error" class="text-red-500">{error}</div>
+          <div data-form-id="result" class="text-4xl transition-all duration-300 ease-in-out">{result}</div>
+          {!error && !result && (
+            <div class="text-center text-gray-500" data-empty-state>
               Your suggested emojis will appear here
             </div>
           )}
@@ -149,6 +155,9 @@ Emoji count: ${emojiCount}`,
     const textArea = document.getElementById('text') as HTMLTextAreaElement;
     const charCount = document.getElementById('charCount') as HTMLElement;
     const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
+    const form = document.getElementById('emojiForm') as HTMLFormElement;
+    const resultContainer = document.getElementById('result');
+    const emptyState = document.querySelector('[data-empty-state]');
     
     if (textArea) {
       textArea.addEventListener('input', () => {
@@ -157,6 +166,64 @@ Emoji count: ${emojiCount}`,
         
         // Enable/disable submit button based on text content
         submitBtn.disabled = count === 0;
+      });
+    }
+    
+    // Progressive enhancement for form submission
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Loading...';
+        
+        fetch(window.location.href, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: {
+            accept: 'application/json',
+          }
+        })
+        .then(res => res.json())
+        .then(data => {
+          // Update the DOM with response data
+          const errorEl = document.querySelector('[data-form-id="error"]');
+          const resultEl = document.querySelector('[data-form-id="result"]');
+          
+          if (errorEl) {
+            errorEl.textContent = data.error || '';
+            errorEl.style.display = data.error ? 'block' : 'none';
+          }
+          
+          if (resultEl) {
+            resultEl.textContent = data.result || '';
+            resultEl.style.display = data.result ? 'block' : 'none';
+          }
+          
+          // Show/hide empty state
+          if (emptyState) {
+            emptyState.style.display = !data.error && !data.result ? 'block' : 'none';
+          }
+          
+          // Reset button state
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Suggest Emojis';
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          
+          // Handle fetch errors
+          const errorEl = document.querySelector('[data-form-id="error"]');
+          if (errorEl) {
+            errorEl.textContent = 'Network error occurred. Please try again.';
+            errorEl.style.display = 'block';
+          }
+          
+          // Reset button state
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Suggest Emojis';
+        });
       });
     }
   });

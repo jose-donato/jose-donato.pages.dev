@@ -2,130 +2,141 @@
 import Icon from "../../components/Icon.astro";
 import { optimize } from "svgo";
 import Layout from "../../layouts/Layout.astro";
-
-// Server-side form handling
-let result = '';
-let error = '';
-
-if (Astro.request.method === "POST") {
-  try {
-    const formData = await Astro.request.formData();
-    const svg = formData.get("svg");
-    const slug = formData.get("slug");
-    const includeSvg = formData.get("includeSvgTag") === "on";
-    const replaceColors = formData.get("replaceColors") === "on";
-    const keepDimensions = formData.get("keepDimensions") === "on";
-
-    if (!svg || typeof svg !== "string") {
-      error = "No SVG provided";
-    } else if (!validateSvg(svg)) {
-      error = "Invalid SVG provided";
-    } else {
-      result = treatSvg(
-        svg,
-        slug ? slug.toString() : generateRandomId(),
-        includeSvg,
-        replaceColors,
-        keepDimensions
-      );
-    }
-  } catch (e) {
-    error = "An error occurred while processing your request";
-  }
-}
+import { action } from "../../utils/form";
 
 // Helper functions from the original code
 function generateRandomId() {
-  return Math.random().toString(36).substring(2, 15) + 
-         Math.random().toString(36).substring(2, 15);
+	return (
+		Math.random().toString(36).substring(2, 15) +
+		Math.random().toString(36).substring(2, 15)
+	);
 }
 
 function validateSvg(svg: string) {
-  return /<svg[^>]+>/.test(svg);
+	return /<svg[^>]+>/.test(svg);
 }
 
-// Add these type definitions and functions before your component frontmatter
+// Type definitions and functions
 type OptimizationOptions = {
-  plugins: Array<{
-    name: string;
-    params?: {
-      overrides: Record<string, any>;
-    };
-    active?: boolean;
-  }>;
+	plugins: Array<{
+		name: string;
+		params?: {
+			overrides: Record<string, any>;
+		};
+		active?: boolean;
+	}>;
 };
 
 function optimizeSVG(svg: string, options: OptimizationOptions): string {
-  return optimize(svg, options).data.trim();
+	return optimize(svg, options).data.trim();
 }
 
 function wrapWithSymbol(svg: string, id: string): string {
-  return svg
-    .replace(/^<svg/, `<symbol id="${id}"`)
-    .replace(/<\/svg>$/, "</symbol>");
+	return svg
+		.replace(/^<svg/, `<symbol id="${id}"`)
+		.replace(/<\/svg>$/, "</symbol>");
 }
 
 function replaceSVGColors(svg: string): string {
-  return svg
-    .replace(/fill="(?![^"]*none)[^"]+"/g, 'fill="currentColor"')
-    .replace(/stroke="[^"]+"/g, 'stroke="currentColor"');
+	return svg
+		.replace(/fill="(?![^"]*none)[^"]+"/g, 'fill="currentColor"')
+		.replace(/stroke="[^"]+"/g, 'stroke="currentColor"');
 }
 
 function treatSvg(
-  svg: string,
-  id: string,
-  wrapSymbolWithSvg = false,
-  replaceColors = false,
-  keepDimensions = false,
+	svg: string,
+	id: string,
+	wrapSymbolWithSvg = false,
+	replaceColors = false,
+	keepDimensions = false,
 ): string {
-  const optimizationOptions: OptimizationOptions = {
-    plugins: [
-      {
-        name: "preset-default",
-        params: {
-          overrides: {
-            mergePaths: {},
-            removeUselessStrokeAndFill: {},
-            removeViewBox: false,
-            removeHiddenElems: false,
-            collapseGroups: false,
-            removeNonInheritableGroupAttrs: false,
-            cleanupIds: {
-              remove: false,
-            },
-            cleanupAttrs: {},
-            convertPathData: {
-              removeUseless: true,
-              lineShorthands: true,
-              applyTransforms: true,
-            },
-          },
-        },
-      },
-      ...(keepDimensions
-        ? []
-        : [
-            {
-              name: "removeDimensions",
-              active: !keepDimensions,
-            },
-          ]),
-    ],
-  };
+	const optimizationOptions: OptimizationOptions = {
+		plugins: [
+			{
+				name: "preset-default",
+				params: {
+					overrides: {
+						mergePaths: {},
+						removeUselessStrokeAndFill: {},
+						removeViewBox: false,
+						removeHiddenElems: false,
+						collapseGroups: false,
+						removeNonInheritableGroupAttrs: false,
+						cleanupIds: {
+							remove: false,
+						},
+						cleanupAttrs: {},
+						convertPathData: {
+							removeUseless: true,
+							lineShorthands: true,
+							applyTransforms: true,
+						},
+					},
+				},
+			},
+			...(keepDimensions
+				? []
+				: [
+						{
+							name: "removeDimensions",
+							active: !keepDimensions,
+						},
+					]),
+		],
+	};
 
-  let svgString = optimizeSVG(svg, optimizationOptions);
-  svgString = wrapWithSymbol(svgString, id);
+	let svgString = optimizeSVG(svg, optimizationOptions);
+	svgString = wrapWithSymbol(svgString, id);
 
-  if (replaceColors) {
-    svgString = replaceSVGColors(svgString);
-  }
+	if (replaceColors) {
+		svgString = replaceSVGColors(svgString);
+	}
 
-  if (wrapSymbolWithSvg) {
-    svgString = `<svg>${svgString}</svg>`;
-  }
+	if (wrapSymbolWithSvg) {
+		svgString = `<svg>${svgString}</svg>`;
+	}
 
-  return svgString;
+	return svgString;
 }
+
+// Server-side form handling
+const { data, response } = await action(Astro, async () => {
+	try {
+		const formData = await Astro.request.formData();
+		const svg = formData.get("svg");
+		const slug = formData.get("slug");
+		const includeSvg = formData.get("includeSvgTag") === "on";
+		const replaceColors = formData.get("replaceColors") === "on";
+		const keepDimensions = formData.get("keepDimensions") === "on";
+
+		if (!svg || typeof svg !== "string") {
+			return { error: "No SVG provided", result: "" };
+		} else if (!validateSvg(svg)) {
+			return { error: "Invalid SVG provided", result: "" };
+		} else {
+			const result = treatSvg(
+				svg,
+				slug ? slug.toString() : generateRandomId(),
+				includeSvg,
+				replaceColors,
+				keepDimensions,
+			);
+			return { error: "", result };
+		}
+	} catch (e) {
+		return {
+			error: "An error occurred while processing your request",
+			result: "",
+		};
+	}
+});
+
+// Early return the response for client-side requests
+if (response) return response;
+
+// Extract the data for server-side rendering
+const error = data?.error || "";
+const result = data?.result || "";
 ---
 
 <Layout>
@@ -243,47 +254,45 @@ function treatSvg(
       </div>
     </form>
 
-    {error && <div class="mt-4 text-red-500">{error}</div>}
+    <div data-form-id="error" class="mt-4 text-red-500">{error}</div>
     
-    {result && (
-      <div class="card p-6 mt-6">
-        <h2 class="font-bold text-lg mb-4">Result</h2>
-        <pre class="bg-gray-50 rounded p-4 overflow-x-auto">
-          <code class="language-xml">{result}</code>
-        </pre>
-        <div class="flex justify-end mt-4">
-          <button 
-            class="btn"
-            data-copy
-            data-content={result}
-          >
-            Copy
-          </button>
-        </div>
+    <div class="card p-6 mt-6" style={result ? '' : 'display: none;'} data-result-container>
+      <h2 class="font-bold text-lg mb-4">Result</h2>
+      <pre class="bg-gray-50 rounded p-4 overflow-x-auto">
+        <code data-form-id="result" class="language-xml">{result}</code>
+      </pre>
+      <div class="flex justify-end mt-4">
+        <button 
+          class="btn"
+          data-copy
+          data-content={result}
+        >
+          Copy
+        </button>
       </div>
-    )}
+    </div>
 
-<div class="card p-6 mt-6">
-    <h2 class="font-bold text-lg mb-4">How to use it?</h2>
-    <ol class="list-decimal list-inside space-y-4 pl-2">
-      <li>Paste your svg to be optimized and converted to a symbol</li>
-      <li>
-        Copy the generated code above and paste it in a file called 
-        <code class="bg-gray-50 rounded p-1 border border-gray-200">sprite.svg</code> 
-        in the public folder of your project.
-      </li>
-      <li>
-        Use the svg on your project like this:
-        <pre class="bg-gray-50 rounded p-2 border border-gray-200 mt-2 overflow-x-auto">
-          <code class="language-xml">{`<svg class="w-6 h-6">
+    <div class="card p-6 mt-6">
+      <h2 class="font-bold text-lg mb-4">How to use it?</h2>
+      <ol class="list-decimal list-inside space-y-4 pl-2">
+        <li>Paste your svg to be optimized and converted to a symbol</li>
+        <li>
+          Copy the generated code above and paste it in a file called 
+          <code class="bg-gray-50 rounded p-1 border border-gray-200">sprite.svg</code> 
+          in the public folder of your project.
+        </li>
+        <li>
+          Use the svg on your project like this:
+          <pre class="bg-gray-50 rounded p-2 border border-gray-200 mt-2 overflow-x-auto">
+            <code class="language-xml">{`<svg class="w-6 h-6">
   <use href="/sprite.svg#icon-name" />
 </svg>`}</code>
-        </pre>
-      </li>
-      <li>
-        <strong>Bonus:</strong> Create a reusable Icon component in your framework of choice:
-        <pre class="bg-gray-50 rounded p-2 border border-gray-200 mt-4 overflow-x-auto">
-          <code class="language-javascript">{`// Icon component (adapt to your framework's syntax)
+          </pre>
+        </li>
+        <li>
+          <strong>Bonus:</strong> Create a reusable Icon component in your framework of choice:
+          <pre class="bg-gray-50 rounded p-2 border border-gray-200 mt-4 overflow-x-auto">
+            <code class="language-javascript">{`// Icon component (adapt to your framework's syntax)
 function Icon({ name, className, ...props }) {
   return (
     <svg className={className} {...props}>
@@ -291,20 +300,73 @@ function Icon({ name, className, ...props }) {
     </svg>
   );
 }`}</code>
-        </pre>
-        
-        <p class="mt-4">Then use it like this:</p>
-        <pre class="bg-gray-50 rounded p-2 border border-gray-200 mt-2 overflow-x-auto">
-          <code class="language-jsx">{`<Icon name="icon-name" className="w-6 h-6" />`}</code>
-        </pre>
-      </li>
-    </ol>
-  </div>
+          </pre>
+          
+          <p class="mt-4">Then use it like this:</p>
+          <pre class="bg-gray-50 rounded p-2 border border-gray-200 mt-2 overflow-x-auto">
+            <code class="language-jsx">{`<Icon name="icon-name" className="w-6 h-6" />`}</code>
+          </pre>
+        </li>
+      </ol>
+    </div>
   </div>
 </Layout>
 
 <script>
-  // Client-side functionality
+  // Client-side form enhancement
+  const form = document.querySelector("form");
+  
+  if (form) {
+    form.addEventListener("submit", function (e) {
+      // Prevent default form submission
+      e.preventDefault();
+      
+      // Show loading state if needed
+      // const button = form.querySelector("button[type='submit']");
+      // if (button) button.disabled = true;
+      
+      // Submit the form using fetch
+      fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: {
+          accept: "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          // Update DOM with the response data
+          const errorEl = document.querySelector("[data-form-id='error']");
+          const resultEl = document.querySelector("[data-form-id='result']");
+          const resultContainer = document.querySelector("[data-result-container]");
+          
+          if (errorEl) errorEl.textContent = data.error || '';
+          
+          if (resultEl) {
+            resultEl.textContent = data.result || '';
+            
+            // Update copy button
+            const copyBtn = document.querySelector("[data-copy]");
+            if (copyBtn) copyBtn.setAttribute('data-content', data.result || '');
+            
+            // Show/hide the result container
+            if (resultContainer) {
+              resultContainer.style.display = data.result ? 'block' : 'none';
+            }
+          }
+          
+          // Reset loading state if needed
+          // if (button) button.disabled = false;
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          // Handle errors if needed
+          // if (button) button.disabled = false;
+        });
+    });
+  }
+
+  // Copy button functionality
   document.querySelectorAll('[data-copy]').forEach(button => {
     button.addEventListener('click', () => {
       const content = button.getAttribute('data-content');
@@ -314,10 +376,6 @@ function Icon({ name, className, ...props }) {
       }
     });
   });
-
-  // Add drag and drop functionality
-  // Add SVG validation
-  // Add other client-side features
 </script>
 
 <style>

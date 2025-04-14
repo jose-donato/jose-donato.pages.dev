@@ -1,0 +1,77 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Icon from "../components/Icon.astro";
+import { getCollection } from "astro:content";
+
+const allPosts = await getCollection("blog");
+console.log(allPosts);
+const allTopics = allPosts.flatMap((post) => post.topics);
+
+// Handle filtering by topic
+const url = new URL(Astro.request.url);
+const topic = url.searchParams.get("topic") || "";
+const filteredPosts = topic
+	? allPosts.filter((post) => post.topics.includes(topic))
+	: allPosts;
+---
+
+<Layout
+  seo={{
+    title: "José Donato | Blog",
+    description: "Personal blog with articles about programming, security, and more.",
+  }}
+>
+  <div class="space-y-20">
+    <div>
+      <h2 class="text-lg font-bold uppercase tracking-widest">Blog</h2>
+      <ul class="mt-6">
+        <form class="space-y-2">
+          <div class="flex flex-wrap gap-2">
+            {
+              allTopics.map((topic) => (
+                <button
+                  type="submit"
+                  name="topic"
+                  value={topic}
+                  class={url.searchParams.get("topic") === topic ? "btn" : "btn-outline"}
+                >
+                  {topic}
+                </button>
+              ))
+            }
+          </div>
+          {
+            topic && (
+              <button class="btn gap-2 ml-auto" type="submit" name="topic" value="">
+                <Icon id="system-uicons-reset" className="w-4 h-4" />
+                Reset
+              </button>
+            )
+          }
+        </form>
+        <ul class="mt-6 space-y-6">
+          {
+            filteredPosts.map((post) => (
+              <li class="card p-6">
+                <a href={`/blog/${post.slug}`} class="block h-full">
+                  <h2 class="font-bold text-xl hover:underline">{post.title}</h2>
+                  <p class="text-sm mt-2">{post.snippet}</p>
+                  <div class="flex justify-between mt-4">
+                    <div class="text-xs text-zinc-600 dark:text-zinc-400">
+                      <p>{post.date}</p>
+                      <p class="mt-1">{post.readingTime} min read</p>
+                      <p class="mt-1">{post.topics}</p>
+                    </div>
+                    <div class="self-end">
+                      <span class="link text-sm">Read more</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </ul>
+    </div>
+  </div>
+</Layout> 

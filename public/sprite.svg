@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <defs>
+        <symbol viewBox="0 0 24 24" id="material-symbols-article">
+            <path fill="currentColor" d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm2-4h7v-2H7zm0-4h10v-2H7zm0-4h10V7H7z"></path>
+        </symbol>
         <symbol id="checkmark-icon"
             xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true"
             class="w-3.5 h-3.5 mr-2 text-green-500 dark:text-green-400 flex-shrink-0"

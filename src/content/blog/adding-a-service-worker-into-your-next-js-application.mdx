@@ -1,0 +1,74 @@
+---
+title: Adding a service worker into your Next.js application
+type: post
+snippet: What are service workers and how to add them to a Next.js application
+coverImage: '/add-sw-blog.png'
+date: '14.10.2020'
+topics: '#pwa #nextjs #serviceworkers #javascript #react'
+---
+
+___
+I will start by doing a service worker (the brains behind progressive web applications) intro but if you already know all of that just skip to the next.js part (Section 2.)
+
+## Section 1. PWA and SW intro
+
+Nowadays, users install in average zero mobile applications per months. Which means users install less native applications on their mobile devices. Since the web has a reach of three times more than native applications without compromising and requiring the users to install them, the perfect solution would be something that users can access with their web browser and if they want install it on their devices (if they don't they can always access it with their browser). This is what Progressive Web Applications (introduced by Google) try to achieve. They are just web applications that try to behave like native applications: work offline, receive push notifications, have good performance, etc.
+
+
+The brain behind this new concept are the **service workers**: javascript files that act as a proxy in your web application. They can intercept the requests (and cache them), listen for events and do something when they happen. For example, we can cache certain assets when the service worker is installed and serve it directly through the service worker instead of making a trip to grab those assets every time they are needed.
+
+This image from https://blog.clairvoyantsoft.com/service-workers-in-javascript-simple-demo-app-81efcdf2f2c4?gi=abbe01a65fba explains well what a service worker does:
+![how service workers work](https://dev-to-uploads.s3.amazonaws.com/i/camgh1oaer3z9rqg3000.png)
+
+
+## Section 2. Adding a service worker to next.js
+
+
+In the past years, to add a service worker to next.js application we had to use third party plugins such as next-pwa (https://github.com/shadowwalker/next-pwa) or next-offline (https://github.com/hanford/next-offline) or use a custom server. Don't take me wrong next-pwa and next-offline are great plugins but for certain situations we don't want/need all that abstraction.
+
+
+
+About a year ago, Next.js 9.1 introduced the `public` directory support where we can store the files that will be mapped to the root of the domain. For example, if I'm running my application locally at `http://localhost:3000` and store a file called `sw.js` inside `public` (`public/sw.js`) it will available at `http://localhost:3000/sw.js`. Therefore, we can reference it in our application and install the service worker without the need of a custom server.
+
+The most simple service worker file can be:
+```javascript
+//public/sw.js
+self.addEventListener("install", function (event) {
+  console.log("Hello world from the Service Worker 🤙");
+});
+```
+
+Of course this service worker does nothing, only logs when it is installed, for more examples of service worker capabilities check here: https://serviceworke.rs/
+
+After we have our service worker in place, we need to install  it and we can do that when the page mounts. Next.js allows us to change the custom root document that involves all pages inside the `pages` directory by creating the file `_app.js` inside the same folder:
+```javascript
+//pages/_app.js
+import { useEffect } from "react"
+function MyApp({ Component, pageProps }) {
+  useEffect(() => {
+    if("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+       navigator.serviceWorker.register("/sw.js").then(
+          function (registration) {
+            console.log("Service Worker registration successful with scope: ", registration.scope);
+          },
+          function (err) {
+            console.log("Service Worker registration failed: ", err);
+          }
+        );
+      });
+    }
+  }, [])
+  
+  return <Component {...pageProps} />
+}
+
+export default MyApp
+```
+
+And that's it! The service worker will install in your next.js application the first time you visit the website.
+
+Source code: https://github.com/jose-donato/with-service-worker
+Demo (plan to add more SW features in the future): https://with-service-worker.vercel.app/
+
+Any questions just ask me and if you want to know more about me visit https://jose-donato.live
