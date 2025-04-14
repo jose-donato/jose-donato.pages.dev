@@ -2,6 +2,7 @@ import cloudflare from "@astrojs/cloudflare";
 import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, envField } from "astro/config";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig({
 	env: {
@@ -18,7 +19,12 @@ export default defineConfig({
 		enabled: false,
 	},
 	vite: {
-		plugins: [tailwindcss()],
+		plugins: [
+			tailwindcss(),
+			nodePolyfills({
+				include: ["os"],
+			}),
+		],
 		build: {
 			minify: false,
 		},
