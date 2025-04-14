@@ -23,6 +23,7 @@ export default defineConfig({
 			tailwindcss(),
 			nodePolyfills({
 				include: ["os", "fs"],
+				protocolImports: false,
 			}),
 		],
 		build: {
