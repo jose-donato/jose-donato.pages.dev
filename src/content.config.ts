@@ -4,8 +4,6 @@ import { defineCollection, z } from "astro:content";
 // 2. Import loader(s)
 import { file, glob } from "astro/loaders";
 
-console.log("content config\n\n\n");
-
 // 3. Define your collection(s)
 const blog = defineCollection({
 	loader: glob({ base: "./src/content/blog", pattern: "**/*.{md,mdx}" }),

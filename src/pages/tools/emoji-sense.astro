@@ -3,9 +3,10 @@ import Layout from "../../layouts/Layout.astro";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { action } from "../../utils/form";
+import { GOOGLE_API_KEY } from "astro:env/server";
 
 const googleGenerativeAI = createGoogleGenerativeAI({
-	apiKey: import.meta.env.GOOGLE_API_KEY,
+	apiKey: GOOGLE_API_KEY,
 });
 const model = googleGenerativeAI("gemini-1.5-flash");
 
