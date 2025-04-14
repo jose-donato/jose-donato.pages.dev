@@ -22,7 +22,7 @@ export default defineConfig({
 		plugins: [
 			tailwindcss(),
 			nodePolyfills({
-				include: ["os"],
+				include: ["os", "fs"],
 			}),
 		],
 		build: {
