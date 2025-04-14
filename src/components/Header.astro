@@ -2,6 +2,7 @@
 import Icon from "./Icon.astro";
 import { SOCIALS } from "../utils/constants";
 import Floater from "./Floater.astro";
+import { Image } from "astro:assets";
 ---
 
 {/*<Navbar activeUrl={route} />*/}
@@ -41,11 +42,12 @@ import Floater from "./Floater.astro";
     </div>
   </div>
   <div class="flex md:min-w-[20%]">
-    <img
+    <Image
       src="/avatar.webp"
       class="rounded-md h-40 object-cover shadow-lg"
       alt="me"
-      loading="eager"
+      width={160}
+      height={160}
     />
   </div>
 </div>

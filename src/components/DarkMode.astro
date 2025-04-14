@@ -47,4 +47,13 @@ import Icon from "./Icon.astro";
   document
     .getElementById("theme-toggle")
     .addEventListener("click", handleToggleClick);
+
+  // Add keyboard shortcut listener
+  document.addEventListener("keydown", (event) => {
+    // Check for Cmd+M or Ctrl+M
+    if (event.key === "m" && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault(); // Prevent default browser action
+      handleToggleClick(); // Toggle the theme
+    }
+  });
 </script>

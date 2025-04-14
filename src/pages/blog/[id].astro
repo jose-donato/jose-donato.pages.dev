@@ -1,0 +1,37 @@
+---
+import { getEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import PDFViewer from "../../components/PDFViewer.astro";
+
+const { id = "" } = Astro.params;
+
+const post = await getEntry("blog", id);
+
+// Check if post has PDF file
+const hasPDF = post?.data.file?.endsWith(".pdf");
+---
+
+<Layout
+  seo={{
+    title: post?.data.title || "Blog Post",
+    description: post?.data.snippet || "Blog post details",
+  }}
+>
+  <article class="prose dark:prose-invert max-w-none">
+    <h1 class="text-3xl font-bold">{post?.data.title}</h1>
+    
+    {post?.data.date && <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-2">{post.data.date}</p>}
+    
+    {post?.data.author && <p class="text-sm text-zinc-600 dark:text-zinc-400">By {post.data.author}</p>}
+    
+    {hasPDF ? (
+      <PDFViewer 
+        pdfPath={`/assets/${post?.data.file}`} 
+      />
+    ) : (
+      <div class="mt-6">
+        <slot />
+      </div>
+    )}
+  </article>
+</Layout>

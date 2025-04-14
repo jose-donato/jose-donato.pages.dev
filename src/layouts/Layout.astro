@@ -2,14 +2,15 @@
 import { SEO, type Props as SEOProps } from "astro-seo";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import "../styles/global.css";
+import "@/styles/global.css";
+import "@/styles/starwind.css";
 
 interface Props {
-  seo?: SEOProps;
-  ogImage?: {
-    template: string;
-    data?: Record<string, any>;
-  };
+	seo?: SEOProps;
+	ogImage?: {
+		template: string;
+		data?: Record<string, any>;
+	};
 }
 
 const { seo, ogImage } = Astro.props;

@@ -5,13 +5,13 @@ import { getCollection } from "astro:content";
 
 const allPosts = await getCollection("blog");
 console.log(allPosts);
-const allTopics = allPosts.flatMap((post) => post.topics);
+const allTopics = allPosts.flatMap((post) => post.data.topics);
 
 // Handle filtering by topic
 const url = new URL(Astro.request.url);
 const topic = url.searchParams.get("topic") || "";
 const filteredPosts = topic
-	? allPosts.filter((post) => post.topics.includes(topic))
+	? allPosts.filter((post) => post.data.topics?.includes(topic))
 	: allPosts;
 ---
 
@@ -23,8 +23,7 @@ const filteredPosts = topic
 >
   <div class="space-y-20">
     <div>
-      <h2 class="text-lg font-bold uppercase tracking-widest">Blog</h2>
-      <ul class="mt-6">
+      <ul class="">
         <form class="space-y-2">
           <div class="flex flex-wrap gap-2">
             {
@@ -53,14 +52,14 @@ const filteredPosts = topic
           {
             filteredPosts.map((post) => (
               <li class="card p-6">
-                <a href={`/blog/${post.slug}`} class="block h-full">
-                  <h2 class="font-bold text-xl hover:underline">{post.title}</h2>
-                  <p class="text-sm mt-2">{post.snippet}</p>
+                <a href={`/blog/${post.id}`} class="block h-full">
+                  <h2 class="font-bold text-xl hover:underline">{post.data.title}</h2>
+                  <p class="text-sm mt-2">{post.data.snippet}</p>
                   <div class="flex justify-between mt-4">
                     <div class="text-xs text-zinc-600 dark:text-zinc-400">
-                      <p>{post.date}</p>
-                      <p class="mt-1">{post.readingTime} min read</p>
-                      <p class="mt-1">{post.topics}</p>
+                      <p>{post.data.date}</p>
+                      <p class="mt-1">{post.data.readingTime} min read</p>
+                      <p class="mt-1">{post.data.topics}</p>
                     </div>
                     <div class="self-end">
                       <span class="link text-sm">Read more</span>

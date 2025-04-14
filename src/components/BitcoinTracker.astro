@@ -1,0 +1,133 @@
+---
+import Icon from "@/components/Icon.astro";
+---
+
+
+  <div id="price-container" class="hidden">
+    <div class="text-center">
+      <div class="text-5xl md:text-7xl font-bold tracking-tighter flex items-center justify-center">
+        $<span id="price-value">0.00</span>
+        <span id="trend-up" class="hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-green-500 ml-2"><path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path></svg>
+        </span>
+        <span id="trend-down" class="hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-red-500 ml-2"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg>
+        </span>
+      </div>
+    </div>
+
+    <div class="space-y-2 mt-6">
+      <div class="flex justify-between text-sm text-gray-400">
+        <span>$0</span>
+        <span>Progress to $100k</span>
+        <span>🚀</span>
+      </div>
+      <div class="w-full bg-zinc-700 rounded-full h-2.5">
+        <div id="progress-bar" class="bg-[#f7931a] h-2.5 rounded-full" style="width: 0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="loading" class="flex items-center justify-center">
+    <svg class="animate-spin -ml-1 mr-3 h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+    </svg>
+  </div>
+
+<script>
+  import {
+    PriceStatus,
+    type PythCluster,
+    PythConnection,
+    getPythClusterApiUrl,
+    getPythProgramKeyForCluster,
+  } from "@pythnetwork/client";
+  import { Connection, PublicKey } from "@solana/web3.js";
+
+  let price = 0;
+  let status = "connecting";
+  let prevPrice = 0;
+  let trend = null;
+
+  // DOM Elements
+  const priceContainer = document.getElementById("price-container");
+  const loadingElement = document.getElementById("loading");
+  const priceValueElement = document.getElementById("price-value");
+  const trendUpElement = document.getElementById("trend-up");
+  const trendDownElement = document.getElementById("trend-down");
+  const progressBarElement = document.getElementById("progress-bar");
+
+  // Update UI with price data
+  function updateUI() {
+    if (status === "live") {
+      priceContainer.classList.remove("hidden");
+      loadingElement.classList.add("hidden");
+
+      // Format price
+      const formattedPrice = price.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+      priceValueElement.textContent = formattedPrice;
+
+      // Update trend indicator
+      if (trend === "up") {
+        trendUpElement.classList.remove("hidden");
+        trendDownElement.classList.add("hidden");
+      } else if (trend === "down") {
+        trendUpElement.classList.add("hidden");
+        trendDownElement.classList.remove("hidden");
+      }
+
+      // Update progress bar
+      const target = 100000;
+      const progressPercentage = (price / target) * 100;
+      progressBarElement.style.width = `${progressPercentage}%`;
+    } else {
+      priceContainer.classList.add("hidden");
+      loadingElement.classList.remove("hidden");
+    }
+  }
+
+  // Initialize Pyth connection
+  async function initPythConnection() {
+    try {
+      const PYTHNET_CLUSTER_NAME = "pythnet";
+      const connection = new Connection(
+        getPythClusterApiUrl(PYTHNET_CLUSTER_NAME)
+      );
+      const pythPublicKey = getPythProgramKeyForCluster(PYTHNET_CLUSTER_NAME);
+      const btcFeed = new PublicKey(
+        "GVXRSBjFk6e6J3NbVPXohDJetcTjaeeuykUpbQF8UoMU"
+      );
+
+      const pythConnection = new PythConnection(
+        connection,
+        pythPublicKey,
+        "confirmed",
+        [btcFeed]
+      );
+
+      pythConnection.onPriceChangeVerbose((productAccount, priceAccount) => {
+        const priceData = priceAccount.accountInfo.data;
+        if (priceData.price && priceData.confidence) {
+          const newPrice = priceData.price;
+          trend = newPrice > prevPrice ? "up" : "down";
+          prevPrice = newPrice;
+          price = newPrice;
+          status = "live";
+        } else {
+          status = PriceStatus[priceData.status];
+        }
+        updateUI();
+      });
+
+      pythConnection.start();
+    } catch (error) {
+      console.error("Failed to initialize Pyth connection:", error);
+    }
+  }
+
+  // Start the connection when the component mounts
+  initPythConnection();
+</script>

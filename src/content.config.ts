@@ -16,6 +16,7 @@ const blog = defineCollection({
 		topics: z.string().optional(),
 		readingTime: z.number().optional(),
 		author: z.string().optional(),
+		file: z.string().optional(),
 	}),
 });
 

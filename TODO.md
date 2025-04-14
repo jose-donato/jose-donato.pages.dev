@@ -1,0 +1,10 @@
+- [ ] update readme
+- [ ] redirect old website here
+- [ ] redirect tools here
+- [ ] clean up commits
+- [ ] write blogpost
+- [ ] make sure analytics are working
+- [ ] hit 100/100/100 lighthouse
+- [ ] bring xmas investing with a locker
+- [ ] add snippet to each blog post
+- [ ] navbar add active on tools & blog

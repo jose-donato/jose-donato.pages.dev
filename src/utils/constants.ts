@@ -36,6 +36,12 @@ export const TOOLS = [
 		description:
 			"AI-powered emoji suggestion tool that helps you find the perfect emojis for your text. Get customized emoji recommendations instantly.",
 	},
+	{
+		title: "BTC 100K Countdown",
+		slug: "btc-100k",
+		description:
+			"A real-time Bitcoin price tracker that shows the progress towards $100,000, powered by Pyth Network's price feeds.",
+	},
 ];
 
 export const EDUCATION = [
@@ -229,6 +235,61 @@ export const PROJECTS: Project[] = [
 		technologies: ["Next.js", "TailwindCSS", "Wordpress", "GraphQL"],
 		description: "A website for a nation-wide radio.",
 		url: "https://ruc.pt",
+	},
+	{
+		title: "Smart contracts to sign up presences in classrooms",
+		type: "web app",
+		technologies: [
+			"Smart-contracts",
+			"React",
+			"Node.js",
+			"truffle",
+			"ganache",
+			"Material-UI",
+		],
+		description:
+			"Project done for Informatics Security and Law course. It uses smart contracts to register the presence of students in a classroom and for teachers to check which students are present.",
+		url: "https://gitlab.com/presences",
+	},
+	{
+		title: "Learning elliptic-curve cryptography",
+		type: "web app",
+		technologies: ["Next.js", "Node.js", "Material-UI"],
+		description:
+			"Web App developed for Cryptography course in Masters. It has a backend in Node.js to calculate the elliptic curves.",
+		url: "https://elliptic-curves-frontend.now.sh",
+	},
+	{
+		title: "Public Key Infrastructure with blockchain",
+		type: "web app",
+		technologies: ["Node.js", "Blockchain", "React", "Material-UI"],
+		description:
+			"Backend uses node.js and implements a simple blockchain to store the PKI certificates. The frontend is a React application.",
+		url: "https://gitlab.com/pki1",
+	},
+	{
+		title: "Mihi Jewellery",
+		type: "website",
+		technologies: ["Next.js", "DatoCMS", "TailwindCSS", "TypeScript"],
+		description:
+			"Ecommerce catalog developed for a jewellery company. Uses DatoCMS and Next.js with TailwindCSS and Cloudinary for media management.",
+		url: "https://mihi-jewellery.com",
+	},
+	{
+		title: "Pensec",
+		type: "desktop app",
+		technologies: ["Python", "nmap", "searchsploit"],
+		description:
+			"Project done for Security Auditing course. Python application that aims to be an all-in-one pentesting tool.",
+		url: "https://github.com/jose-donato/pensec",
+	},
+	{
+		title: "presentation-helper",
+		type: "web app",
+		technologies: ["Next.js", "Firebase", "TailwindCSS", "PWA"],
+		description:
+			"Productivity tool to help you and your attendees ace in presentations. It is a PWA with excellent lighthouse scores.",
+		url: "https://github.com/jose-donato/presentation-helper",
 	},
 ];
 

@@ -4,47 +4,50 @@ import Icon from "../components/Icon.astro";
 import { PROJECTS } from "../utils/constants";
 
 const technologies = Array.from(
-  new Set(PROJECTS.flatMap((project) => project.technologies))
+	new Set(PROJECTS.flatMap((project) => project.technologies)),
 );
 const url = new URL(Astro.request.url);
 const query = url.searchParams.get("q") || "";
 const results = query
-  ? PROJECTS.filter((project) => project.technologies.includes(query))
-  : PROJECTS;
+	? PROJECTS.filter((project) => project.technologies.includes(query))
+	: PROJECTS;
 
 // Fetch GitHub stars for projects with GitHub URLs
 const projectsWithStars = await Promise.all(
-  results.map(async (project) => {
-    // Check if the URL is a GitHub repository URL
-    if (project.url?.includes('github.com')) {
-      try {
-        // Extract owner and repo from GitHub URL
-        const urlParts = new URL(project.url).pathname.split('/').filter(Boolean);
-        if (urlParts.length >= 2) {
-          const owner = urlParts[0];
-          const repo = urlParts[1];
-          
-          // Fetch star count from GitHub API
-          const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
-          if (response.ok) {
-            const data = await response.json();
-            return { ...project, stars: data.stargazers_count };
-          }
-        }
-      } catch (error) {
-        console.error(`Error fetching stars for ${project.title}:`, error);
-      }
-    }
-    return project;
-  })
+	results.map(async (project) => {
+		// Check if the URL is a GitHub repository URL
+		if (project.url?.includes("github.com")) {
+			try {
+				// Extract owner and repo from GitHub URL
+				const urlParts = new URL(project.url).pathname
+					.split("/")
+					.filter(Boolean);
+				if (urlParts.length >= 2) {
+					const owner = urlParts[0];
+					const repo = urlParts[1];
+
+					// Fetch star count from GitHub API
+					const response = await fetch(
+						`https://api.github.com/repos/${owner}/${repo}`,
+					);
+					if (response.ok) {
+						const data = await response.json();
+						return { ...project, stars: data.stargazers_count };
+					}
+				}
+			} catch (error) {
+				console.error(`Error fetching stars for ${project.title}:`, error);
+			}
+		}
+		return project;
+	}),
 );
 ---
 
 <Layout>
   <div class="space-y-20">
     <div>
-      <h2 class="text-lg font-bold uppercase tracking-widest">Projects</h2>
-      <ul class="mt-6">
+      <ul class="">
         <form class="space-y-2">
           <div class="flex flex-wrap gap-2">
           {

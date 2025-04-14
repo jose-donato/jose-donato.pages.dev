@@ -1,0 +1,30 @@
+---
+import Icon from "@/components/Icon.astro";
+import Layout from "@/layouts/Layout.astro";
+import BitcoinTracker from "@/components/BitcoinTracker.astro";
+---
+
+<Layout>
+  <div class="flex items-center justify-center p-4">
+      <div class="space-y-8">
+        <div class="flex items-center flex-col justify-center gap-2 text-[#f7931a]">
+          <Icon id="bitcoin-logo" className="w-20 h-20" />
+          <h1 class="text-2xl md:text-3xl font-bold">
+            Bitcoin Countdown to $100k
+          </h1>
+        </div>
+
+        <BitcoinTracker client:load />
+
+        <div class="flex items-center justify-center gap-4">
+          <a
+            href="https://pyth.network"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <Icon id="pyth-logo" className="w-24 h-24" />
+          </a>
+        </div>
+      </div>
+  </div>
+</Layout>
