@@ -1,5 +1,6 @@
 ---
 import { SEO, type Props as SEOProps } from "astro-seo";
+import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import "@/styles/global.css";
@@ -77,6 +78,7 @@ const ogImageUrl = "/og_image.png";
         image: ogImageUrl,
       }}
     />
+    <ClientRouter />
     
   </head>
   <body>
