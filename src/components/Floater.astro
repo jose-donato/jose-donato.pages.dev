@@ -1,6 +1,5 @@
 ---
 import DarkMode from "./DarkMode.astro";
-import Icon from "./Icon.astro";
 
 const pathname = new URL(Astro.request.url).pathname;
 
@@ -22,11 +21,19 @@ const LINKS = [
 		icon: "material-symbols-article",
 	},
 ];
+
+// Check if the current path starts with a specific route
+const isActive = (href: string) => {
+	if (href === "/") {
+		return pathname === href;
+	}
+	return pathname === href || pathname.startsWith(`${href}/`);
+};
 ---
 
 <div class="flex justify-between items-center mb-10">
   <div
-    class="flex transition-all ease-in-out gap-2"
+    class="flex transition-all ease-in-out gap-5"
   >
   {
     LINKS.map((link) => (
@@ -35,9 +42,9 @@ const LINKS = [
         class:list={[
           "text-lg font-bold uppercase tracking-widest",
           {
-            "text-zinc-700 dark:text-white": pathname === link.href,
-            "text-zinc-600": pathname !== link.href,
-            "underline-animation": pathname === link.href
+            "text-zinc-700 dark:text-white": isActive(link.href),
+            "text-zinc-600": !isActive(link.href),
+            "underline-animation": isActive(link.href)
           },
         ]}
         title={link.name}

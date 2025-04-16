@@ -42,6 +42,12 @@ export const TOOLS = [
 		description:
 			"A real-time Bitcoin price tracker that shows the progress towards $100,000, powered by Pyth Network's price feeds.",
 	},
+	{
+		title: "Gift Helper",
+		slug: "gift-helper",
+		description:
+			"AI-powered gift suggestion tool that helps you find the perfect gift for your family, friends, and anyone else you want to give a gift to.",
+	},
 ];
 
 export const EDUCATION = [

@@ -7,3 +7,7 @@ painpoints
 			}),
 
 - [ ] no live reload on dev-wrangler?
+
+
+- [ ] adopted posthog - https://posthog.com/docs/libraries/astro
+- [ ] 

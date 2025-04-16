@@ -1,0 +1,480 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { generateObject } from "ai";
+import { action } from "../../utils/form";
+import { GOOGLE_API_KEY } from "astro:env/server";
+import { z } from "astro/zod";
+
+const googleGenerativeAI = createGoogleGenerativeAI({
+	apiKey: GOOGLE_API_KEY,
+});
+// Using gemini-1.5-flash for speed and cost-effectiveness
+const model = googleGenerativeAI("gemini-1.5-flash");
+
+// Define minimum tag count
+const MIN_TAGS = 3;
+
+// Use the action utility to handle form submissions
+const { data, response } = await action(Astro, async () => {
+	const formData = await Astro.request.formData();
+	const tagsJson = formData.get("tags");
+	const minPriceStr = formData.get("minPrice"); // Get min price
+	const maxPriceStr = formData.get("maxPrice"); // Get max price
+	const ageStr = formData.get("age"); // Get age
+
+	if (!tagsJson || typeof tagsJson !== "string") {
+		return { error: "No tags provided", result: [] };
+	}
+	// Validate required fields
+	if (!minPriceStr || !maxPriceStr || !ageStr) {
+		return {
+			error: "Missing required fields (Min Price, Max Price, Age)",
+			result: [],
+		};
+	}
+
+	// Validate numeric types (optional but good practice)
+	const minPrice = Number(minPriceStr);
+	const maxPrice = Number(maxPriceStr);
+	const age = Number(ageStr);
+
+	if (
+		Number.isNaN(minPrice) ||
+		Number.isNaN(maxPrice) ||
+		Number.isNaN(age) ||
+		minPrice < 0 ||
+		maxPrice < 0 ||
+		age < 0
+	) {
+		return { error: "Invalid numeric input for price or age.", result: [] };
+	}
+	if (minPrice > maxPrice) {
+		return {
+			error: "Minimum price cannot be greater than maximum price.",
+			result: [],
+		};
+	}
+
+	let tags: string[] = [];
+	try {
+		tags = JSON.parse(tagsJson);
+		if (!Array.isArray(tags)) {
+			return { error: "Invalid tags format", result: [] };
+		}
+		if (tags.length < MIN_TAGS) {
+			return { error: `Please add at least ${MIN_TAGS} tags.`, result: [] };
+		}
+	} catch (e) {
+		console.error("Error parsing tags:", e);
+		return { error: "Failed to parse tags", result: [] };
+	}
+
+	try {
+		const prompt = `You are a gift suggestion expert.
+You will be given a list of tags describing a person, occasion, or interests, their age, and a price range.
+Suggest 5-10 relevant gift ideas based ONLY on these criteria.
+
+The recipient's age is ${age}. Consider this when suggesting gifts.
+The desired price range is $${minPrice} to $${maxPrice}. Keep suggestions strictly within this range.
+
+Guidelines:
+- Keep suggestions concise and relevant to the tags, age, and price range provided.
+- Ensure suggestions are appropriate for the specified age.
+- Ensure suggestions fall within the $${minPrice}-$${maxPrice} price range.
+- NEVER INCLUDE INTRODUCTORY TEXT, EXPLANATIONS OR EXTRA TEXT IN YOUR RESPONSE. Only provide the list of gift ideas.
+
+Tags: ${JSON.stringify(tags)}
+Age: ${age}
+Price Range: $${minPrice}-$${maxPrice}
+Response:`;
+
+		const aiResponse = await generateObject({
+			model: model,
+			schema: z
+				.array(
+					z.object({
+						product: z.string(),
+						price: z.string(),
+					}),
+				)
+				.describe("The list of gift ideas"),
+			prompt: prompt,
+			maxTokens: 150,
+		});
+		const result = aiResponse?.object;
+
+		return { error: "", result: result || [] };
+	} catch (apiError) {
+		console.error("Error generating gift suggestions:", apiError);
+		return { error: "Failed to generate gift suggestions", result: [] };
+	}
+});
+
+// Early return for client-side requests (for progressive enhancement)
+if (response) return response;
+
+// Extract data for server-side rendering
+const error = data?.error || "";
+// Ensure result is treated as a string, split lines for rendering if needed
+const result = data?.result || [];
+---
+
+<Layout seo={{ title: "GiftSense - AI-powered Gift Suggestions" }}>
+  <div class="max-w-[700px] mx-auto">
+    <h1 class="text-3xl font-bold mb-4 text-center">
+      <span class="underline-animation">Gift</span>Sense
+    </h1>
+
+    <div class="flex justify-center items-center flex-col gap-2 my-5">
+      <p>Get AI-powered gift suggestions based on tags, age, and price range.</p>
+    </div>
+
+    <div class="card p-6">
+      <form method="POST" id="giftForm">
+        <input type="hidden" name="tags" id="tagsInputHidden" />
+        <div class="mb-4">
+          <label for="tagInput" class="block text-sm font-medium mb-1">
+            Add Interests (min. 3)
+          </label>
+          <input
+            type="text"
+            id="tagInput"
+            placeholder="Type an interest and press Tab..."
+            class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
+          />
+        </div>
+
+        <div class="mb-4 min-h-[40px]" id="tagsContainer">
+          <!-- Tags will be added here dynamically -->
+          <span class="text-sm text-gray-500 italic" id="noTagsMessage">No interests added yet. Add at least 3.</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div>
+            <label for="minPrice" class="block text-sm font-medium mb-1">
+              Min Price ($) <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              id="minPrice"
+              name="minPrice"
+              placeholder="e.g., 25"
+              min="0"
+              class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
+              required
+            />
+          </div>
+          <div>
+            <label for="maxPrice" class="block text-sm font-medium mb-1">
+              Max Price ($) <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              id="maxPrice"
+              name="maxPrice"
+              placeholder="e.g., 100"
+              min="0"
+              class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
+              required
+            />
+          </div>
+          <div>
+            <label for="age" class="block text-sm font-medium mb-1">
+              Age <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              id="age"
+              name="age"
+              placeholder="e.g., 30"
+              min="0"
+              class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <button
+            type="submit"
+            id="submitBtn"
+            class="btn"
+            disabled
+          >
+            Suggest Gifts
+          </button>
+        </div>
+      </form>
+
+      <div class="mt-6">
+        <h2 class="text-lg font-semibold mb-2">Suggested Gifts</h2>
+        <div id="result" class="min-h-[80px] p-4 border border-gray-200 rounded-md bg-gray-50">
+          <div data-form-id="error" class="text-red-500 mb-2">{error}</div>
+          <ul class="list-none list-inside space-y-1" data-form-id="result">
+          </ul>
+          {!error && !result && (
+            <div class="text-center text-gray-500" data-empty-state>
+              Your suggested gifts will appear here.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-6 mt-6">
+      <h2 class="font-bold text-lg mb-4">How it works</h2>
+      <p>GiftSense uses AI to brainstorm gift ideas based on the tags you provide. The more descriptive the tags, the better the suggestions!</p>
+      <ul class="list-disc list-inside space-y-2 mt-2">
+        <li>Enter tags related to the person's interests, hobbies, or the occasion.</li>
+        <li>Press Tab after each tag to add it to the list.</li>
+        <li>Click "Suggest Gifts" to get AI-powered recommendations.</li>
+      </ul>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tagInput = document.getElementById('tagInput') as HTMLInputElement;
+    const tagsContainer = document.getElementById('tagsContainer');
+    const noTagsMessage = document.getElementById('noTagsMessage');
+    const hiddenTagsInput = document.getElementById('tagsInputHidden') as HTMLInputElement;
+    const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
+    const form = document.getElementById('giftForm') as HTMLFormElement;
+    const resultContainer = document.getElementById('result');
+    const emptyState = resultContainer?.querySelector('[data-empty-state]');
+    const minPriceInput = document.getElementById('minPrice') as HTMLInputElement;
+    const maxPriceInput = document.getElementById('maxPrice') as HTMLInputElement;
+    const ageInput = document.getElementById('age') as HTMLInputElement;
+    const MIN_TAGS = 3;
+
+    let tags: string[] = [];
+
+    function validateForm(): boolean {
+       const minPrice = minPriceInput?.value ? parseFloat(minPriceInput.value) : NaN;
+       const maxPrice = maxPriceInput?.value ? parseFloat(maxPriceInput.value) : NaN;
+       const age = ageInput?.value ? parseInt(ageInput.value, 10) : NaN;
+
+       const hasEnoughTags = tags.length >= MIN_TAGS;
+       const hasMinPrice = minPriceInput?.value !== '' && !isNaN(minPrice) && minPrice >= 0;
+       const hasMaxPrice = maxPriceInput?.value !== '' && !isNaN(maxPrice) && maxPrice >= 0;
+       const hasAge = ageInput?.value !== '' && !isNaN(age) && age >= 0;
+       const validPriceRange = isNaN(minPrice) || isNaN(maxPrice) || minPrice <= maxPrice; // Only validate range if both are numbers
+
+       return hasEnoughTags && hasMinPrice && hasMaxPrice && hasAge && validPriceRange;
+    }
+
+
+    function renderTags() {
+      if (!tagsContainer || !noTagsMessage || !submitBtn || !hiddenTagsInput) return;
+      tagsContainer.innerHTML = '';
+
+      if (tags.length === 0) {
+        noTagsMessage.textContent = `No tags added yet. Add at least ${MIN_TAGS}.`;
+        tagsContainer.appendChild(noTagsMessage);
+        noTagsMessage.style.display = 'inline';
+      } else {
+         noTagsMessage.style.display = 'none';
+         tags.forEach((tag, index) => {
+          const tagElement = document.createElement('span');
+          tagElement.className = 'inline-block bg-blue-100 text-blue-800 text-sm font-medium mr-2 mb-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300';
+          tagElement.textContent = tag;
+
+          const removeButton = document.createElement('button');
+          removeButton.className = 'ml-1 text-blue-600 hover:text-blue-800';
+          removeButton.innerHTML = '&times;';
+          removeButton.type = 'button';
+          removeButton.onclick = () => {
+            tags.splice(index, 1);
+            updateFormState();
+          };
+
+          tagElement.appendChild(removeButton);
+          tagsContainer.appendChild(tagElement);
+        });
+         if (tags.length < MIN_TAGS) {
+            const reminder = document.createElement('span');
+            reminder.className = 'text-sm text-yellow-600 italic ml-2';
+            reminder.textContent = `(Add ${MIN_TAGS - tags.length} more tag${tags.length === MIN_TAGS - 1 ? '' : 's'})`;
+            tagsContainer.appendChild(reminder);
+         }
+      }
+      hiddenTagsInput.value = JSON.stringify(tags);
+      // Enable/disable submit button based on overall form validity
+      submitBtn.disabled = !validateForm();
+    }
+
+    function updateFormState() {
+        renderTags(); // renderTags already calls validateForm and updates the button
+    }
+
+    // Add event listeners to required fields to re-validate on input
+    [minPriceInput, maxPriceInput, ageInput].forEach(input => {
+        input?.addEventListener('input', updateFormState);
+    });
+
+
+    if (tagInput) {
+      tagInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab' && tagInput.value.trim() !== '') {
+          e.preventDefault();
+          const newTag = tagInput.value.trim();
+          if (!tags.includes(newTag)) {
+             tags.push(newTag);
+             updateFormState();
+          }
+          tagInput.value = '';
+        }
+      });
+    }
+
+    updateFormState(); // Initial validation and button state
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        if (!validateForm()) return; // Client-side validation check
+
+
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Thinking...';
+        if (resultContainer) (resultContainer as HTMLElement).style.opacity = '0.5';
+        if (emptyState) (emptyState as HTMLElement).style.display = 'none';
+
+        // Fetch logic remains largely the same, as FormData handles the new fields
+        fetch(window.location.href, {
+          method: 'POST',
+          body: new FormData(form),
+           headers: {
+             accept: 'application/json',
+           }
+        })
+        .then(res => {
+            if (!res.ok) {
+                return res.json().then(errData => {
+                    throw new Error(errData.error || `HTTP error! Status: ${res.status}`);
+                });
+            }
+            return res.json();
+        })
+        .then(data => {
+
+          const errorEl = resultContainer?.querySelector('[data-form-id="error"]');
+          const resultUl = resultContainer?.querySelector('[data-form-id="result"]') as HTMLUListElement | null;
+
+          if (!resultContainer || !errorEl || !resultUl) {
+              console.error("Required result elements not found in the DOM.");
+              return;
+          }
+
+          // Clear previous state
+          errorEl.textContent = '';
+          (errorEl as HTMLElement).style.display = 'none';
+          resultUl.innerHTML = '';
+          resultUl.style.display = 'none';
+          if (emptyState) (emptyState as HTMLElement).style.display = 'none';
+
+          // Handle error response
+          if (data.error) {
+            errorEl.textContent = data.error;
+            (errorEl as HTMLElement).style.display = 'block';
+             // If specific validation error, show empty state too
+             if (data.error.includes("Missing required fields") || data.error.includes("Invalid numeric input") || data.error.includes("Minimum price cannot be greater than maximum price")) {
+                 if (emptyState) {
+                    emptyState.textContent = "Please correct the errors above.";
+                    (emptyState as HTMLElement).style.display = 'block';
+                 }
+             }
+          }
+          // Handle success response
+          else if (data.result && Array.isArray(data.result) && data.result.length > 0) {
+
+             data.result.forEach((suggestion: { product: string, price: string }) => {
+                const productText = suggestion.product.trim();
+                
+                if (productText) { // Only render if there's product text
+                  const li = document.createElement('li');
+                  li.className = 'flex justify-between items-center gap-2';
+
+                  const span = document.createElement('span');
+                  span.textContent = productText;
+                  li.appendChild(span);
+
+                  // Create container for link and price
+                  const rightContainer = document.createElement('div');
+                  rightContainer.className = 'flex items-center gap-2 text-sm';
+
+                  // Display price if available
+                  if (suggestion.price) {
+                     const priceSpan = document.createElement('span');
+                     priceSpan.className = 'text-gray-500 whitespace-nowrap';
+                     priceSpan.textContent = `(${suggestion.price})`;
+                     rightContainer.appendChild(priceSpan);
+                  }
+
+                  // Construct Amazon URL with price range
+                  const minPriceValue = minPriceInput.value;
+                  const maxPriceValue = maxPriceInput.value;
+                  let amazonUrl = `https://www.amazon.com/s?k=${encodeURIComponent(productText)}`;
+                  if (minPriceValue && !Number.isNaN(parseFloat(minPriceValue)) && parseFloat(minPriceValue) >= 0) {
+                    amazonUrl += `&low-price=${minPriceValue}`;
+                  }
+                   if (maxPriceValue && !Number.isNaN(parseFloat(maxPriceValue)) && parseFloat(maxPriceValue) >= 0) {
+                    amazonUrl += `&high-price=${maxPriceValue}`;
+                  }
+
+                  const link = document.createElement('a');
+                  link.href = amazonUrl; // Use the constructed URL
+                  link.target = '_blank';
+                  link.rel = 'noopener noreferrer';
+                  link.className = 'link whitespace-nowrap';
+                  link.textContent = 'Search Amazon';
+                  rightContainer.appendChild(link);
+
+                  li.appendChild(rightContainer);
+                  resultUl.appendChild(li);
+                } else {
+                  console.log(`Skipped empty product suggestion: ${suggestion}`);
+                }
+             });
+             resultUl.style.display = 'block';
+          }
+          // Handle no results (but no error)
+          else {
+            if (emptyState) {
+                 emptyState.textContent = "No suggestions found for these criteria.";
+                 (emptyState as HTMLElement).style.display = 'block';
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Fetch Error:', error);
+          const errorEl = resultContainer?.querySelector('[data-form-id="error"]');
+           const resultUl = resultContainer?.querySelector('[data-form-id="result"]');
+           if (resultUl) (resultUl as HTMLElement).style.display = 'none';
+           if (emptyState) (emptyState as HTMLElement).style.display = 'none';
+
+          if (errorEl) {
+            errorEl.textContent = error.message || 'An unexpected error occurred. Please try again.';
+            (errorEl as HTMLElement).style.display = 'block';
+             if (emptyState) {
+                emptyState.textContent = "Could not fetch suggestions.";
+                (emptyState as HTMLElement).style.display = 'block';
+            }
+          }
+
+
+        })
+        .finally(() => {
+            // Reset button state and visual feedback
+            submitBtn.disabled = !validateForm(); // Re-evaluate disable state based on current form values
+            submitBtn.textContent = 'Suggest Gifts';
+             if (resultContainer) (resultContainer as HTMLElement).style.opacity = '1';
+        });
+      });
+    }
+  });
+</script> 
