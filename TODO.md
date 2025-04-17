@@ -10,3 +10,4 @@
 - [ ] navbar add active on tools & blog
 - [ ] add pyth video
 - [ ] fix light mode issues (e.g., input fields in dark mode)
+- [ ] update all to .pages.dev
