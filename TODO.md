@@ -9,5 +9,7 @@
 - [ ] add snippet to each blog post
 - [ ] navbar add active on tools & blog
 - [ ] add pyth video
-- [ ] fix light mode issues (e.g., input fields in dark mode)
 - [ ] update all to .pages.dev
+- [ ] remove all dumb comments
+- [x] fix light mode issues (e.g., input fields in dark mode)
+- [ ] fix input fields

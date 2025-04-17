@@ -2,7 +2,6 @@
 import Layout from "../../layouts/Layout.astro";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
-import { action } from "../../utils/form";
 import { GOOGLE_API_KEY } from "astro:env/server";
 
 const googleGenerativeAI = createGoogleGenerativeAI({
@@ -10,20 +9,28 @@ const googleGenerativeAI = createGoogleGenerativeAI({
 });
 const model = googleGenerativeAI("gemini-1.5-flash");
 
-// Use the action utility to handle form submissions
-const { data, response } = await action(Astro, async () => {
-	const formData = await Astro.request.formData();
-	const text = formData.get("text");
-	const emojiCount = formData.get("emojiCount") || "auto";
+let error = "";
+let result = "";
+let textValue = "";
+let emojiCountValue = "auto";
 
-	if (!text || typeof text !== "string") {
-		return { error: "No text provided", result: "" };
-	}
-
+if (Astro.request.method === "POST") {
 	try {
-		const response = await generateText({
-			model: model,
-			prompt: `You are an emoji suggester.
+		const formData = await Astro.request.formData();
+		const text = formData.get("text");
+		const emojiCount = formData.get("emojiCount") || "auto";
+
+		textValue = typeof text === "string" ? text : "";
+		emojiCountValue = typeof emojiCount === "string" ? emojiCount : "auto";
+
+		if (!textValue || textValue.length === 0) {
+			error = "No text provided";
+		} else if (textValue.length > 500) {
+			error = "Text cannot exceed 500 characters";
+		} else {
+			const response = await generateText({
+				model: model,
+				prompt: `You are an emoji suggester.
 You will be given a text and a number of emojis you should suggest.
 
 
@@ -49,24 +56,21 @@ Text: Today I built a new website!
 Emoji count: 1
 Response: 🌐
 
-Text: ${text}
-Emoji count: ${emojiCount}`,
-			maxTokens: 50,
-		});
-
-		return { error: "", result: response?.text };
+Text: ${textValue}
+Emoji count: ${emojiCountValue}`,
+				maxTokens: 50,
+			});
+			result = response?.text ?? "";
+			if (!result) {
+				error =
+					"Failed to generate suggestions, the AI returned an empty response.";
+			}
+		}
 	} catch (apiError) {
 		console.error("Error generating emoji suggestions:", apiError);
-		return { error: "Failed to generate emoji suggestions", result: "" };
+		error = "Failed to generate emoji suggestions due to an internal error.";
 	}
-});
-
-// Early return for client-side requests
-if (response) return response;
-
-// Extract data for server-side rendering
-const error = data?.error || "";
-const result = data?.result || "";
+}
 ---
 
 <Layout seo={{ title: "EmojiSense - AI-powered Emoji Suggestions" }}>
@@ -90,9 +94,10 @@ const result = data?.result || "";
             name="text"
             rows="4"
             maxlength="500"
+            required
             placeholder="Type your text here..."
             class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
-          ></textarea>
+          >{textValue}</textarea>
           <p class="text-xs text-gray-500 mt-1" id="charCount">0/500 characters</p>
         </div>
         
@@ -105,10 +110,10 @@ const result = data?.result || "";
             name="emojiCount"
             class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
           >
-            <option value="auto">Auto</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
+            <option value="auto" selected={emojiCountValue === 'auto'}>Auto</option>
+            <option value="1" selected={emojiCountValue === '1'}>1</option>
+            <option value="2" selected={emojiCountValue === '2'}>2</option>
+            <option value="3" selected={emojiCountValue === '3'}>3</option>
           </select>
         </div>
         
@@ -117,20 +122,19 @@ const result = data?.result || "";
           type="submit" 
           id="submitBtn"
           class="btn"
-          disabled
           >
             Suggest Emojis
           </button>
         </div>
       </form>
       
-      <div class="mt-6">
+      <div class="mt-6" data-result-container>
         <h2 class="text-lg font-semibold mb-2">Suggested Emojis</h2>
-        <div id="result" class="h-16 flex items-center justify-center">
-          <div data-form-id="error" class="text-red-500">{error}</div>
-          <div data-form-id="result" class="text-4xl transition-all duration-300 ease-in-out">{result}</div>
+        <div id="resultDisplay" class="h-16 flex items-center justify-center">
+          {error && <div class="text-red-500" data-error-message>{error}</div>}
+          {result && <div class="text-4xl transition-all duration-300 ease-in-out" data-result-message>{result}</div>}
           {!error && !result && (
-            <div class="text-center text-gray-500" data-empty-state>
+            <div class="text-center text-gray-500">
               Your suggested emojis will appear here
             </div>
           )}
@@ -152,80 +156,30 @@ const result = data?.result || "";
 </Layout>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const textArea = document.getElementById('text') as HTMLTextAreaElement;
-    const charCount = document.getElementById('charCount') as HTMLElement;
-    const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
-    const form = document.getElementById('emojiForm') as HTMLFormElement;
-    const resultContainer = document.getElementById('result');
-    const emptyState = document.querySelector('[data-empty-state]');
+  const textArea = document.getElementById('text') as HTMLTextAreaElement;
+  const charCount = document.getElementById('charCount') as HTMLElement;
+
+  if (textArea && charCount) {
+    const updateCount = () => {
+      const count = textArea.value.length;
+      charCount.textContent = `${count}/500 characters`;
+    };
     
-    if (textArea) {
-      textArea.addEventListener('input', () => {
-        const count = textArea.value.length;
-        charCount.textContent = `${count}/500 characters`;
-        
-        // Enable/disable submit button based on text content
-        submitBtn.disabled = count === 0;
-      });
-    }
+    textArea.addEventListener('input', updateCount);
     
-    // Progressive enhancement for form submission
-    if (form) {
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        // Show loading state
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Loading...';
-        
-        fetch(window.location.href, {
-          method: 'POST',
-          body: new FormData(form),
-          headers: {
-            accept: 'application/json',
-          }
-        })
-        .then(res => res.json())
-        .then(data => {
-          // Update the DOM with response data
-          const errorEl = document.querySelector('[data-form-id="error"]');
-          const resultEl = document.querySelector('[data-form-id="result"]');
-          
-          if (errorEl) {
-            errorEl.textContent = data.error || '';
-            errorEl.style.display = data.error ? 'block' : 'none';
-          }
-          
-          if (resultEl) {
-            resultEl.textContent = data.result || '';
-            resultEl.style.display = data.result ? 'block' : 'none';
-          }
-          
-          // Show/hide empty state
-          if (emptyState) {
-            emptyState.style.display = !data.error && !data.result ? 'block' : 'none';
-          }
-          
-          // Reset button state
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Suggest Emojis';
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          
-          // Handle fetch errors
-          const errorEl = document.querySelector('[data-form-id="error"]');
-          if (errorEl) {
-            errorEl.textContent = 'Network error occurred. Please try again.';
-            errorEl.style.display = 'block';
-          }
-          
-          // Reset button state
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Suggest Emojis';
-        });
+    updateCount();
+  }
+
+  const resultContainer = document.querySelector('[data-result-container]') as HTMLElement;
+  const errorMessage = document.querySelector('[data-error-message]');
+  const resultMessage = document.querySelector('[data-result-message]');
+
+  if (resultContainer && (errorMessage || resultMessage)) {
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: resultContainer.offsetTop - 100,
+        behavior: 'smooth'
       });
-    }
-  });
+    });
+  }
 </script>

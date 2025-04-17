@@ -2,10 +2,13 @@
 import { getEntry } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import PDFViewer from "../../components/PDFViewer.astro";
+import { render } from "astro:content";
 
 const { id = "" } = Astro.params;
 
 const post = await getEntry("blog", id);
+
+const { Content } = await render(post);
 
 // Check if post has PDF file
 const hasPDF = post?.data.file?.endsWith(".pdf");
@@ -30,7 +33,7 @@ const hasPDF = post?.data.file?.endsWith(".pdf");
       />
     ) : (
       <div class="mt-6">
-        <slot />
+        <Content />
       </div>
     )}
   </article>

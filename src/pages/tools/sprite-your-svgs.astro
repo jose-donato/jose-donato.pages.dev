@@ -2,9 +2,8 @@
 import Icon from "../../components/Icon.astro";
 import { optimize } from "svgo";
 import Layout from "../../layouts/Layout.astro";
-import { action } from "../../utils/form";
+import { Code } from "astro:components";
 
-// Helper functions from the original code
 function generateRandomId() {
 	return (
 		Math.random().toString(36).substring(2, 15) +
@@ -16,7 +15,6 @@ function validateSvg(svg: string) {
 	return /<svg[^>]+>/.test(svg);
 }
 
-// Type definitions and functions
 type OptimizationOptions = {
 	plugins: Array<{
 		name: string;
@@ -99,44 +97,55 @@ function treatSvg(
 	return svgString;
 }
 
-// Server-side form handling
-const { data, response } = await action(Astro, async () => {
+let symbol = "";
+let error = "";
+
+if (Astro.request.method === "POST") {
 	try {
 		const formData = await Astro.request.formData();
-		const svg = formData.get("svg");
+		const svg = formData.get("svg") as string;
 		const slug = formData.get("slug");
 		const includeSvg = formData.get("includeSvgTag") === "on";
 		const replaceColors = formData.get("replaceColors") === "on";
 		const keepDimensions = formData.get("keepDimensions") === "on";
 
 		if (!svg || typeof svg !== "string") {
-			return { error: "No SVG provided", result: "" };
-		} else if (!validateSvg(svg)) {
-			return { error: "Invalid SVG provided", result: "" };
-		} else {
-			const result = treatSvg(
-				svg,
-				slug ? slug.toString() : generateRandomId(),
-				includeSvg,
-				replaceColors,
-				keepDimensions,
-			);
-			return { error: "", result };
+			console.log("No SVG provided");
+			error = "No SVG provided";
 		}
+		if (!validateSvg(svg)) {
+			console.log("Invalid SVG provided");
+			error = "Invalid SVG provided";
+		}
+		const result = treatSvg(
+			svg,
+			slug ? slug.toString() : generateRandomId(),
+			includeSvg,
+			replaceColors,
+			keepDimensions,
+		);
+
+		symbol = result;
 	} catch (e) {
-		return {
-			error: "An error occurred while processing your request",
-			result: "",
-		};
+		error = "An error occurred while processing your request";
 	}
-});
+}
 
-// Early return the response for client-side requests
-if (response) return response;
+// Static code strings for the examples
+const usageExample = `<svg class="w-6 h-6">
+  <use href="/sprite.svg#icon-name" />
+</svg>`;
 
-// Extract the data for server-side rendering
-const error = data?.error || "";
-const result = data?.result || "";
+const componentExample = `// Icon component (adapt to your framework's syntax)
+function Icon({ name, className, ...props }) {
+  return (
+    <svg className={className} {...props}>
+      <use href={\`/sprite.svg#\${name}\`} />
+    </svg>
+  );
+}`;
+
+const componentUsageExample = `<Icon name="icon-name" className="w-6 h-6" />`;
 ---
 
 <Layout>
@@ -256,16 +265,14 @@ const result = data?.result || "";
 
     <div data-form-id="error" class="mt-4 text-red-500">{error}</div>
     
-    <div class="card p-6 mt-6" style={result ? '' : 'display: none;'} data-result-container>
+    <div class="card p-6 mt-6" style={symbol ? '' : 'display: none;'} data-result-container>
       <h2 class="font-bold text-lg mb-4">Result</h2>
-      <pre class="bg-gray-50 rounded p-4 overflow-x-auto">
-        <code data-form-id="result" class="language-xml">{result}</code>
-      </pre>
+        <Code wrap code={symbol} lang="xml" class="rounded p-1" id="result" />
       <div class="flex justify-end mt-4">
         <button 
           class="btn"
           data-copy
-          data-content={result}
+          data-content={symbol}
         >
           Copy
         </button>
@@ -278,34 +285,25 @@ const result = data?.result || "";
         <li>Paste your svg to be optimized and converted to a symbol</li>
         <li>
           Copy the generated code above and paste it in a file called 
-          <code class="bg-gray-50 rounded p-1 border border-gray-200">sprite.svg</code> 
+          <code class="bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 rounded p-1 border border-gray-200">sprite.svg</code> 
           in the public folder of your project.
         </li>
         <li>
           Use the svg on your project like this:
-          <pre class="bg-gray-50 rounded p-2 border border-gray-200 mt-2 overflow-x-auto">
-            <code class="language-xml">{`<svg class="w-6 h-6">
-  <use href="/sprite.svg#icon-name" />
-</svg>`}</code>
-          </pre>
+          <div class="mt-2">
+            <Code code={usageExample} lang="xml" class="rounded p-1" />
+          </div>
         </li>
         <li>
           <strong>Bonus:</strong> Create a reusable Icon component in your framework of choice:
-          <pre class="bg-gray-50 rounded p-2 border border-gray-200 mt-4 overflow-x-auto">
-            <code class="language-javascript">{`// Icon component (adapt to your framework's syntax)
-function Icon({ name, className, ...props }) {
-  return (
-    <svg className={className} {...props}>
-      <use href={\`/sprite.svg#\${name}\`} />
-    </svg>
-  );
-}`}</code>
-          </pre>
+          <div class="mt-4">
+            <Code code={componentExample} lang="jsx" class="rounded p-1" />
+          </div>
           
           <p class="mt-4">Then use it like this:</p>
-          <pre class="bg-gray-50 rounded p-2 border border-gray-200 mt-2 overflow-x-auto">
-            <code class="language-jsx">{`<Icon name="icon-name" className="w-6 h-6" />`}</code>
-          </pre>
+          <div class="mt-2">
+            <Code code={componentUsageExample} lang="jsx" class="rounded p-1" />
+          </div>
         </li>
       </ol>
     </div>
@@ -313,96 +311,11 @@ function Icon({ name, className, ...props }) {
 </Layout>
 
 <script>
-  // Client-side form enhancement
-  const form = document.querySelector("form");
-  
-  if (form) {
-    form.addEventListener("submit", function (e) {
-      // Prevent default form submission
-      e.preventDefault();
-      
-      // Show loading state if needed
-      // const button = form.querySelector("button[type='submit']");
-      // if (button) button.disabled = true;
-      
-      // Submit the form using fetch
-      fetch(form.action, {
-        method: form.method,
-        body: new FormData(form),
-        headers: {
-          accept: "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          // Update DOM with the response data
-          const errorEl = document.querySelector("[data-form-id='error']");
-          const resultEl = document.querySelector("[data-form-id='result']");
-          const resultContainer = document.querySelector("[data-result-container]");
-          
-          if (errorEl) errorEl.textContent = data.error || '';
-          
-          if (resultEl) {
-            resultEl.textContent = data.result || '';
-            
-            // Update copy button
-            const copyBtn = document.querySelector("[data-copy]");
-            if (copyBtn) copyBtn.setAttribute('data-content', data.result || '');
-            
-            // Show/hide the result container
-            if (resultContainer) {
-              resultContainer.style.display = data.result ? 'block' : 'none';
-            }
-          }
-          
-          // Reset loading state if needed
-          // if (button) button.disabled = false;
-        })
-        .catch(error => {
-          console.error("Error:", error);
-          // Handle errors if needed
-          // if (button) button.disabled = false;
-        });
+  const resultContainer = document.querySelector('[data-result-container]');
+  if (resultContainer && resultContainer instanceof HTMLElement && resultContainer.style.display !== 'none') {
+    window.scrollTo({
+      top: resultContainer.offsetTop - 100,
+      behavior: 'smooth'
     });
   }
-
-  // Copy button functionality
-  document.querySelectorAll('[data-copy]').forEach(button => {
-    button.addEventListener('click', () => {
-      const content = button.getAttribute('data-content');
-      if (content) {
-        navigator.clipboard.writeText(content);
-        // Add toast notification if desired
-      }
-    });
-  });
 </script>
-
-<style>
-  .underline-animation {
-    position: relative;
-    padding-bottom: 5px;
-  }
-
-  .underline-animation::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background-image: linear-gradient(transparent, transparent), 
-                     linear-gradient(rgb(147 51 234), rgb(147 51 234));
-    background-size: 100% 5px;
-    background-position: 0 100%;
-    background-repeat: no-repeat;
-    transition: background-size 0.5s ease-in-out;
-    rotate: -2deg;
-    animation: animateUnderline 1s;
-  }
-
-  @keyframes animateUnderline {
-    0% { background-size: 0% 5px; }
-    50% { background-size: 100% 5px; }
-  }
-</style> 

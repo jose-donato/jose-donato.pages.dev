@@ -4,9 +4,10 @@ import Icon from "../components/Icon.astro";
 import { getCollection } from "astro:content";
 
 const allPosts = await getCollection("blog");
-console.log(allPosts);
-const allTopics = allPosts.flatMap((post) => post.data.topics);
-
+// Extract all topics from posts and create a unique, sorted array
+const allTopics = [
+	...new Set(allPosts.flatMap((post) => post.data.topics?.split(" ") || [])),
+].sort();
 // Handle filtering by topic
 const url = new URL(Astro.request.url);
 const topic = url.searchParams.get("topic") || "";
