@@ -79,13 +79,13 @@ As I said earlier, a PWA is just a very good web app that is installable. This m
       <source src="https://openbb-cms.directus.app/assets/36685e54-d8c1-47ba-acd6-1692fabd768e" />
     </video>
   <figcaption>
-    By doing this, the Terminal will be displayed in its own isolated container, similar to a native app.
+    By doing this, OpenBB Workspace will be displayed in its own isolated container, similar to a native app.
   </figcaption>
 </figure>
 
 - **On your mobile device:**
  
- You can access the Terminal more easily by adding it to your phone’s app list or homepage:
+ You can access OpenBB Workspace more easily by adding it to your phone’s app list or homepage:
 
 
  <figure>
@@ -130,14 +130,11 @@ We all know the financial world never sleeps and we want to give you all the too
 
 This mobile PWA launch is a big deal for us (and specially for me!) since it’s where our tech meets our mission of making investment research accessible for everyone, everywhere.
 
-But above all, we’re excited to see how this empowers you across all kinds of devices and platforms and we can’t wait to see what you do using the Terminal.
+But above all, we’re excited to see how this empowers you across all kinds of devices and platforms and we can’t wait to see what you do using OpenBB Workspace.
 
 If you want to chat more about this, feel free to DM me on [Twitter](https://x.com/josedonato__) or [LinkedIn](https://www.linkedin.com/in/jose-donato/).
 
 As a team, we look forward to having you join our [Discord](https://discord.gg/dsJg8ftW), where you can discuss anything OpenBB, share feedback, and get support. 
 
-If you sign up for the [Terminal](https://pro.openbb.co/register) by Nov 7th, we’ve got a special offer for you. Go check it out!
-
 <a href="https://pro.openbb.co/" target="_blank" rel="noopener noreferrer" class="_btn">
-Get started
-  </a>
+Get started</a>

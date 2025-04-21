@@ -47,7 +47,7 @@ Having the opportunity to meet Marc in person was great. Meeting online is one t
 
 ## Championing Pyth's Vision
 
-Our journey with Pyth is just getting started. We've already done a successful proof of concept (demo below) to integrate Pyth into the Terminal Pro, and we're optimistic about extending this integration to our Add-in for Excel. The potential applications of Pyth's real-time data within our platform are vast and exciting. 
+Our journey with Pyth is just getting started. We've already done a successful proof of concept (demo below) to integrate Pyth into OpenBB Workspace, and we're optimistic about extending this integration to our Add-in for Excel. The potential applications of Pyth's real-time data within our platform are vast and exciting. 
 
 <video className="mx-auto" controls>
   <source src="https://openbb-cms.directus.app/assets/59afdf4a-b552-4c83-bb81-09da35b98488" />
