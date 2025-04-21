@@ -3,8 +3,8 @@ title: Meet José Donato
 type: post
 snippet: Little story about how open source and OpenBB changed my life.
 coverImage: ''
-date: '14.09.2022'
-topics: 'Personal Story, Open Source, Finance, Investing, OpenBB, Career Journey, Financial Literacy, Startups, Technology, Community'
+date: '14-09-2022'
+topics: 'Personal Story Open-Source Finance Investing OpenBB Career Technology Community'
 ---
 
 In Portugal, a country where financial literacy is not a priority at all (currently the worst in all of Western Europe - [ref](https://howmuch.net/articles/financial-literacy-around-the-world)), people are not usually exposed to this topic if not directly related to it either because of work or a huge financial scandal happening (which unfortunately happens quite frequently and has a negative effect on the interest of investing because of the loss of trust in the financial system).

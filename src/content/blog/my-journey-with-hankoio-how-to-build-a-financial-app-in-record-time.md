@@ -3,8 +3,8 @@ title: 'My Journey with Hanko: How to Build a Financial App in Record Time'
 type: post
 snippet: Learn everything about our decision to make the OpenBB Terminal accessible — and even installable — everywhere.
 coverImage: ''
-date: '30.09.2023'
-topics: 'webdev, opensource, javascript, ai, svelte'
+date: '30-09-2023'
+topics: 'webdev open-source javascript ai svelte'
 ---
 
 ![budgetguru demo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/z9ssv301bjqgo7ikcqer.png)

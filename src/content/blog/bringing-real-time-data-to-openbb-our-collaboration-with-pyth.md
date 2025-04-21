@@ -3,8 +3,8 @@ title: 'Bringing Real-Time Data to OpenBB: Our Collaboration with Pyth'
 type: post
 snippet: By integrating Pyth Network's real-time data feeds, we enhanced the OpenBB Terminal's capabilities and democratized access to financial data. This collaboration took another lever now as OpenBB was selected to be part of the Pyth Network Retrospective Airdrop program.
 coverImage: ''
-date: '07.02.2024'
-topics: 'OpenBB, Pyth Network, real-time data, financial data, data feeds, OpenBB Terminal, collaboration, partnership, crypto, blockchain, airdrop, data democratization'
+date: '07-02-2024'
+topics: 'OpenBB pyth-network real-time financial data-feeds collaboration partnership crypto blockchain airdrop'
 ---
 
 ## Embarking on a New Journey: OpenBB Meets Real-Time Data

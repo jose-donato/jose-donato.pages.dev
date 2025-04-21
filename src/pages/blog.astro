@@ -51,7 +51,22 @@ const filteredPosts = topic
         </form>
         <ul class="mt-6 space-y-6">
           {
-            filteredPosts.map((post) => (
+            filteredPosts.sort((a, b) => {
+              const datePartsA = a.data.date?.split('-').map(Number);
+              const datePartsB = b.data.date?.split('-').map(Number);
+
+              // Create dates ensuring parts exist and month is adjusted (0-indexed)
+              const dateA = datePartsA && datePartsA.length === 3 
+                ? new Date(datePartsA[2], datePartsA[1] - 1, datePartsA[0]) 
+                : new Date(0); // Fallback for invalid/missing dates
+              
+              const dateB = datePartsB && datePartsB.length === 3 
+                ? new Date(datePartsB[2], datePartsB[1] - 1, datePartsB[0]) 
+                : new Date(0); // Fallback for invalid/missing dates
+
+              // Compare timestamps for descending order
+              return dateB.getTime() - dateA.getTime();
+            }).map((post) => (
               <li class="card p-6">
                 <a href={`/blog/${post.id}`} class="block h-full">
                   <h2 class="font-bold text-xl hover:underline">{post.data.title}</h2>
@@ -59,8 +74,6 @@ const filteredPosts = topic
                   <div class="flex justify-between mt-4">
                     <div class="text-xs text-zinc-600 dark:text-zinc-400">
                       <p>{post.data.date}</p>
-                      <p class="mt-1">{post.data.readingTime} min read</p>
-                      <p class="mt-1">{post.data.topics}</p>
                     </div>
                     <div class="self-end">
                       <span class="link text-sm">Read more</span>

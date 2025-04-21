@@ -48,6 +48,12 @@ export const TOOLS = [
 		description:
 			"AI-powered gift suggestion tool that helps you find the perfect gift for your family, friends, and anyone else you want to give a gift to.",
 	},
+	{
+		title: "Quiz Generator",
+		slug: "quiz-generator",
+		description:
+			"Transform your blog posts into interactive quizzes powered by AI.",
+	},
 ];
 
 export const EDUCATION = [

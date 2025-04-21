@@ -3,8 +3,8 @@ title: OpenBB Terminal is now available on mobile
 type: post
 snippet: Learn everything about our decision to make the OpenBB Terminal accessible — and even installable — everywhere.
 coverImage: ''
-date: '10.09.2024'
-topics: 'OpenBB Terminal, Progressive Web Applications (PWA), Mobile Accessibility, Web Apps, Cross-Platform Development, Financial Technology (FinTech), Investment Research, Data Accessibility'
+date: '10-09-2024'
+topics: 'Progressive-Web-Applications PWA Web'
 ---
 
 Hey everyone, [José](https://openbb.co/blog/jose-donato) here!

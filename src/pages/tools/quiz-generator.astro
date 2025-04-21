@@ -1,0 +1,426 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { generateObject } from "ai";
+import { GOOGLE_API_KEY } from "astro:env/server";
+import { z } from "astro/zod";
+
+const googleGenerativeAI = createGoogleGenerativeAI({
+	apiKey: GOOGLE_API_KEY,
+});
+const model = googleGenerativeAI("gemini-1.5-flash"); 
+
+const QuizFormSchema = z.object({
+	url: z.string().url({ message: "Invalid URL format." }).min(1),
+	language: z.string().min(1, { message: "Language is required." }),
+});
+
+const QuestionSchema = z.object({
+	question: z.string().describe("The text of the multiple-choice question."),
+	options: z
+		.array(z.string())
+		.min(2, "Must provide at least two options.")
+		.describe("An array of possible answers for the question."),
+	answer: z
+		.string()
+		.describe("The correct answer, which must exactly match one of the options."),
+});
+
+const QuizOutputSchema = z.object({
+	title: z.string().describe("A concise title for the quiz based on the article content."),
+	questions: z
+		.array(QuestionSchema)
+		.min(1, "Must generate at least one question.")
+		.describe("An array of multiple-choice questions based on the article."),
+});
+
+type QuizOutput = z.infer<typeof QuizOutputSchema>;
+type Question = z.infer<typeof QuestionSchema>;
+
+const languages = [
+	{ label: "English", value: "english" },
+	{ label: "French", value: "french" },
+	{ label: "Spanish", value: "spanish" },
+	{ label: "Portuguese", value: "portuguese" },
+	{ label: "Japanese", value: "japanese" },
+	{ label: "Chinese", value: "chinese" },
+] as const;
+
+let error = "";
+let result: QuizOutput | null = null;
+let urlValue = "";
+let languageValue = languages[0].value; // Default to English
+
+if (Astro.request.method === "POST") {
+	try {
+		const formData = await Astro.request.formData();
+		const rawData = {
+			url: formData.get("url"),
+			language: formData.get("language"),
+		};
+
+		// Store submitted values for repopulation
+		urlValue = typeof rawData.url === "string" ? rawData.url : "";
+		languageValue = typeof rawData.language === "string" ? rawData.language : languages[0].value;
+
+		// Validate form input
+		const validationResult = QuizFormSchema.safeParse(rawData);
+		if (!validationResult.success) {
+			error = validationResult.error.errors.map((e) => e.message).join(", ");
+		} else {
+			const { url, language } = validationResult.data;
+			error = ""; // Clear previous errors
+			result = null; // Clear previous results
+
+			// 1. Fetch article content as Markdown
+			const mdUrl = `https://md.dhr.wtf/?url=${encodeURIComponent(url)}`;
+			let markdown = "";
+			try {
+				const response = await fetch(mdUrl);
+				if (!response.ok) {
+					throw new Error(`Failed to fetch markdown: ${response.statusText}`);
+				}
+				markdown = await response.text();
+				if (!markdown || markdown.startsWith("Error processing page")) {
+					throw new Error("Could not extract article content from URL.");
+				}
+                 // Limit markdown size to avoid excessive token usage (e.g., ~10k chars)
+                 const MAX_MARKDOWN_LENGTH = 10000;
+                 if (markdown.length > MAX_MARKDOWN_LENGTH) {
+                     markdown = `${markdown.substring(0, MAX_MARKDOWN_LENGTH)}... (content truncated)`;
+                 }
+
+			} catch (fetchError) {
+				console.error("Error fetching markdown:", fetchError);
+				error = `Failed to fetch article content: ${fetchError?.message}`;
+			}
+
+			// 2. Generate Quiz if markdown was fetched successfully
+			if (markdown && !error) {
+				const prompt = `You are an expert quiz creator. Generate a short multiple-choice quiz (around 5 questions) based on the following article content. The quiz should be in ${language}.
+
+Article Content (Markdown):
+---
+${markdown}
+---
+
+Instructions:
+- Generate a quiz title and a list of multiple-choice questions.
+- Each question must have a question text, an array of options, and the correct answer string (matching one of the options exactly).
+- Focus ONLY on the provided text content. Ignore images, charts, or complex formatting.
+- Ensure the questions and options are in ${language}.
+- Respond ONLY with the JSON object matching the provided schema. Do not include any introductory text, explanations, or markdown formatting outside the JSON structure.
+
+Language: ${language}
+Desired JSON Output:`;
+
+				try {
+					const aiResponse = await generateObject({
+						model: model,
+						schema: QuizOutputSchema,
+						prompt: prompt,
+						mode: "json",
+                        maxTokens: 1000, // Adjust as needed
+					});
+
+					if (aiResponse?.object?.questions?.length > 0) {
+						result = aiResponse.object;
+					} else {
+						error = "AI failed to generate a valid quiz. The article might be too short or the content unsuitable.";
+						result = null;
+					}
+				} catch (aiError: any) {
+					console.error("Error generating quiz:", aiError);
+					error = `Failed to generate quiz: ${aiError.message || 'An internal error occurred.'}`;
+					result = null;
+				}
+			}
+		}
+	} catch (formError: any) {
+		console.error("Error processing form:", formError);
+		error = "Failed to process request due to an internal error.";
+		result = null;
+	}
+}
+
+const quizDataForClient = result ? JSON.stringify(result) : null;
+---
+
+<Layout seo={{ title: "Quiz Generator - AI-powered Quiz Creation" }}>
+	<div class="max-w-[700px] mx-auto">
+		<h1 class="text-3xl font-bold mb-4 text-center">
+			<span class="underline-animation">Quiz</span> Generator
+		</h1>
+
+		<div class="flex justify-center items-center flex-col gap-2 my-5">
+			<p>Generate a multiple-choice quiz from any article URL.</p>
+		</div>
+
+		<div class="card p-6">
+			<form method="POST" id="quizForm">
+				<div class="mb-4">
+					<label for="url" class="block text-sm font-medium mb-1">
+						Article URL <span class="text-red-500">*</span>
+					</label>
+					<input
+						type="url"
+						id="url"
+						name="url"
+						required
+						placeholder="https://example.com/article"
+						value={urlValue}
+						class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 dark:bg-zinc-800 dark:border-zinc-700"
+					/>
+				</div>
+
+				<div class="mb-4">
+					<label for="language" class="block text-sm font-medium mb-1">
+						Quiz Language <span class="text-red-500">*</span>
+					</label>
+					<select
+						id="language"
+						name="language"
+						required
+						class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 dark:bg-zinc-800 dark:border-zinc-700"
+					>
+						{languages.map((lang) => (
+							<option value={lang.value} selected={lang.value === languageValue}>
+								{lang.label}
+							</option>
+						))}
+					</select>
+				</div>
+
+				<div class="flex justify-end">
+					<button type="submit" id="submitBtn" class="btn">
+						Generate Quiz
+					</button>
+				</div>
+			</form>
+
+            <!-- Error Display -->
+			{error && (
+                <div class="mt-6 p-4 border border-red-300 bg-red-50 rounded-md text-red-700 dark:bg-red-900/30 dark:border-red-700 dark:text-red-300" data-error-message>
+                    <p class="font-semibold">Error:</p>
+					<p>{error}</p>
+				</div>
+			)}
+
+			<!-- Result Display Area -->
+			<div id="quizResultArea" class="mt-6" data-quiz-data={quizDataForClient}>
+                {/* Initial State or No Results */}
+                {!error && !result && (
+                    <div class="min-h-[80px] p-4 border border-gray-200 rounded-md bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-center text-gray-500 dark:text-gray-400">
+                        {Astro.request.method === "POST" ? "No quiz generated. Check the URL or try different options." : "Your generated quiz will appear here."}
+                    </div>
+                )}
+                {/* Quiz will be rendered here by client-side script if result exists */}
+			</div>
+		</div>
+
+        <div class="card p-6 mt-6">
+			<h2 class="font-bold text-lg mb-4">How it works</h2>
+			<p>
+				This tool fetches the content of the provided article URL, then uses AI to generate a multiple-choice quiz based on that content in your selected language.
+			</p>
+			<ul class="list-disc list-inside space-y-2 mt-2">
+				<li>Paste the full URL of the article you want to create a quiz from.</li>
+				<li>Select the language for the quiz questions and answers.</li>
+				<li>Click "Generate Quiz". The AI will process the article and create the questions.</li>
+                <li>Answer the questions interactively!</li>
+			</ul>
+            <p class="text-xs text-gray-500 mt-3">Note: Content fetching relies on an external service and may not work for all websites (e.g., those requiring logins or heavy JavaScript). Performance depends on article length and AI model load.</p>
+		</div>
+
+	</div>
+</Layout>
+
+<script define:vars={{ quizDataForClient }}>
+
+    const quizResultArea = document.getElementById('quizResultArea');
+    let quizData = null;
+
+    // Attempt to parse quiz data passed from the server
+    if (quizResultArea?.dataset.quizData) {
+        try {
+            quizData = JSON.parse(quizResultArea.dataset.quizData);
+        } catch (e) {
+            console.error("Failed to parse quiz data:", e);
+            // Optionally display an error in the quizResultArea
+             if (quizResultArea) {
+                 quizResultArea.innerHTML = `<div class="text-red-500">Error loading quiz data.</div>`;
+             }
+        }
+    }
+
+    if (quizData && quizData.questions && quizData.questions.length > 0 && quizResultArea) {
+        let currentQuestionIndex = 0;
+        let selectedAnswer = null; // Stores the *text* of the selected option
+        let isAnswered = false;
+        let isCorrect = false;
+
+        const renderQuiz = () => {
+            if (!quizData) return; // Should not happen if we reach here, but good practice
+
+            const currentQuestion = quizData.questions[currentQuestionIndex];
+            if (!currentQuestion) return; // Should not happen
+
+            // Clear previous content
+            quizResultArea.innerHTML = '';
+
+            const card = document.createElement('div');
+            card.className = 'card p-6'; // Re-use card styling
+
+            // Title
+            const titleElement = document.createElement('h2');
+            titleElement.className = 'text-xl font-semibold mb-4';
+            titleElement.textContent = quizData.title;
+            card.appendChild(titleElement);
+
+             // Question Progress
+            const progressElement = document.createElement('div');
+            progressElement.className = 'text-sm text-gray-500 dark:text-gray-400 mb-4';
+            progressElement.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.questions.length}`;
+            card.appendChild(progressElement);
+
+
+            // Question Text
+            const questionElement = document.createElement('p');
+            questionElement.className = 'text-lg mb-4 font-medium';
+            questionElement.textContent = currentQuestion.question;
+            card.appendChild(questionElement);
+
+            // Options (Radio Group)
+            const radioGroup = document.createElement('div');
+            radioGroup.className = 'space-y-3 mb-4';
+            radioGroup.role = 'radiogroup';
+
+            currentQuestion.options.forEach((option, index) => {
+                const optionId = `q${currentQuestionIndex}-option${index}`;
+                const wrapper = document.createElement('div');
+                wrapper.className = 'flex items-center space-x-2';
+
+                const radioInput = document.createElement('input');
+                radioInput.type = 'radio';
+                radioInput.id = optionId;
+                radioInput.name = `question-${currentQuestionIndex}`;
+                radioInput.value = option; // Use the option text as the value
+                radioInput.checked = selectedAnswer === option;
+                radioInput.disabled = isAnswered;
+                radioInput.className = 'h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500 dark:border-zinc-600 dark:bg-zinc-700 dark:focus:ring-indigo-600 dark:focus:ring-offset-zinc-800';
+
+                radioInput.addEventListener('change', () => {
+                    if (!isAnswered) {
+                        selectedAnswer = option;
+                        // Re-render to update button state if needed, though direct check is fine too
+                        // renderQuiz(); // Avoid re-rendering just for selection unless necessary
+                    }
+                });
+
+                const label = document.createElement('label');
+                label.htmlFor = optionId;
+                label.textContent = option;
+                label.className = 'text-sm font-medium text-gray-700 dark:text-gray-300';
+
+                wrapper.appendChild(radioInput);
+                wrapper.appendChild(label);
+                radioGroup.appendChild(wrapper);
+            });
+            card.appendChild(radioGroup);
+
+            // Feedback Area
+            const feedbackElement = document.createElement('div');
+            feedbackElement.className = 'mt-4 space-y-2'; // Added space-y-2
+            card.appendChild(feedbackElement); // Add feedback area to card
+
+            // Action Buttons / Feedback Display
+            const footer = document.createElement('div');
+            footer.className = 'mt-4 flex flex-col items-stretch gap-2'; // Use flex-col and gap
+
+            if (!isAnswered) {
+                const submitButton = document.createElement('button');
+                submitButton.textContent = 'Submit Answer';
+                submitButton.className = 'btn w-full'; // Make button full width
+                submitButton.disabled = selectedAnswer === null; // Disable if no answer selected
+                submitButton.addEventListener('click', handleAnswerSubmit);
+                footer.appendChild(submitButton);
+
+                // Add listener to enable button on selection
+                 radioGroup.querySelectorAll('input[type="radio"]').forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        submitButton.disabled = false;
+                    });
+                 });
+
+            } else {
+                // Display Feedback
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `p-3 rounded-md text-sm ${isCorrect ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 border border-green-300 dark:border-green-700' : 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-700'}`;
+                resultDiv.innerHTML = isCorrect
+                    ? `<span class="font-semibold">Correct!</span> Great job!`
+                    : `<span class="font-semibold">Incorrect.</span> The correct answer was: <strong class="font-medium">${currentQuestion.answer}</strong>`;
+                feedbackElement.appendChild(resultDiv); // Add feedback message
+
+                // Next/Finish Button
+                if (currentQuestionIndex < quizData.questions.length - 1) {
+                    const nextButton = document.createElement('button');
+                    nextButton.textContent = 'Next Question';
+                    nextButton.className = 'btn w-full'; // Make button full width
+                    nextButton.addEventListener('click', handleNext);
+                    footer.appendChild(nextButton);
+                } else {
+                    const finishMessage = document.createElement('p');
+                    finishMessage.className = 'text-center font-semibold text-lg mt-4';
+                    finishMessage.textContent = 'Quiz Complete!';
+                    footer.appendChild(finishMessage); // Append finish message instead of a button
+                }
+            }
+
+            card.appendChild(footer);
+            quizResultArea.appendChild(card);
+        };
+
+        const handleAnswerSubmit = () => {
+            if (selectedAnswer !== null && quizData) {
+                isAnswered = true;
+                isCorrect = selectedAnswer === quizData.questions[currentQuestionIndex].answer;
+                renderQuiz(); // Re-render to show feedback and next button
+            }
+        };
+
+        const handleNext = () => {
+            if (quizData && currentQuestionIndex < quizData.questions.length - 1) {
+                currentQuestionIndex++;
+                selectedAnswer = null;
+                isAnswered = false;
+                isCorrect = false;
+                renderQuiz(); // Render the next question
+                 // Scroll back up slightly
+                quizResultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        };
+
+        // Initial render of the first question
+        renderQuiz();
+
+    } else if (quizResultArea && quizResultArea.dataset.quizData && (!quizData || !quizData.questions || quizData.questions.length === 0)) {
+         // Handle case where server sent data, but it was empty or invalid JSON for questions
+          quizResultArea.innerHTML = `<div class="min-h-[80px] p-4 border border-gray-200 rounded-md bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-center text-gray-500 dark:text-gray-400">
+              No valid quiz questions were generated. Please check the URL or try again.
+          </div>`;
+    }
+
+     // Scroll to results/error after form submission
+    const serverRenderedError = document.querySelector('[data-error-message]');
+    const serverRenderedResult = quizResultArea?.dataset.quizData; // Check if data exists
+
+    if (quizResultArea && (serverRenderedError || serverRenderedResult)) {
+		// Scroll after the browser has painted the page
+		requestAnimationFrame(() => {
+			window.scrollTo({
+				top: quizResultArea.offsetTop - 100, // Adjust offset as needed
+				behavior: 'smooth',
+			});
+		});
+	}
+</script>
