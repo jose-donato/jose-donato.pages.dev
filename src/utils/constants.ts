@@ -73,6 +73,11 @@ export const EDUCATION = [
 			"I've completed my bachelor in Informatics Engineering at the University of Coimbra with a final grade of 16/20.",
 		date: "2015 - 2018",
 	},
+	{
+		title: "English Language Certification - B2",
+		description: "Completed my first English language certification.",
+		date: "2015",
+	},
 ];
 
 export const PAST_EXPERIENCE_HOMEPAGE = [
@@ -80,7 +85,7 @@ export const PAST_EXPERIENCE_HOMEPAGE = [
 		title: "Fullstack Developer",
 		place: "OpenBB",
 		placeUrl: "https://openbb.co",
-		description: `Currently working at OpenBB with the mission of building modern investment research platforms for everyone. In this process, I've been involved in multiple projects. Built [openbb.co](https://openbb.co), the company website, using remix.run, TailwindCSS, TypeScript, mdx-bundler. I'm involved in the development of our financial discord and telegram bot made with Python. To manage all OpenBB Products, we built a web platform - [my.openbb.co](https://my.openbb.co) also using Remix and TailwindCSS. I usually add features (normally crypto related) to our bigger and open source product called [OpenBB Terminal](https://openbb.co/github). We recently launched our enterprise product, [OpenBB Terminal Pro](https://openbb.co/github), that is a web application built with React, TailwindCSS, Zustand, and other amazing technologies. Sign up [today](https://pro.openbb.co).`,
+		description: `Currently working at OpenBB with the mission of building modern investment research platforms for everyone. In this process, I've been involved in multiple projects. Built [openbb.co](https://openbb.co), the company website, using remix.run, TailwindCSS, TypeScript, mdx-bundler. I was involved in the development of our financial discord and telegram bot made with Python. To manage all OpenBB Products, we built a web platform - [my.openbb.co](https://my.openbb.co) also using Remix and TailwindCSS. Our primary product, [OpenBB Workspace](https://pro.openbb.co), is a web application built with React, TailwindCSS, Zustand, and other amazing technologies. Sign up [today](https://pro.openbb.co).`,
 		date: "2021 - Present",
 	},
 	{
@@ -88,7 +93,7 @@ export const PAST_EXPERIENCE_HOMEPAGE = [
 		place: "University of Coimbra",
 		placeUrl: "https://www.uc.pt/en",
 		description:
-			"As part of my master internship, I was awarded a research scholarship from FCT (the Portuguese public agency that supports science, technology and innovation). This enabled me to work independently while having the support of my supervisor. It was a great challenge that came with a lot of freedom, but also with huge responsibilities. The focus of this internship (and my dissertation) was to assess whether web applications were already a viable alternative to native ones in mobile devices. Based on this, I delivered my master thesis, which was a comparative study between web and native applications, if you are interested in reading my master thesis DM me.",
+			"As part of my master internship, I was awarded a research scholarship from FCT (the Portuguese public agency that supports science, technology and innovation). This enabled me to work independently while having the support of my supervisor. It was a great challenge that came with a lot of freedom, but also with huge responsibilities. The focus of this internship (and my dissertation) was to assess whether web applications were already a viable alternative to native ones in mobile devices. Based on this, I delivered my master thesis, which was a comparative study between web and native applications, you can read it [here](/master_thesis.pdf). I also wrote about several cybersecurity topics, you can read them in my [blog](/blog).",
 		date: "2019 - 2020",
 	},
 	{
@@ -101,11 +106,16 @@ export const PAST_EXPERIENCE_HOMEPAGE = [
 
 export const HIGHLIGHTS_HOMEPAGE = [
 	{
-		title:
-			"Building the first AI-Powered Financial Terminal: OpenBB Terminal Pro",
+		title: "Building OpenBB Workspace",
 		description:
-			"Main developer behind the first AI-powered financial terminal, OpenBB Terminal Pro. It's a performant web application highly customizable and tailored for professional investors. Sign up below.",
-		url: "https://openbb.co/products/terminal",
+			"Main developer behind OpenBB Workspace, a performant web application highly customizable that enables streamlined AI workflows while guaranteeing full control over your data. Sign up below.",
+		url: "https://pro.openbb.co",
+	},
+	{
+		title: "Pyth Integration: Real-Time Data + AI",
+		description:
+			"Developed OpenBB's first real-time widget using Pyth Network integration, showcasing the future of finance through a combination of real-time data feeds, and AI capabilities.",
+		url: "https://www.youtube.com/watch?v=LWUioH_ncQk",
 	},
 	{
 		title: "Showcased on Cloudflare: Edge-Optimized Remix Run Stack",

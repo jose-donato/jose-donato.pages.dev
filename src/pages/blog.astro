@@ -2,7 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import Icon from "../components/Icon.astro";
 import { getCollection } from "astro:content";
-
+//import { Tweet } from "@astro-community/astro-embed-twitter";
+//import { YouTube } from "@astro-community/astro-embed-youtube";
 const allPosts = await getCollection("blog");
 // Extract all topics from posts and create a unique, sorted array
 const allTopics = [
@@ -22,6 +23,7 @@ const filteredPosts = topic
     description: "Personal blog with articles about programming, security, and more.",
   }}
 >
+<script async src="https://platform.twitter.com/widgets.js"></script>
   <div class="space-y-20">
     <div>
       <ul class="">
@@ -49,7 +51,7 @@ const filteredPosts = topic
             )
           }
         </form>
-        <ul class="mt-6 space-y-6">
+        <ul class="mt-6 space-y-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           {
             filteredPosts.sort((a, b) => {
               const datePartsA = a.data.date?.split('-').map(Number);
@@ -67,11 +69,11 @@ const filteredPosts = topic
               // Compare timestamps for descending order
               return dateB.getTime() - dateA.getTime();
             }).map((post) => (
-              <li class="card p-6">
-                <a href={`/blog/${post.id}`} class="block h-full">
+              <li class="h-full">
+                <a href={`/blog/${post.id}`} class="card p-6 h-full flex flex-col">
                   <h2 class="font-bold text-xl hover:underline">{post.data.title}</h2>
-                  <p class="text-sm mt-2">{post.data.snippet}</p>
-                  <div class="flex justify-between mt-4">
+                  <p class="text-sm mt-2 mb-2">{post.data.snippet}</p>
+                  <div class="flex justify-between mt-auto">
                     <div class="text-xs text-zinc-600 dark:text-zinc-400">
                       <p>{post.data.date}</p>
                     </div>

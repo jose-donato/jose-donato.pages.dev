@@ -13,3 +13,7 @@
 - [ ] remove all dumb comments
 - [x] fix light mode issues (e.g., input fields in dark mode)
 - [ ] fix input fields
+- [ ] skills b2
+- [ ] add https://astro-embed.netlify.app/components/youtube/ for pyth video
+- [ ] add https://astro-embed.netlify.app/components/twitter for good tweets, like a carousel in blog or something
+- [ ] think about a way to embed telegram bots

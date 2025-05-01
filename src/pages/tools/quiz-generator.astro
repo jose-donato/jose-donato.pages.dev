@@ -4,16 +4,48 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateObject } from "ai";
 import { GOOGLE_API_KEY } from "astro:env/server";
 import { z } from "astro/zod";
+import { getPrompt } from "../../utils/quiz-generator";
 
 const googleGenerativeAI = createGoogleGenerativeAI({
 	apiKey: GOOGLE_API_KEY,
 });
-const model = googleGenerativeAI("gemini-1.5-flash"); 
+const model = googleGenerativeAI("gemini-1.5-flash");
 
-const QuizFormSchema = z.object({
-	url: z.string().url({ message: "Invalid URL format." }).min(1),
-	language: z.string().min(1, { message: "Language is required." }),
-});
+const QuizFormSchema = z
+	.object({
+		inputType: z.enum(["url", "text"]),
+		url: z.string().optional(),
+		text: z
+			.string()
+			.max(15000, {
+				message: "Text exceeds maximum length of 15,000 characters.",
+			})
+			.optional(),
+		language: z.string().min(1, { message: "Language is required." }),
+	})
+	.refine(
+		(data) => {
+			if (data.inputType === "url" && !data.url) return false;
+			if (data.inputType === "text" && !data.text) return false;
+			return true;
+		},
+		{
+			message:
+				"Please provide either a URL or text content based on your selection.",
+		},
+	)
+	.refine(
+		(data) => {
+			return (
+				data.inputType !== "url" ||
+				(data.url && z.string().url().safeParse(data.url).success)
+			);
+		},
+		{
+			message: "Invalid URL format.",
+			path: ["url"],
+		},
+	);
 
 const QuestionSchema = z.object({
 	question: z.string().describe("The text of the multiple-choice question."),
@@ -23,11 +55,15 @@ const QuestionSchema = z.object({
 		.describe("An array of possible answers for the question."),
 	answer: z
 		.string()
-		.describe("The correct answer, which must exactly match one of the options."),
+		.describe(
+			"The correct answer, which must exactly match one of the options.",
+		),
 });
 
 const QuizOutputSchema = z.object({
-	title: z.string().describe("A concise title for the quiz based on the article content."),
+	title: z
+		.string()
+		.describe("A concise title for the quiz based on the article content."),
 	questions: z
 		.array(QuestionSchema)
 		.min(1, "Must generate at least one question.")
@@ -46,73 +82,84 @@ const languages = [
 	{ label: "Chinese", value: "chinese" },
 ] as const;
 
+// Define a type for the language values
+type LanguageValue = (typeof languages)[number]["value"];
+
 let error = "";
 let result: QuizOutput | null = null;
 let urlValue = "";
-let languageValue = languages[0].value; // Default to English
+let textValue = "";
+let inputType = "url"; // Default to URL input
+let languageValue: LanguageValue = languages[0].value; // Fix type error with explicit typing
 
 if (Astro.request.method === "POST") {
 	try {
 		const formData = await Astro.request.formData();
 		const rawData = {
+			inputType: formData.get("inputType"),
 			url: formData.get("url"),
+			text: formData.get("text"),
 			language: formData.get("language"),
 		};
 
 		// Store submitted values for repopulation
+		inputType =
+			typeof rawData.inputType === "string" ? rawData.inputType : "url";
 		urlValue = typeof rawData.url === "string" ? rawData.url : "";
-		languageValue = typeof rawData.language === "string" ? rawData.language : languages[0].value;
+		textValue = typeof rawData.text === "string" ? rawData.text : "";
+		// Handle languageValue safely
+		if (
+			typeof rawData.language === "string" &&
+			languages.some((lang) => lang.value === rawData.language)
+		) {
+			languageValue = rawData.language as LanguageValue;
+		} else {
+			languageValue = languages[0].value;
+		}
 
 		// Validate form input
 		const validationResult = QuizFormSchema.safeParse(rawData);
 		if (!validationResult.success) {
 			error = validationResult.error.errors.map((e) => e.message).join(", ");
 		} else {
-			const { url, language } = validationResult.data;
+			const { inputType, url, text, language } = validationResult.data;
 			error = ""; // Clear previous errors
 			result = null; // Clear previous results
 
-			// 1. Fetch article content as Markdown
-			const mdUrl = `https://md.dhr.wtf/?url=${encodeURIComponent(url)}`;
-			let markdown = "";
-			try {
-				const response = await fetch(mdUrl);
-				if (!response.ok) {
-					throw new Error(`Failed to fetch markdown: ${response.statusText}`);
-				}
-				markdown = await response.text();
-				if (!markdown || markdown.startsWith("Error processing page")) {
-					throw new Error("Could not extract article content from URL.");
-				}
-                 // Limit markdown size to avoid excessive token usage (e.g., ~10k chars)
-                 const MAX_MARKDOWN_LENGTH = 10000;
-                 if (markdown.length > MAX_MARKDOWN_LENGTH) {
-                     markdown = `${markdown.substring(0, MAX_MARKDOWN_LENGTH)}... (content truncated)`;
-                 }
+			let content = "";
 
-			} catch (fetchError) {
-				console.error("Error fetching markdown:", fetchError);
-				error = `Failed to fetch article content: ${fetchError?.message}`;
+			// Get content based on input type
+			if (inputType === "url" && url) {
+				// 1. Fetch article content as Markdown from URL
+				const mdUrl = `https://md.dhr.wtf/?url=${encodeURIComponent(url)}`;
+				try {
+					const response = await fetch(mdUrl);
+					if (!response.ok) {
+						throw new Error(`Failed to fetch markdown: ${response.statusText}`);
+					}
+					content = await response.text();
+					if (!content || content.startsWith("Error processing page")) {
+						throw new Error("Could not extract article content from URL.");
+					}
+					// Limit markdown size to avoid excessive token usage
+					const MAX_MARKDOWN_LENGTH = 10000;
+					if (content.length > MAX_MARKDOWN_LENGTH) {
+						content = `${content.substring(0, MAX_MARKDOWN_LENGTH)}... (content truncated)`;
+					}
+				} catch (fetchError: unknown) {
+					console.error("Error fetching markdown:", fetchError);
+					const errorMsg =
+						fetchError instanceof Error ? fetchError.message : "Unknown error";
+					error = `Failed to fetch article content: ${errorMsg}`;
+				}
+			} else if (inputType === "text" && text) {
+				// Use the provided text directly
+				content = text;
 			}
 
-			// 2. Generate Quiz if markdown was fetched successfully
-			if (markdown && !error) {
-				const prompt = `You are an expert quiz creator. Generate a short multiple-choice quiz (around 5 questions) based on the following article content. The quiz should be in ${language}.
-
-Article Content (Markdown):
----
-${markdown}
----
-
-Instructions:
-- Generate a quiz title and a list of multiple-choice questions.
-- Each question must have a question text, an array of options, and the correct answer string (matching one of the options exactly).
-- Focus ONLY on the provided text content. Ignore images, charts, or complex formatting.
-- Ensure the questions and options are in ${language}.
-- Respond ONLY with the JSON object matching the provided schema. Do not include any introductory text, explanations, or markdown formatting outside the JSON structure.
-
-Language: ${language}
-Desired JSON Output:`;
+			// Generate Quiz if content was obtained successfully
+			if (content && !error) {
+				const prompt = getPrompt(content, languageValue);
 
 				try {
 					const aiResponse = await generateObject({
@@ -120,23 +167,28 @@ Desired JSON Output:`;
 						schema: QuizOutputSchema,
 						prompt: prompt,
 						mode: "json",
-                        maxTokens: 1000, // Adjust as needed
+						maxTokens: 1000,
 					});
 
 					if (aiResponse?.object?.questions?.length > 0) {
 						result = aiResponse.object;
 					} else {
-						error = "AI failed to generate a valid quiz. The article might be too short or the content unsuitable.";
+						error =
+							"AI failed to generate a valid quiz. The content might be too short or unsuitable.";
 						result = null;
 					}
-				} catch (aiError: any) {
+				} catch (aiError: unknown) {
 					console.error("Error generating quiz:", aiError);
-					error = `Failed to generate quiz: ${aiError.message || 'An internal error occurred.'}`;
+					const errorMsg =
+						aiError instanceof Error
+							? aiError.message
+							: "An internal error occurred";
+					error = `Failed to generate quiz: ${errorMsg}`;
 					result = null;
 				}
 			}
 		}
-	} catch (formError: any) {
+	} catch (formError: unknown) {
 		console.error("Error processing form:", formError);
 		error = "Failed to process request due to an internal error.";
 		result = null;
@@ -153,12 +205,40 @@ const quizDataForClient = result ? JSON.stringify(result) : null;
 		</h1>
 
 		<div class="flex justify-center items-center flex-col gap-2 my-5">
-			<p>Generate a multiple-choice quiz from any article URL.</p>
+			<p class="text-center">Generate a multiple-choice quiz from any article URL or text. <br />Built by José Donato and <a href="https://hugobrink.com" class="link" target="_blank" rel="noopener noreferrer">Hugo Brink</a></p>
 		</div>
 
 		<div class="card p-6">
 			<form method="POST" id="quizForm">
 				<div class="mb-4">
+					<label class="block text-sm font-medium mb-2">
+						Input Type <span class="text-red-500">*</span>
+					</label>
+					<div class="flex space-x-4">
+						<label class="inline-flex items-center">
+							<input 
+								type="radio" 
+								name="inputType" 
+								value="url" 
+								checked={inputType === "url"}
+								class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500 dark:border-zinc-600 dark:bg-zinc-700" 
+							/>
+							<span class="ml-2">URL</span>
+						</label>
+						<label class="inline-flex items-center">
+							<input 
+								type="radio" 
+								name="inputType" 
+								value="text" 
+								checked={inputType === "text"}
+								class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500 dark:border-zinc-600 dark:bg-zinc-700" 
+							/>
+							<span class="ml-2">Text</span>
+						</label>
+					</div>
+				</div>
+
+				<div id="urlInput" class={`mb-4 ${inputType !== 'url' ? 'hidden' : ''}`}>
 					<label for="url" class="block text-sm font-medium mb-1">
 						Article URL <span class="text-red-500">*</span>
 					</label>
@@ -166,11 +246,27 @@ const quizDataForClient = result ? JSON.stringify(result) : null;
 						type="url"
 						id="url"
 						name="url"
-						required
 						placeholder="https://example.com/article"
 						value={urlValue}
 						class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 dark:bg-zinc-800 dark:border-zinc-700"
 					/>
+				</div>
+
+				<div id="textInput" class={`mb-4 ${inputType !== 'text' ? 'hidden' : ''}`}>
+					<label for="text" class="block text-sm font-medium mb-1">
+						Content Text <span class="text-red-500">*</span>
+						<span class="text-xs text-gray-500 ml-1">(Max 15,000 characters)</span>
+					</label>
+					<textarea
+						id="text"
+						name="text"
+						rows="6"
+						placeholder="Paste your text content here..."
+						class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 dark:bg-zinc-800 dark:border-zinc-700"
+					>{textValue}</textarea>
+					<div class="text-xs text-gray-500 mt-1">
+						<span id="charCount">0</span>/15,000 characters
+					</div>
 				</div>
 
 				<div class="mb-4">
@@ -221,21 +317,51 @@ const quizDataForClient = result ? JSON.stringify(result) : null;
         <div class="card p-6 mt-6">
 			<h2 class="font-bold text-lg mb-4">How it works</h2>
 			<p>
-				This tool fetches the content of the provided article URL, then uses AI to generate a multiple-choice quiz based on that content in your selected language.
+				This tool uses AI to generate a multiple-choice quiz based on either an article URL or text you provide in your selected language.
 			</p>
 			<ul class="list-disc list-inside space-y-2 mt-2">
-				<li>Paste the full URL of the article you want to create a quiz from.</li>
-				<li>Select the language for the quiz questions and answers.</li>
-				<li>Click "Generate Quiz". The AI will process the article and create the questions.</li>
+				<li>Choose "URL" to paste the full URL of an article, or "Text" to directly paste content.</li>
+				<li>Select the language for your quiz questions and answers.</li>
+				<li>Click "Generate Quiz". The AI will process the content and create questions.</li>
                 <li>Answer the questions interactively!</li>
 			</ul>
-            <p class="text-xs text-gray-500 mt-3">Note: Content fetching relies on an external service and may not work for all websites (e.g., those requiring logins or heavy JavaScript). Performance depends on article length and AI model load.</p>
+            <p class="text-xs text-gray-500 mt-3">Note: URL content fetching relies on an external service and may not work for all websites (e.g., those requiring logins or heavy JavaScript). Performance depends on content length and AI model load.</p>
 		</div>
-
 	</div>
 </Layout>
 
 <script define:vars={{ quizDataForClient }}>
+    // Toggle between URL and text input
+    document.querySelectorAll('input[name="inputType"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const inputType = e.target.value;
+            document.getElementById('urlInput').classList.toggle('hidden', inputType !== 'url');
+            document.getElementById('textInput').classList.toggle('hidden', inputType !== 'text');
+        });
+    });
+
+    // Character counter for text input
+    const textArea = document.getElementById('text');
+    const charCount = document.getElementById('charCount');
+    
+    if (textArea && charCount) {
+        // Initial count
+        charCount.textContent = textArea.value.length.toString();
+        
+        // Update count on input
+        textArea.addEventListener('input', () => {
+            charCount.textContent = textArea.value.length.toString();
+            
+            // Optional: Add visual feedback when approaching limit
+            if (textArea.value.length > 14000) {
+                charCount.classList.add('text-orange-500');
+            } else if (textArea.value.length > 14800) {
+                charCount.classList.add('text-red-500');
+            } else {
+                charCount.classList.remove('text-orange-500', 'text-red-500');
+            }
+        });
+    }
 
     const quizResultArea = document.getElementById('quizResultArea');
     let quizData = null;
@@ -340,7 +466,7 @@ const quizDataForClient = result ? JSON.stringify(result) : null;
             if (!isAnswered) {
                 const submitButton = document.createElement('button');
                 submitButton.textContent = 'Submit Answer';
-                submitButton.className = 'btn w-full'; // Make button full width
+                submitButton.className = 'btn'; // Make button full width
                 submitButton.disabled = selectedAnswer === null; // Disable if no answer selected
                 submitButton.addEventListener('click', handleAnswerSubmit);
                 footer.appendChild(submitButton);
@@ -365,7 +491,7 @@ const quizDataForClient = result ? JSON.stringify(result) : null;
                 if (currentQuestionIndex < quizData.questions.length - 1) {
                     const nextButton = document.createElement('button');
                     nextButton.textContent = 'Next Question';
-                    nextButton.className = 'btn w-full'; // Make button full width
+                    nextButton.className = 'btn'; // Make button full width
                     nextButton.addEventListener('click', handleNext);
                     footer.appendChild(nextButton);
                 } else {

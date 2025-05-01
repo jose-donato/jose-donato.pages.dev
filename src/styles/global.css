@@ -27,11 +27,11 @@
 }
 
 @utility btn {
-  @apply text-zinc-900 bg-white hover:bg-zinc-100 border border-zinc-200 focus:ring-4 focus:ring-zinc-100 font-medium rounded-lg text-sm px-3 py-1.5 text-center inline-flex items-center dark:focus:ring-zinc-600 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white dark:hover:bg-zinc-700;
+  @apply w-fit text-zinc-900 bg-white hover:bg-zinc-100 border border-zinc-200 focus:ring-4 focus:ring-zinc-100 font-medium rounded-lg text-sm px-3 py-1.5 text-center inline-flex items-center dark:focus:ring-zinc-600 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white dark:hover:bg-zinc-700;
 }
 
 @utility btn-outline {
-  @apply text-zinc-900 bg-transparent hover:bg-zinc-100 border border-zinc-200 focus:ring-4 focus:ring-zinc-100 font-medium rounded-lg text-sm px-3 py-1.5 text-center inline-flex items-center dark:focus:ring-zinc-600 dark:border-zinc-700 dark:text-white dark:hover:bg-zinc-700;
+  @apply w-fit text-zinc-900 bg-transparent hover:bg-zinc-100 border border-zinc-200 focus:ring-4 focus:ring-zinc-100 font-medium rounded-lg text-sm px-3 py-1.5 text-center inline-flex items-center dark:focus:ring-zinc-600 dark:border-zinc-700 dark:text-white dark:hover:bg-zinc-700;
 }
 
 @utility icon-btn {
