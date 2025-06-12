@@ -148,11 +148,11 @@ export const PROJECTS: Project[] = [
 		url: "https://openbb.co",
 	},
 	{
-		title: "OpenBB Terminal Pro",
+		title: "OpenBB Workspace",
 		type: "web app",
 		technologies: ["React", "TailwindCSS", "Zustand", "Tanstack/React Query"],
-		description: "An enterprise product for investment research.",
-		url: "https://openbb.co/github",
+		description: "Enterprise UI built for AI workflows.",
+		url: "https://pro.openbb.co",
 	},
 	{
 		title: "ollama-reply",
@@ -215,9 +215,9 @@ export const PROJECTS: Project[] = [
 		url: "",
 	},
 	{
-		title: "OpenBB Terminal",
+		title: "OpenBB Platform",
 		type: "desktop app",
-		technologies: ["Python", "Plotly", "Pydantic", "FastAPI"],
+		technologies: ["Python", "Plotly", "Pydantic", "FastAPI", "Pandas"],
 		description: "An open source product for investment research.",
 		url: "https://openbb.co/products/terminal",
 		githubUrl: "",
