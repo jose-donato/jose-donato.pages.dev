@@ -309,9 +309,4 @@ export const SOCIALS = [
 		icon: "mdi-linkedin",
 		name: "LinkedIn",
 	},
-	{
-		url: "mailto:jose-donato@protonmail.com",
-		icon: "mdi-email",
-		name: "Email",
-	},
 ];
