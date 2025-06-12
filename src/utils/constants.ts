@@ -85,7 +85,7 @@ export const PAST_EXPERIENCE_HOMEPAGE = [
 		title: "Fullstack Developer",
 		place: "OpenBB",
 		placeUrl: "https://openbb.co",
-		description: `Currently working at OpenBB with the mission of building modern investment research platforms for everyone. In this process, I've been involved in multiple projects. Built [openbb.co](https://openbb.co), the company website, using remix.run, TailwindCSS, TypeScript, mdx-bundler. I was involved in the development of our financial discord and telegram bot made with Python. To manage all OpenBB Products, we built a web platform - [my.openbb.co](https://my.openbb.co) also using Remix and TailwindCSS. Our primary product, [OpenBB Workspace](https://pro.openbb.co), is a web application built with React, TailwindCSS, Zustand, and other amazing technologies. Sign up [today](https://pro.openbb.co).`,
+		description: `Currently working at OpenBB with the mission of building modern investment research platforms for everyone. Our primary product, [OpenBB Workspace](https://pro.openbb.co), is a web application built with React, TailwindCSS, Zustand, and other amazing technologies that enables AI workflows while guaranteeing full control over your data. I've also contributed to other projects including [openbb.co](https://openbb.co), our company website built with remix.run, and [my.openbb.co](https://my.openbb.co), our product management platform. Sign up for OpenBB Workspace [today](https://pro.openbb.co).`,
 		date: "2021 - Present",
 	},
 	{
@@ -108,7 +108,7 @@ export const HIGHLIGHTS_HOMEPAGE = [
 	{
 		title: "Building OpenBB Workspace",
 		description:
-			"Main developer behind OpenBB Workspace, a performant web application highly customizable that enables streamlined AI workflows while guaranteeing full control over your data. Sign up below.",
+			"Leading the development of OpenBB Workspace, a performant web application highly customizable that enables AI workflows while guaranteeing full control over your data. Sign up below.",
 		url: "https://pro.openbb.co",
 	},
 	{
@@ -116,12 +116,6 @@ export const HIGHLIGHTS_HOMEPAGE = [
 		description:
 			"Developed OpenBB's first real-time widget using Pyth Network integration, showcasing the future of finance through a combination of real-time data feeds, and AI capabilities.",
 		url: "https://www.youtube.com/watch?v=LWUioH_ncQk",
-	},
-	{
-		title: "Showcased on Cloudflare: Edge-Optimized Remix Run Stack",
-		description:
-			"Highlighted by Cloudflare, my project leverages the Remix stack, tailored for edge computing with Cloudflare Pages and D1.",
-		url: "https://blog.cloudflare.com/d1-turning-it-up-to-11",
 	},
 	{
 		title:
@@ -208,19 +202,11 @@ export const PROJECTS: Project[] = [
 		url: "https://hub.openbb.co",
 	},
 	{
-		title: "Financial Discord and Telegram Bot",
-		type: "web app",
-		technologies: ["Python"],
-		description: "A bot for financial discord and telegram.",
-		url: "",
-	},
-	{
 		title: "OpenBB Platform",
 		type: "desktop app",
 		technologies: ["Python", "Plotly", "Pydantic", "FastAPI", "Pandas"],
 		description: "An open source product for investment research.",
-		url: "https://openbb.co/products/terminal",
-		githubUrl: "",
+		url: "https://github.com/OpenBB-finance/OpenBB",
 	},
 	{
 		title: "Credential Platform for Queima das Fitas",
@@ -240,16 +226,9 @@ export const PROJECTS: Project[] = [
 	{
 		title: "Application for Queima das Fitas",
 		type: "mobile app",
-		technologies: ["React Native"],
+		technologies: ["React Native", "Expo"],
 		description: "A mobile application dedicated to Queima das Fitas.",
 		url: "https://noticias.uc.pt/multimedia/videos/queimapp-chegou-a-primeira-aplicacao-mobile-dedicada-a-queima-das-fitas/",
-	},
-	{
-		title: "EveApp",
-		type: "mobile app",
-		technologies: ["React Native", "Expo"],
-		description: "An evolved version of the Queima das Fitas application.",
-		url: "https://www.facebook.com/EveApp2019/",
 	},
 	{
 		title: "RUC.pt",
@@ -262,12 +241,11 @@ export const PROJECTS: Project[] = [
 		title: "Smart contracts to sign up presences in classrooms",
 		type: "web app",
 		technologies: [
-			"Smart-contracts",
+			"web3",
 			"React",
-			"Node.js",
+			"Material-UI",
 			"truffle",
 			"ganache",
-			"Material-UI",
 		],
 		description:
 			"Project done for Informatics Security and Law course. It uses smart contracts to register the presence of students in a classroom and for teachers to check which students are present.",
@@ -276,7 +254,7 @@ export const PROJECTS: Project[] = [
 	{
 		title: "Learning elliptic-curve cryptography",
 		type: "web app",
-		technologies: ["Next.js", "Node.js", "Material-UI"],
+		technologies: ["Next.js", "Material-UI"],
 		description:
 			"Web App developed for Cryptography course in Masters. It has a backend in Node.js to calculate the elliptic curves.",
 		url: "https://elliptic-curves-frontend.now.sh",

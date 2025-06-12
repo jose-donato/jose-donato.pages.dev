@@ -1,15 +1,15 @@
 ---
-title: OpenBB Terminal is now available on mobile
+title: OpenBB Workspace is now available on mobile
 type: post
-snippet: Learn everything about our decision to make the OpenBB Terminal accessible — and even installable — everywhere.
+snippet: Learn everything about our decision to make the OpenBB Workspace accessible — and even installable — everywhere.
 coverImage: ''
 date: '10-09-2024'
 topics: 'Progressive-Web-Applications PWA Web'
 ---
 
-Hey everyone, [José](https://openbb.co/blog/jose-donato) here!
+Hey everyone, José here!
 
-I've got some exciting news to share about the OpenBB Terminal.
+I've got some exciting news to share about the OpenBB Workspace.
 
 We just announced a free tier, but we are taking it to the next level. We’re making it **accessible from *anywhere*, including on mobile**.
 
@@ -57,9 +57,9 @@ Why? Because PWAs are essentially supercharged web apps that can work great on a
 
 Also, it’s amazing for developers since they only need to develop an app once, and it can be accessed from any device with a web browser (either a mobile phone, a tablet, or a desktop — it doesn’t matter the operating system). So you basically just need to build one app to be used on any device without any specific installer.
 
-## 2. Taking OpenBB Terminal Pro Mobile
+## 2. Taking OpenBB Workspace Mobile
 
-From day one, I pushed for Terminal to be a web application:
+From day one, I pushed for Workspace to be a web application:
 
 ![](https://openbb-cms.directus.app/assets/269228e7-d469-46f3-beae-dd455fb48987)
 
@@ -110,7 +110,7 @@ As I said earlier, a PWA is just a very good web app that is installable. This m
 
 ### Why does this decision matter?
 
-We’ve always said that “the OpenBB Terminal should be accessible to everyone, everywhere”. 
+We’ve always said that “the OpenBB Workspace should be accessible to everyone, everywhere”. 
 
 With the introduction of the free tier, we tackled the “everyone” part. But… everywhere? Well, it wouldn’t be exactly true if you needed an NSA-level desktop to use it.
 

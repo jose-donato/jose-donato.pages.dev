@@ -6,11 +6,11 @@ import "@/styles/global.css";
 import Posthog from "@/components/Posthog.astro";
 
 interface Props {
-	seo?: SEOProps;
-	ogImage?: {
-		template: string;
-		data?: Record<string, any>;
-	};
+  seo?: SEOProps;
+  ogImage?: {
+    template: string;
+    data?: Record<string, any>;
+  };
 }
 
 const { seo, ogImage } = Astro.props;
@@ -56,13 +56,16 @@ const ogImageUrl = "/og_image.png";
     <meta name="theme-color" content="#ffffff" />
     <meta name="generator" content={Astro.generator} />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta name="keywords" content="josé donato, fullstack, openbb" />
+    <meta
+      name="keywords"
+      content="josé donato, fullstack, openbb, quant, trading, tools, finance"
+    />
     <Posthog />
     <SEO
       {...seo}
       title={seo?.title ?? "José Donato"}
       description={seo?.description ??
-        "I'm a Fullstack Engineer from Portugal with a master's degree in Informatics Security and bachelor in Computer Science. Currently working remotely at OpenBB."}
+        "Fullstack Engineer from Portugal specializing in finance and quant trading tools. Working remotely at OpenBB."}
       openGraph={{
         basic: {
           type: "website",
@@ -79,7 +82,9 @@ const ogImageUrl = "/og_image.png";
   </head>
   <body>
     <div class="_bg-effect"></div>
-    <main class="mx-auto max-w-(--breakpoint-md) px-4 sm:px-6 md:px-8 my-12 md:my-20">
+    <main
+      class="mx-auto max-w-(--breakpoint-md) px-4 sm:px-6 md:px-8 my-12 md:my-20"
+    >
       <Header />
       <div class="min-h-[40vh]">
         <slot />

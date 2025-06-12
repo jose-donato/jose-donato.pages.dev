@@ -1,5 +1,5 @@
 {
-	"name": "portfolio-astro-deno",
+	"name": "portfolio-astro",
 	"type": "module",
 	"version": "0.0.1",
 	"scripts": {
@@ -26,7 +26,7 @@
 		"astro": "^5.9.2",
 		"astro-seo": "^0.8.3",
 		"marked": "^15.0.7",
-		"svgo": "^3.3.2",
+		"svgo": "4.0.0-rc.5",
 		"tailwind-variants": "^1.0.0",
 		"tailwindcss": "^4.1.4",
 		"tw-animate-css": "^1.2.5",
@@ -35,7 +35,6 @@
 	"devDependencies": {
 		"@tailwindcss/typography": "^0.5.10",
 		"tailwind-merge": "^3.0.2",
-		"vite-plugin-node-polyfills": "^0.23.0",
 		"wrangler": "^4.10.0"
 	}
 }

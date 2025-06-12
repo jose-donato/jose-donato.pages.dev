@@ -1,7 +1,7 @@
 ---
 title: 'Bringing Real-Time Data to OpenBB: Our Collaboration with Pyth'
 type: post
-snippet: By integrating Pyth Network's real-time data feeds, we enhanced the OpenBB Terminal's capabilities and democratized access to financial data. This collaboration took another lever now as OpenBB was selected to be part of the Pyth Network Retrospective Airdrop program.
+snippet: By integrating Pyth Network's real-time data feeds, we enhanced the OpenBB Workspace's capabilities and democratized access to financial data. This collaboration took another lever now as OpenBB was selected to be part of the Pyth Network Retrospective Airdrop program.
 coverImage: ''
 date: '07-02-2024'
 topics: 'OpenBB pyth-network real-time financial data-feeds collaboration partnership crypto blockchain airdrop'
@@ -9,7 +9,7 @@ topics: 'OpenBB pyth-network real-time financial data-feeds collaboration partne
 
 ## Embarking on a New Journey: OpenBB Meets Real-Time Data
 
-At OpenBB, we've always been driven by the vision of providing comprehensive and accessible financial data to everyone. From the inception of the OpenBB Terminal, our mission has been clear: to equip users with the tools they need to analyze financial markets effectively. 
+At OpenBB, we've always been driven by the vision of providing comprehensive and accessible financial data to everyone. From the inception of the OpenBB Workspace, our mission has been clear: to equip users with the tools they need to analyze financial markets effectively. 
 
 However, despite our best efforts to integrate various data sources, we consistently encountered a significant gap: the availability of real-time data feeds. 
 
@@ -17,7 +17,7 @@ This is where our exciting collaboration with [Pyth Network](https://pyth.networ
 
 ## Finding Pyth Network
 
-In the early days, I dedicated my time to adding as many crypto sources to the terminal as possible. Despite this, I always felt something was missing - not just in the crypto section, but across the entire spectrum of data we offered. Real-time feeds were the missing piece. Then, I stumbled upon [Pyth](https://pyth.network/). 
+In the early days, I dedicated my time to adding as many crypto sources to the OpenBB Platform as possible. Despite this, I always felt something was missing - not just in the crypto section, but across the entire spectrum of data we offered. Real-time feeds were the missing piece. Then, I stumbled upon [Pyth](https://pyth.network/). 
 
 <figure>
 <img alt="pyth price feeds" src="https://openbb-cms.directus.app/assets/e77d2208-4eb5-4dbd-86f3-7eb33e3cb0f7" class="large-img"/>
@@ -26,9 +26,9 @@ In the early days, I dedicated my time to adding as many crypto sources to the t
 
 From the very first interaction, the folks at Pyth were nothing short of amazing. Their willingness to help and the ease of integration of their product made it obvious to me that we were on the verge of something special. 
 
-Integrating Pyth into our open source [Terminal](https://openbb.co/products/terminal) marked the first time we were able to offer real-time data to our users - a step forward in our quest to democratize financial information.
+Integrating Pyth into our open source [Platform](https://github.com/OpenBB-finance/OpenBB) marked the first time we were able to offer real-time data to our users - a step forward in our quest to democratize financial information.
 
-Watch the demo below or check out the code in this [pull request](https://github.com/OpenBB-finance/OpenBBTerminal/pull/2178).
+Watch the demo below or check out the code in this [pull request](https://github.com/OpenBB-finance/OpenBB/pull/2178).
 
 <video className="mx-auto" controls>
   <source src="https://openbb-cms.directus.app/assets/42be6002-d3fb-4439-a1fc-aeab3108a261" />
@@ -65,7 +65,7 @@ We plan to support Pyth as actively as possible, including staking the entire am
 
 The partnership between OpenBB and Pyth represents a significant leap forward in our mission to democratize access to financial data. 
 
-By integrating Pyth's real-time [price feeds](https://pyth.network/price-feeds), we enhanced the capabilities of the OpenBB Terminal and empowered our users with the most accurate and up-to-date information available. 
+By integrating Pyth's real-time [price feeds](https://pyth.network/price-feeds), we enhanced the capabilities of the OpenBB Workspace and empowered our users with the most accurate and up-to-date information available. 
 
 We are eager to see where this collaboration leads us and remain committed to exploring new ways to bring value to our users and the broader financial community.
 
