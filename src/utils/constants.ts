@@ -85,15 +85,15 @@ export const PAST_EXPERIENCE_HOMEPAGE = [
 		title: "Fullstack Developer",
 		place: "OpenBB",
 		placeUrl: "https://openbb.co",
-		description: `Currently working at OpenBB with the mission of building modern investment research platforms for everyone. Our primary product, [OpenBB Workspace](https://pro.openbb.co), is a web application built with React, TailwindCSS, Zustand, and other amazing technologies that enables AI workflows while guaranteeing full control over your data. I've also contributed to other projects including [openbb.co](https://openbb.co), our company website built with remix.run, and [my.openbb.co](https://my.openbb.co), our product management platform. Sign up for OpenBB Workspace [today](https://pro.openbb.co).`,
+		description: `First engineering hire at OpenBB, leading web development for enterprise data analysis platform. Architected [OpenBB Workspace](https://pro.openbb.co) from concept to production - a React-based platform that consolidates data sources and enables AI workflows for organizations of all types. Built with React, TypeScript, Zustand, and modern web technologies for secure deployment on-premises and private cloud. Also contributed to [openbb.co](https://openbb.co) company website built with Remix, and [my.openbb.co](https://my.openbb.co) product management platform.`,
 		date: "2021 - Present",
 	},
 	{
-		title: "Cybersecurity Researcher",
+		title: "Web Performance Researcher",
 		place: "University of Coimbra",
 		placeUrl: "https://www.uc.pt/en",
 		description:
-			"As part of my master internship, I was awarded a research scholarship from FCT (the Portuguese public agency that supports science, technology and innovation). This enabled me to work independently while having the support of my supervisor. It was a great challenge that came with a lot of freedom, but also with huge responsibilities. The focus of this internship (and my dissertation) was to assess whether web applications were already a viable alternative to native ones in mobile devices. Based on this, I delivered my master thesis, which was a comparative study between web and native applications, you can read it [here](/master_thesis.pdf). I also wrote about several cybersecurity topics, you can read them in my [blog](/blog).",
+			"Awarded research scholarship from FCT (Portuguese science agency) to conduct independent research on web application performance. Focused on comparative analysis between web and native applications across mobile platforms, examining computational performance, user experience, and technical feasibility. Research demonstrated that modern web technologies can achieve native-level performance for complex operations. Delivered comprehensive thesis available [here](/master_thesis.pdf) and published findings on web technology capabilities.",
 		date: "2019 - 2020",
 	},
 	{
@@ -106,22 +106,22 @@ export const PAST_EXPERIENCE_HOMEPAGE = [
 
 export const HIGHLIGHTS_HOMEPAGE = [
 	{
-		title: "Building OpenBB Workspace",
+		title: "OpenBB Workspace: Enterprise Data Platform",
 		description:
-			"Leading the development of OpenBB Workspace, a performant web application highly customizable that enables AI workflows while guaranteeing full control over your data. Sign up below.",
+			"Architected React-based data analysis platform serving enterprise clients. Built for secure AI integration and flexible data workflows beyond traditional use cases.",
 		url: "https://pro.openbb.co",
 	},
 	{
-		title: "Pyth Integration: Real-Time Data + AI",
+		title: "Real-Time Data Infrastructure",
 		description:
-			"Developed OpenBB's first real-time widget using Pyth Network integration, showcasing the future of finance through a combination of real-time data feeds, and AI capabilities.",
+			"Designed architecture connecting diverse data sources with real-time streaming capabilities. Built WebSocket infrastructure and optimized chart rendering for large datasets.",
 		url: "https://www.youtube.com/watch?v=LWUioH_ncQk",
 	},
 	{
 		title:
-			"Comparing the Performance of Web Applications to Native Applications",
+			"Web vs Native Application Performance Research",
 		description:
-			"In my master's thesis, I conducted a comparative study between web and native applications for mobile devices, exploring their reliability and performance.",
+			"Masters thesis comparing web and native application performance across mobile devices. Research demonstrated web applications can achieve native-level performance for data-intensive operations.",
 		url: "/master_thesis.pdf",
 	},
 ];
@@ -138,14 +138,14 @@ export const PROJECTS: Project[] = [
 			"Posthog",
 			"Directus",
 		],
-		description: "The company website for OpenBB.",
+		description: "Company website built with Remix.run featuring server-side rendering, headless CMS integration, and analytics. Optimized for performance and SEO.",
 		url: "https://openbb.co",
 	},
 	{
 		title: "OpenBB Workspace",
 		type: "web app",
 		technologies: ["React", "TailwindCSS", "Zustand", "Tanstack/React Query"],
-		description: "Enterprise UI built for AI workflows.",
+		description: "Enterprise data analysis platform with AI integration. Built React-based architecture for secure on-premises deployment, real-time data streaming, and flexible workflows.",
 		url: "https://pro.openbb.co",
 	},
 	{
@@ -183,7 +183,7 @@ export const PROJECTS: Project[] = [
 		type: "web app",
 		technologies: ["SvelteKit", "TailwindCSS", "TypeScript"],
 		description:
-			"Transform and optimize your SVGs by generating an efficient sprite, reducing HTTP requests and externalizing icon data.",
+			"Web-based SVG optimization tool built with SvelteKit. Generates efficient sprites, reduces HTTP requests, and provides real-time preview with performance metrics.",
 		url: "https://github.com/jose-donato/sprite-your-svgs",
 	},
 	{
