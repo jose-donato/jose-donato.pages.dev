@@ -5,17 +5,17 @@ import Floater from "./Floater.astro";
 import { Image } from "astro:assets";
 ---
 
-<div class="flex flex-col md:flex-row items-center gap-12 mb-8">
-  <div class="flex flex-col flex-1">
-    <h1 class="text-2xl md:text-3xl tracking-tight font-light mb-2">
+<div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 mb-8">
+  <div class="flex flex-col flex-1 text-center md:text-left">
+    <h1
+      class="text-xl sm:text-2xl md:text-3xl tracking-tight font-light mb-4 md:mb-2"
+    >
       Hello! My name is
       {" "}
-      <span class="font-bold text-bullish-500">José Donato</span>{" "}<span
-        class="wave">👋</span
-      >
+      <span class="font-bold text-bullish-500">José Donato</span>
     </h1>
     <div
-      class="flex flex-col gap-4 text-base text-text-secondary leading-relaxed mt-6"
+      class="flex flex-col gap-4 text-sm sm:text-base text-text-secondary leading-relaxed mt-4 md:mt-6 px-4 md:px-0"
     >
       <p>
         I'm a <strong class="text-text-primary">Fullstack Engineer</strong> from
@@ -50,10 +50,10 @@ import { Image } from "astro:assets";
       }
     </div>
   </div>
-  <div class="flex md:min-w-[240px]">
+  <div class="flex md:min-w-[240px] avatar-container order-first md:order-last">
     <Image
       src="/avatar.webp"
-      class="h-48 w-48 object-cover shadow-2xl ring-2 ring-border-primary/20"
+      class="h-32 w-32 sm:h-40 sm:w-40 md:h-48 md:w-48 object-cover shadow-2xl ring-2 ring-border-primary/20 avatar-glow mx-auto"
       alt="José Donato"
       width={192}
       height={192}
@@ -85,5 +85,36 @@ import { Image } from "astro:assets";
   .underline-animation:hover::after {
     background: var(--bullish-400);
     height: 3px;
+  }
+
+  .avatar-container {
+    position: relative;
+  }
+
+  .avatar-glow {
+    position: relative;
+    box-shadow:
+      0 25px 50px -1px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(255, 255, 255, 0.05),
+      0 0 50px rgba(16, 185, 129, 0.4),
+      0 0 100px rgba(16, 185, 129, 0.2);
+    animation: glow-pulse 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow-pulse {
+    0% {
+      box-shadow:
+        0 25px 50px -1px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 0 30px rgba(16, 185, 129, 0.3),
+        0 0 80px rgba(16, 185, 129, 0.15);
+    }
+    100% {
+      box-shadow:
+        0 25px 50px -4px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 0 60px rgba(16, 185, 129, 0.5),
+        0 0 120px rgba(16, 185, 129, 0.25);
+    }
   }
 </style>
