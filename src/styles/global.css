@@ -1,37 +1,344 @@
-@import 'tailwindcss';
-
-@plugin '@tailwindcss/typography';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
-@theme {
-  --font-satoshi: Satoshi, sans-serif;
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Base Colors */
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-tertiary: var(--bg-tertiary);
+  --color-bg-quaternary: var(--bg-quaternary);
+  --color-bg-overlay: var(--bg-overlay);
+  
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-disabled: var(--text-disabled);
+  --color-text-inverse: var(--text-inverse);
+  
+  --color-border-primary: var(--border-primary);
+  --color-border-secondary: var(--border-secondary);
+  --color-border-focus: var(--border-focus);
+  --color-border-hover: var(--border-hover);
+  
+  /* Trading Colors - Bullish */
+  --color-bullish-50: var(--bullish-50);
+  --color-bullish-100: var(--bullish-100);
+  --color-bullish-200: var(--bullish-200);
+  --color-bullish-300: var(--bullish-300);
+  --color-bullish-400: var(--bullish-400);
+  --color-bullish-500: var(--bullish-500);
+  --color-bullish-600: var(--bullish-600);
+  --color-bullish-700: var(--bullish-700);
+  --color-bullish-800: var(--bullish-800);
+  --color-bullish-900: var(--bullish-900);
+  
+  /* Trading Colors - Bearish */
+  --color-bearish-50: var(--bearish-50);
+  --color-bearish-100: var(--bearish-100);
+  --color-bearish-200: var(--bearish-200);
+  --color-bearish-300: var(--bearish-300);
+  --color-bearish-400: var(--bearish-400);
+  --color-bearish-500: var(--bearish-500);
+  --color-bearish-600: var(--bearish-600);
+  --color-bearish-700: var(--bearish-700);
+  --color-bearish-800: var(--bearish-800);
+  --color-bearish-900: var(--bearish-900);
+  
+  /* Neutral Colors */
+  --color-neutral-50: var(--neutral-50);
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-200: var(--neutral-200);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-400: var(--neutral-400);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-600: var(--neutral-600);
+  --color-neutral-700: var(--neutral-700);
+  --color-neutral-800: var(--neutral-800);
+  --color-neutral-900: var(--neutral-900);
+  
+  /* Volume Colors */
+  --color-volume-extreme: var(--volume-extreme);
+  --color-volume-high: var(--volume-high);
+  --color-volume-medium: var(--volume-medium);
+  --color-volume-low: var(--volume-low);
+  --color-volume-minimal: var(--volume-minimal);
+  
+  /* Alert Colors */
+  --color-alert-critical-bg: var(--alert-critical-bg);
+  --color-alert-critical-border: var(--alert-critical-border);
+  --color-alert-critical-text: var(--alert-critical-text);
+  --color-alert-critical-icon: var(--alert-critical-icon);
+  
+  --color-alert-warning-bg: var(--alert-warning-bg);
+  --color-alert-warning-border: var(--alert-warning-border);
+  --color-alert-warning-text: var(--alert-warning-text);
+  --color-alert-warning-icon: var(--alert-warning-icon);
+  
+  --color-alert-info-bg: var(--alert-info-bg);
+  --color-alert-info-border: var(--alert-info-border);
+  --color-alert-info-text: var(--alert-info-text);
+  --color-alert-info-icon: var(--alert-info-icon);
+  
+  --color-alert-success-bg: var(--alert-success-bg);
+  --color-alert-success-border: var(--alert-success-border);
+  --color-alert-success-text: var(--alert-success-text);
+  --color-alert-success-icon: var(--alert-success-icon);
+  
+  /* Chart Colors */
+  --color-chart-1: var(--bullish-500);
+  --color-chart-2: var(--bearish-500);
+  --color-chart-3: var(--volume-medium);
+  --color-chart-4: var(--volume-high);
+  --color-chart-5: var(--neutral-400);
 }
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+:root {
+  --radius: 0rem;
+  
+  /* Base Colors - Dark Theme Foundation */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #242424;
+  --bg-quaternary: #2d2d2d;
+  --bg-overlay: #374151;
+  
+  /* Text Hierarchy */
+  --text-primary: #ffffff;
+  --text-secondary: #e5e7eb;
+  --text-muted: #9ca3af;
+  --text-disabled: #6b7280;
+  --text-inverse: #0a0a0a;
+  
+  /* Border System */
+  --border-primary: #374151;
+  --border-secondary: #4b5563;
+  --border-focus: #10b981;
+  --border-hover: #6b7280;
+  
+  /* Trading Colors - Bullish/Positive */
+  --bullish-50: #ecfdf5;
+  --bullish-100: #d1fae5;
+  --bullish-200: #a7f3d0;
+  --bullish-300: #6ee7b7;
+  --bullish-400: #34d399;
+  --bullish-500: #10b981;
+  --bullish-600: #059669;
+  --bullish-700: #047857;
+  --bullish-800: #065f46;
+  --bullish-900: #064e3b;
+  
+  /* Trading Colors - Bearish/Negative */
+  --bearish-50: #fef2f2;
+  --bearish-100: #fecaca;
+  --bearish-200: #fca5a5;
+  --bearish-300: #f87171;
+  --bearish-400: #ef4444;
+  --bearish-500: #dc2626;
+  --bearish-600: #b91c1c;
+  --bearish-700: #991b1b;
+  --bearish-800: #7f1d1d;
+  --bearish-900: #7f1d1d;
+  
+  /* Neutral/Unchanged States */
+  --neutral-50: #f9fafb;
+  --neutral-100: #f3f4f6;
+  --neutral-200: #e5e7eb;
+  --neutral-300: #d1d5db;
+  --neutral-400: #9ca3af;
+  --neutral-500: #6b7280;
+  --neutral-600: #4b5563;
+  --neutral-700: #374151;
+  --neutral-800: #1f2937;
+  --neutral-900: #111827;
+  
+  /* Volume Intensity Colors */
+  --volume-extreme: #dc2626;
+  --volume-high: #f59e0b;
+  --volume-medium: #3b82f6;
+  --volume-low: #6b7280;
+  --volume-minimal: #4b5563;
+  
+  /* Alert System Colors */
+  --alert-critical-bg: #7f1d1d;
+  --alert-critical-border: #dc2626;
+  --alert-critical-text: #fecaca;
+  --alert-critical-icon: #ef4444;
+  
+  --alert-warning-bg: #78350f;
+  --alert-warning-border: #f59e0b;
+  --alert-warning-text: #fed7aa;
+  --alert-warning-icon: #fbbf24;
+  
+  --alert-info-bg: #1e3a8a;
+  --alert-info-border: #3b82f6;
+  --alert-info-text: #bfdbfe;
+  --alert-info-icon: #60a5fa;
+  
+  --alert-success-bg: #064e3b;
+  --alert-success-border: #10b981;
+  --alert-success-text: #d1fae5;
+  --alert-success-icon: #34d399;
+}
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+  * {
+    @apply border-border-primary outline-border-focus/50;
+  }
+  body {
+    @apply bg-bg-primary text-text-primary font-sans;
   }
 }
 
+/* Custom animations for real-time data */
+@keyframes flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes pulse-green {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+  }
+}
+
+/* Utility classes for trading interfaces */
+.animate-flash {
+  animation: flash 0.5s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-in;
+}
+
+.animate-pulse-green {
+  animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-pulse-red {
+  animation: pulse-red 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Professional typography for financial data */
+.font-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace;
+}
+
+.font-sans {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Trading-specific utility classes */
+.price-positive {
+  @apply text-bullish-500;
+}
+
+.price-negative {
+  @apply text-bearish-500;
+}
+
+.price-neutral {
+  @apply text-neutral-400;
+}
+
+.bg-bullish-subtle {
+  @apply bg-bullish-900/20;
+}
+
+.bg-bearish-subtle {
+  @apply bg-bearish-900/20;
+}
+
+.border-bullish {
+  @apply border-bullish-600;
+}
+
+.border-bearish {
+  @apply border-bearish-600;
+}
+
+/* Volume intensity indicators */
+.volume-extreme {
+  @apply bg-volume-extreme text-white;
+}
+
+.volume-high {
+  @apply bg-volume-high text-white;
+}
+
+.volume-medium {
+  @apply bg-volume-medium text-white;
+}
+
+.volume-low {
+  @apply bg-volume-low text-white;
+}
+
+.volume-minimal {
+  @apply bg-volume-minimal text-neutral-300;
+}
+
+/* Hide scrollbars while maintaining functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* Trading-focused utility classes */
 @utility btn {
-  @apply w-fit text-zinc-900 bg-white hover:bg-zinc-100 border border-zinc-200 focus:ring-4 focus:ring-zinc-100 font-medium rounded-lg text-sm px-3 py-1.5 text-center inline-flex items-center dark:focus:ring-zinc-600 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white dark:hover:bg-zinc-700;
+  @apply w-fit text-text-primary bg-bg-secondary hover:bg-bg-tertiary border border-border-primary focus:ring-4 focus:ring-border-focus/20 font-medium rounded-lg text-sm px-3 py-1.5 text-center inline-flex items-center transition-all duration-200;
+}
+
+@utility btn-primary {
+  @apply w-fit text-text-inverse bg-bullish-600 hover:bg-bullish-700 border border-bullish-600 focus:ring-4 focus:ring-bullish-500/20 font-medium rounded-lg text-sm px-3 py-1.5 text-center inline-flex items-center transition-all duration-200;
+}
+
+@utility btn-danger {
+  @apply w-fit text-text-primary bg-bearish-600 hover:bg-bearish-700 border border-bearish-600 focus:ring-4 focus:ring-bearish-500/20 font-medium rounded-lg text-sm px-3 py-1.5 text-center inline-flex items-center transition-all duration-200;
 }
 
 @utility btn-outline {
-  @apply w-fit text-zinc-900 bg-transparent hover:bg-zinc-100 border border-zinc-200 focus:ring-4 focus:ring-zinc-100 font-medium rounded-lg text-sm px-3 py-1.5 text-center inline-flex items-center dark:focus:ring-zinc-600 dark:border-zinc-700 dark:text-white dark:hover:bg-zinc-700;
+  @apply w-fit text-text-secondary bg-transparent hover:bg-bg-secondary border border-border-primary focus:ring-4 focus:ring-border-focus/20 font-medium rounded-lg text-sm px-3 py-1.5 text-center inline-flex items-center transition-all duration-200;
 }
 
 @utility icon-btn {
@@ -40,29 +347,22 @@
 }
 
 @utility card {
-  @apply bg-white dark:bg-zinc-900 rounded-lg overflow-hidden p-2 border border-zinc-200 dark:border-zinc-700;
+  @apply bg-bg-secondary rounded-lg overflow-hidden p-4 border border-border-primary transition-all duration-200 hover:border-border-hover;
+}
+
+@utility card-interactive {
+  @apply card hover:bg-bg-tertiary cursor-pointer;
 }
 
 @utility link {
-  @apply text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500 hover:underline transition-colors duration-200 ease-in-out;
+  @apply text-bullish-500 hover:text-bullish-400 hover:underline transition-colors duration-200 ease-in-out;
 }
 
-@layer base {
-  body {
-    @apply font-satoshi font-[420] tracking-wide text-zinc-900 dark:text-zinc-100 bg-white dark:bg-black;
-  }
+@utility divider {
+  @apply h-[1px] w-full bg-border-primary;
 }
 
-@font-face {
-  font-family: "Satoshi";
-  src: url("/fonts/Satoshi-Variable.ttf") format("truetype-variations");
-  font-weight: 1 999;
-}
-
-body {
-  transition: background 0.5s, color 0.5s;
-}
-
+/* Professional wave animation */
 .wave {
   animation-name: wave-animation;
   animation-duration: 2.5s;
@@ -98,6 +398,7 @@ body {
   }
 }
 
+/* Professional reveal animation */
 .reveal-image {
   animation-name: mask-animation;
   animation-duration: 2.5s;
@@ -116,6 +417,7 @@ body {
   }
 }
 
+/* Trading-focused background effect */
 ._bg-effect {
   z-index: -1;
   position: fixed;
@@ -123,28 +425,54 @@ body {
   left: 0px;
   height: 100%;
   width: 100%;
-  opacity: 0.15;
+  opacity: 0.08;
   background-image: conic-gradient(
     at 92% 8%,
-    rgba(32, 33, 40, 0.3) 90deg,
+    rgba(16, 185, 129, 0.3) 90deg,
     transparent 0deg,
     transparent 225deg,
     transparent 0deg
   );
-  background-size: 15px 15px;
+  background-size: 20px 20px;
   background-position: 0px 0px;
   pointer-events: none;
 }
 
-.dark ._bg-effect {
-  background-image: conic-gradient(
-    at 92% 8%,
-    rgba(255, 255, 255, 0.3) 90deg,
-    /* Lighter color for contrast */ transparent 0deg,
-    transparent 225deg,
-    transparent 0deg
-  );
-  background-size: 15px 15px;
-  background-position: 0px 0px;
-  opacity: 0.15; /* Adjust opacity for subtlety */
+/* Font loading */
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Variable.ttf") format("truetype-variations");
+  font-weight: 1 999;
+}
+
+/* Smooth transitions */
+body {
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Professional underline animations */
+.underline-animation {
+  position: relative;
+  padding-bottom: 2px;
+}
+
+.underline-animation::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-image: linear-gradient(transparent, transparent),
+    linear-gradient(var(--bullish-500), var(--bullish-500));
+  background-size: 100% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  rotate: -1deg;
+  transition: all 0.3s ease;
+}
+
+.underline-animation:hover::after {
+  background-image: linear-gradient(transparent, transparent),
+    linear-gradient(var(--bullish-400), var(--bullish-400));
 }

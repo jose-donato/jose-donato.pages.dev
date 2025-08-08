@@ -1,0 +1,82 @@
+---
+export interface Props {
+    value: number;
+    previousValue?: number;
+    currency?: string;
+    showChange?: boolean;
+    animate?: boolean;
+    class?: string;
+}
+
+const {
+    value,
+    previousValue,
+    currency = "$",
+    showChange = false,
+    animate = false,
+    class: className,
+    ...props
+} = Astro.props;
+
+const change = previousValue !== undefined ? value - previousValue : 0;
+const changePercent =
+    previousValue !== undefined && previousValue !== 0
+        ? (change / previousValue) * 100
+        : 0;
+
+const isPositive = change > 0;
+const isNegative = change < 0;
+const isNeutral = change === 0;
+
+const priceClasses = [
+    "font-mono font-semibold",
+    isPositive && "price-positive",
+    isNegative && "price-negative",
+    isNeutral && "price-neutral",
+    animate && isPositive && "animate-pulse-green",
+    animate && isNegative && "animate-pulse-red",
+    className,
+]
+    .filter(Boolean)
+    .join(" ");
+
+const changeClasses = [
+    "text-sm font-mono ml-2",
+    isPositive && "price-positive",
+    isNegative && "price-negative",
+    isNeutral && "price-neutral",
+]
+    .filter(Boolean)
+    .join(" ");
+
+const formatValue = (val: number) => {
+    return new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(val);
+};
+
+const formatChange = (val: number) => {
+    const sign = val > 0 ? "+" : "";
+    return `${sign}${formatValue(val)}`;
+};
+
+const formatPercent = (val: number) => {
+    const sign = val > 0 ? "+" : "";
+    return `${sign}${val.toFixed(2)}%`;
+};
+---
+
+<div class="inline-flex items-center" {...props}>
+    <span class={priceClasses}>
+        {currency}{formatValue(value)}
+    </span>
+
+    {
+        showChange && previousValue !== undefined && (
+            <span class={changeClasses}>
+                ({formatChange(change)} / {formatPercent(changePercent)})
+            </span>
+        )
+    }
+</div>

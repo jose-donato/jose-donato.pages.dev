@@ -1,60 +1,55 @@
 ---
-import DarkMode from "./DarkMode.astro";
-
 const pathname = new URL(Astro.request.url).pathname;
 
 const LINKS = [
-	{ name: "Home", href: "/", icon: "material-symbols-home" },
-	{
-		name: "Projects",
-		href: "/projects",
-		icon: "material-symbols-playlist-add-check",
-	},
-	{
-		name: "Tools",
-		href: "/tools",
-		icon: "material-symbols-build",
-	},
-	{
-		name: "Blog",
-		href: "/blog",
-		icon: "material-symbols-article",
-	},
+  { name: "Home", href: "/", icon: "material-symbols-home" },
+  {
+    name: "Projects",
+    href: "/projects",
+    icon: "material-symbols-playlist-add-check",
+  },
+  {
+    name: "Tools",
+    href: "/tools",
+    icon: "material-symbols-build",
+  },
+  {
+    name: "Blog",
+    href: "/blog",
+    icon: "material-symbols-article",
+  },
 ];
 
 // Check if the current path starts with a specific route
 const isActive = (href: string) => {
-	if (href === "/") {
-		return pathname === href;
-	}
-	return pathname === href || pathname.startsWith(`${href}/`);
+  if (href === "/") {
+    return pathname === href;
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
 };
 ---
 
-<div class="flex justify-between items-center mb-10">
-  <div
-    class="flex transition-all ease-in-out gap-5"
-  >
-  {
-    LINKS.map((link) => (
-      <a
-        href={link.href}
-        class:list={[
-          "text-lg font-bold uppercase tracking-widest",
-          {
-            "text-zinc-700 dark:text-white": isActive(link.href),
-            "text-zinc-600": !isActive(link.href),
-            "underline-animation": isActive(link.href)
-          },
-        ]}
-        title={link.name}
-      >
-        {link.name}
-      </a>
-    ))
-  }
-  </div>
-  <DarkMode />
+<div class="flex justify-center items-center mb-10">
+  <nav class="flex transition-all ease-in-out gap-8">
+    {
+      LINKS.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            "text-lg font-bold uppercase tracking-widest transition-all duration-300 hover:text-bullish-400",
+            {
+              "text-text-primary": isActive(link.href),
+              "text-text-muted hover:text-text-secondary": !isActive(link.href),
+              "underline-animation": isActive(link.href),
+            },
+          ]}
+          title={link.name}
+        >
+          {link.name}
+        </a>
+      ))
+    }
+  </nav>
 </div>
 
 <style>
@@ -64,24 +59,36 @@ const isActive = (href: string) => {
   }
 
   .underline-animation::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 5px;
-    background-image: linear-gradient(transparent, transparent), 
-    linear-gradient(#155dfc, #155dfc);
-    background-size: 100% 5px;
+    height: 3px;
+    background-image: linear-gradient(transparent, transparent),
+      linear-gradient(var(--bullish-500), var(--bullish-500));
+    background-size: 100% 3px;
     background-position: 0 100%;
     background-repeat: no-repeat;
-    transition: background-size 0.5s ease-in-out;
-    rotate: -2deg;
-    animation: animateUnderline 1s;
+    transition: all 0.3s ease-in-out;
+    rotate: -1deg;
+    animation: animateUnderline 0.8s ease-out;
+  }
+
+  .underline-animation:hover::after {
+    background-image: linear-gradient(transparent, transparent),
+      linear-gradient(var(--bullish-400), var(--bullish-400));
+    height: 4px;
   }
 
   @keyframes animateUnderline {
-    0% { background-size: 0% 5px; }
-    50% { background-size: 100% 5px; }
+    0% {
+      background-size: 0% 3px;
+      opacity: 0;
+    }
+    100% {
+      background-size: 100% 3px;
+      opacity: 1;
+    }
   }
 </style>

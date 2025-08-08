@@ -7,14 +7,14 @@ import { getCollection } from "astro:content";
 const allPosts = await getCollection("blog");
 // Extract all topics from posts and create a unique, sorted array
 const allTopics = [
-	...new Set(allPosts.flatMap((post) => post.data.topics?.split(" ") || [])),
+  ...new Set(allPosts.flatMap((post) => post.data.topics?.split(" ") || [])),
 ].sort();
 // Handle filtering by topic
 const url = new URL(Astro.request.url);
 const topic = url.searchParams.get("topic") || "";
 const filteredPosts = topic
-	? allPosts.filter((post) => post.data.topics?.includes(topic))
-	: allPosts;
+  ? allPosts.filter((post) => post.data.topics?.includes(topic))
+  : allPosts;
 ---
 
 <Layout
@@ -51,10 +51,12 @@ const filteredPosts = topic
             <li>
               <a
                 href={`/blog/${post.id}`}
-                class="flex justify-between group items-center py-3 px-4 hover:bg-zinc-50 dark:hover:bg-zinc-900 rounded transition-colors"
+                class="flex justify-between group items-center py-3 px-4 hover:bg-bg-secondary rounded transition-colors"
               >
-                <h2 class="font-medium group-hover:underline">{post.data.title}</h2>
-                <span class="text-sm text-zinc-600 dark:text-zinc-400 ml-4 flex-shrink-0">
+                <h2 class="font-medium group-hover:underline">
+                  {post.data.title}
+                </h2>
+                <span class="text-sm text-text-muted ml-4 flex-shrink-0">
                   {post.data.date}
                 </span>
               </a>
@@ -64,4 +66,3 @@ const filteredPosts = topic
     </ul>
   </div>
 </Layout>
-

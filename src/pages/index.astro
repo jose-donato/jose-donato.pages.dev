@@ -2,9 +2,9 @@
 import Icon from "../components/Icon.astro";
 import Layout from "../layouts/Layout.astro";
 import {
-	EDUCATION,
-	PAST_EXPERIENCE_HOMEPAGE,
-	HIGHLIGHTS_HOMEPAGE,
+  EDUCATION,
+  PAST_EXPERIENCE_HOMEPAGE,
+  HIGHLIGHTS_HOMEPAGE,
 } from "../utils/constants";
 import { marked } from "marked";
 ---
@@ -16,9 +16,7 @@ import { marked } from "marked";
       <ul class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         {
           HIGHLIGHTS_HOMEPAGE.map((highlight, idx) => (
-            <div
-              class="card w-fit flex flex-col gap-2 col-span-1"
-            >
+            <div class="card w-fit flex flex-col gap-2 col-span-1">
               <p class="font-bold">{highlight.title}</p>
               <p class="text-sm">{highlight.description}</p>
               <a
@@ -65,10 +63,10 @@ import { marked } from "marked";
                       </span>
                     ))}
                 </h3>
-                <p class="text-xs text-zinc-500">{experience.date}</p>
+                <p class="text-xs text-text-muted">{experience.date}</p>
               </div>
               <article
-                class="my-2 prose dark:prose-invert prose-sm max-w-none prose-a:link"
+                class="my-2 prose prose-invert prose-sm max-w-none prose-a:link"
                 set:html={marked(experience.description)}
               />
             </li>
@@ -105,11 +103,11 @@ import { marked } from "marked";
                       </span>
                     ))}
                 </h3>
-                <p class="text-xs text-zinc-500">{education.date}</p>
+                <p class="text-xs text-text-muted">{education.date}</p>
               </div>
               {/*
               <article
-                class="my-2 prose dark:prose-invert prose-sm max-w-none"
+                class="my-2 prose prose-invert prose-sm max-w-none"
                 dangerouslySetInnerHTML={{
                   __html: render(
                     education.description,

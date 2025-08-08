@@ -1,0 +1,54 @@
+---
+export interface Props {
+    variant?: "default" | "primary" | "danger" | "outline";
+    size?: "sm" | "default" | "lg";
+    class?: string;
+    href?: string;
+    type?: "button" | "submit" | "reset";
+    disabled?: boolean;
+}
+
+const {
+    variant = "default",
+    size = "default",
+    class: className,
+    href,
+    type = "button",
+    disabled = false,
+    ...props
+} = Astro.props;
+
+const baseClasses = [
+    "inline-flex items-center justify-center whitespace-nowrap font-medium transition-all duration-200",
+    "focus:ring-4 focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+];
+
+const variants = {
+    default: "btn",
+    primary: "btn-primary",
+    danger: "btn-danger",
+    outline: "btn-outline",
+};
+
+const sizes = {
+    sm: "text-xs px-2 py-1 rounded",
+    default: "text-sm px-3 py-1.5 rounded-lg",
+    lg: "text-base px-4 py-2 rounded-lg",
+};
+
+const classes = [...baseClasses, variants[variant], sizes[size], className]
+    .filter(Boolean)
+    .join(" ");
+---
+
+{
+    href ? (
+        <a href={href} class={classes} {...props}>
+            <slot />
+        </a>
+    ) : (
+        <button type={type} disabled={disabled} class={classes} {...props}>
+            <slot />
+        </button>
+    )
+}

@@ -1,0 +1,31 @@
+---
+export interface Props {
+    variant?: "default" | "interactive";
+    class?: string;
+    href?: string;
+}
+
+const { variant = "default", class: className, href, ...props } = Astro.props;
+
+const baseClasses = "card";
+const variantClasses = {
+    default: "",
+    interactive: "card-interactive",
+};
+
+const classes = [baseClasses, variantClasses[variant], className]
+    .filter(Boolean)
+    .join(" ");
+---
+
+{
+    href ? (
+        <a href={href} class={classes} {...props}>
+            <slot />
+        </a>
+    ) : (
+        <div class={classes} {...props}>
+            <slot />
+        </div>
+    )
+}

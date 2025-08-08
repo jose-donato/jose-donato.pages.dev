@@ -20,21 +20,29 @@ const hasPDF = post?.data.file?.endsWith(".pdf");
     description: post?.data.snippet || "Blog post details",
   }}
 >
-  <article class="prose dark:prose-invert max-w-none">
+  <article class="prose prose-invert max-w-none">
     <h1 class="text-3xl font-bold">{post?.data.title}</h1>
-    
-    {post?.data.date && <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-2">{post.data.date}</p>}
-    
-    {post?.data.author && <p class="text-sm text-zinc-600 dark:text-zinc-400">By {post.data.author}</p>}
-    
-    {hasPDF ? (
-      <PDFViewer 
-        pdfPath={`/assets/${post?.data.file}`} 
-      />
-    ) : (
-      <div class="mt-6">
-        <Content />
-      </div>
-    )}
+
+    {
+      post?.data.date && (
+        <p class="text-sm text-text-muted mt-2">{post.data.date}</p>
+      )
+    }
+
+    {
+      post?.data.author && (
+        <p class="text-sm text-text-muted">By {post.data.author}</p>
+      )
+    }
+
+    {
+      hasPDF ? (
+        <PDFViewer pdfPath={`/assets/${post?.data.file}`} />
+      ) : (
+        <div class="mt-6">
+          <Content />
+        </div>
+      )
+    }
   </article>
 </Layout>

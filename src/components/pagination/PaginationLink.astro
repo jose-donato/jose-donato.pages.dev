@@ -1,0 +1,53 @@
+---
+export interface Props {
+    class?: string;
+    href?: string;
+    isActive?: boolean;
+    size?: "default" | "sm" | "lg" | "icon";
+}
+
+const {
+    class: className,
+    href,
+    isActive = false,
+    size = "default",
+    ...props
+} = Astro.props;
+
+const sizeClasses = {
+    default: "h-10 px-4 py-2",
+    sm: "h-9 px-3",
+    lg: "h-11 px-8",
+    icon: "h-10 w-10",
+};
+
+const baseClasses = [
+    "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium",
+    "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus",
+    "disabled:pointer-events-none disabled:opacity-50",
+    sizeClasses[size],
+];
+
+const variantClasses = isActive
+    ? "bg-bullish-600 text-text-inverse hover:bg-bullish-700"
+    : "hover:bg-bg-secondary text-text-secondary hover:text-text-primary";
+---
+
+{
+    href ? (
+        <a
+            href={href}
+            class:list={[...baseClasses, variantClasses, className]}
+            {...props}
+        >
+            <slot />
+        </a>
+    ) : (
+        <span
+            class:list={[...baseClasses, variantClasses, className]}
+            {...props}
+        >
+            <slot />
+        </span>
+    )
+}
