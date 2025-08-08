@@ -94,27 +94,8 @@ import { Image } from "astro:assets";
   .avatar-glow {
     position: relative;
     box-shadow:
-      0 25px 50px -1px rgba(0, 0, 0, 0.25),
+      0 8px 25px -8px rgba(0, 0, 0, 0.15),
       0 0 0 1px rgba(255, 255, 255, 0.05),
-      0 0 50px rgba(16, 185, 129, 0.4),
-      0 0 100px rgba(16, 185, 129, 0.2);
-    animation: glow-pulse 3s ease-in-out infinite alternate;
-  }
-
-  @keyframes glow-pulse {
-    0% {
-      box-shadow:
-        0 25px 50px -1px rgba(0, 0, 0, 0.25),
-        0 0 0 1px rgba(255, 255, 255, 0.05),
-        0 0 30px rgba(16, 185, 129, 0.3),
-        0 0 80px rgba(16, 185, 129, 0.15);
-    }
-    100% {
-      box-shadow:
-        0 25px 50px -4px rgba(0, 0, 0, 0.25),
-        0 0 0 1px rgba(255, 255, 255, 0.05),
-        0 0 60px rgba(16, 185, 129, 0.5),
-        0 0 120px rgba(16, 185, 129, 0.25);
-    }
+      0 0 15px rgba(16, 185, 129, 0.15);
   }
 </style>
