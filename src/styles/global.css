@@ -100,7 +100,7 @@
 }
 
 :root {
-  --radius: 0rem;
+  --radius: 0.375rem;
   
   /* Base Colors - Dark Theme Foundation */
   --bg-primary: #0a0a0a;
@@ -326,19 +326,19 @@
 
 /* Trading-focused utility classes */
 @utility btn {
-  @apply w-fit text-text-primary bg-bg-secondary hover:bg-bg-tertiary border border-border-primary focus:ring-4 focus:ring-border-focus/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md;
+  @apply w-fit text-text-primary bg-bg-secondary hover:bg-bg-tertiary border border-border-primary focus:ring-4 focus:ring-border-focus/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md rounded-lg active:scale-[0.98];
 }
 
 @utility btn-primary {
-  @apply w-fit text-text-inverse bg-bullish-600 hover:bg-bullish-700 border border-bullish-600 focus:ring-4 focus:ring-bullish-500/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-lg;
+  @apply w-fit text-text-inverse bg-bullish-600 hover:bg-bullish-700 border border-bullish-600 focus:ring-4 focus:ring-bullish-500/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-lg rounded-lg active:scale-[0.98];
 }
 
 @utility btn-danger {
-  @apply w-fit text-text-primary bg-bearish-600 hover:bg-bearish-700 border border-bearish-600 focus:ring-4 focus:ring-bearish-500/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-lg;
+  @apply w-fit text-text-primary bg-bearish-600 hover:bg-bearish-700 border border-bearish-600 focus:ring-4 focus:ring-bearish-500/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-lg rounded-lg active:scale-[0.98];
 }
 
 @utility btn-outline {
-  @apply w-fit text-text-secondary bg-transparent hover:bg-bg-secondary border border-border-primary focus:ring-4 focus:ring-border-focus/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 hover:text-text-primary;
+  @apply w-fit text-text-secondary bg-transparent hover:bg-bg-secondary border border-border-primary focus:ring-4 focus:ring-border-focus/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 hover:text-text-primary rounded-lg active:scale-[0.98];
 }
 
 @utility icon-btn {
@@ -347,11 +347,11 @@
 }
 
 @utility card {
-  @apply bg-bg-secondary overflow-hidden p-6 border border-border-primary transition-all duration-200 hover:border-border-hover shadow-sm hover:shadow-md;
+  @apply bg-bg-secondary overflow-hidden p-6 border border-border-primary transition-all duration-200 hover:border-border-hover shadow-sm hover:shadow-md rounded-lg;
 }
 
 @utility card-interactive {
-  @apply card hover:bg-bg-tertiary cursor-pointer hover:scale-[1.02] hover:shadow-lg;
+  @apply card hover:bg-bg-tertiary cursor-pointer hover:scale-[1.02] hover:shadow-lg active:scale-[0.98];
 }
 
 @utility link {

@@ -43,12 +43,12 @@ const filteredPosts = topic
         topic && (
           <div class="flex items-center gap-3">
             <span class="text-sm text-text-muted">Filtered by:</span>
-            <span class="px-3 py-1 text-sm font-medium bg-bullish-600/10 text-bullish-400 border border-bullish-600/20">
+            <span class="px-3 py-1 text-sm font-medium bg-bullish-600/10 text-bullish-400 border border-bullish-600/20 rounded-lg">
               {topic}
             </span>
             <a
               href="/blog"
-              class="text-sm text-text-muted hover:text-text-primary transition-colors"
+              class="link text-sm"
             >
               Clear filter
             </a>
@@ -83,7 +83,7 @@ const filteredPosts = topic
             <article class="group">
               <a
                 href={`/blog/${post.id}`}
-                class="block p-6 border border-border-primary hover:border-border-hover bg-bg-secondary/30 hover:bg-bg-secondary transition-all duration-200 relative"
+                class="card-interactive block"
               >
                 <div class="flex items-start justify-between gap-6">
                   <div class="flex-1 min-w-0">
@@ -152,7 +152,7 @@ const filteredPosts = topic
               : "No articles available yet."}
           </p>
           {topic && (
-            <a href="/blog" class="btn-primary mt-4">
+            <a href="/blog" class="btn-primary mt-4 inline-flex">
               View All Articles
             </a>
           )}
