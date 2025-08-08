@@ -272,7 +272,7 @@ const quizDataForClient = result ? JSON.stringify(result) : null;
 						name="url"
 						placeholder="https://example.com/article"
 						value={urlValue}
-						class="w-full rounded-md border border-border-primary shadow-sm focus:border-bullish-500 focus:ring-bullish-500 p-2 bg-bg-secondary text-text-primary"
+						class="w-full border border-border-primary shadow-sm focus:border-bullish-500 focus:ring-bullish-500 p-2 bg-bg-secondary text-text-primary"
 					/>
 				</div>
 
@@ -291,7 +291,7 @@ const quizDataForClient = result ? JSON.stringify(result) : null;
 						name="text"
 						rows="6"
 						placeholder="Paste your text content here..."
-						class="w-full rounded-md border border-border-primary shadow-sm focus:border-bullish-500 focus:ring-bullish-500 p-2 bg-bg-secondary text-text-primary"
+						class="w-full border border-border-primary shadow-sm focus:border-bullish-500 focus:ring-bullish-500 p-2 bg-bg-secondary text-text-primary"
 						>{textValue}</textarea
 					>
 					<div class="text-xs text-gray-500 mt-1">
@@ -310,7 +310,7 @@ const quizDataForClient = result ? JSON.stringify(result) : null;
 						id="language"
 						name="language"
 						required
-						class="w-full rounded-md border border-border-primary shadow-sm focus:border-bullish-500 focus:ring-bullish-500 p-2 bg-bg-secondary text-text-primary"
+						class="w-full border border-border-primary shadow-sm focus:border-bullish-500 focus:ring-bullish-500 p-2 bg-bg-secondary text-text-primary"
 					>
 						{
 							languages.map((lang) => (
@@ -336,7 +336,7 @@ const quizDataForClient = result ? JSON.stringify(result) : null;
 			{
 				error && (
 					<div
-						class="mt-6 p-4 border border-alert-critical-border bg-alert-critical-bg rounded-md text-alert-critical-text"
+						class="mt-6 p-4 border border-alert-critical-border bg-alert-critical-bg  text-alert-critical-text"
 						data-error-message
 					>
 						<p class="font-semibold">Error:</p>
@@ -354,7 +354,7 @@ const quizDataForClient = result ? JSON.stringify(result) : null;
 				{/* Initial State or No Results */}
 				{
 					!error && !result && (
-						<div class="min-h-[80px] p-4 border border-border-primary rounded-md bg-bg-secondary text-center text-text-muted">
+						<div class="min-h-[80px] p-4 border border-border-primary  bg-bg-secondary text-center text-text-muted">
 							{Astro.request.method === "POST"
 								? "No quiz generated. Check the URL or try different options."
 								: "Your generated quiz will appear here."}
@@ -559,7 +559,7 @@ const quizDataForClient = result ? JSON.stringify(result) : null;
 			} else {
 				// Display Feedback
 				const resultDiv = document.createElement("div");
-				resultDiv.className = `p-3 rounded-md text-sm ${isCorrect ? "bg-alert-success-bg text-alert-success-text border border-alert-success-border" : "bg-alert-critical-bg text-alert-critical-text border border-alert-critical-border"}`;
+				resultDiv.className = `p-3  text-sm ${isCorrect ? "bg-alert-success-bg text-alert-success-text border border-alert-success-border" : "bg-alert-critical-bg text-alert-critical-text border border-alert-critical-border"}`;
 				resultDiv.innerHTML = isCorrect
 					? `<span class="font-semibold">Correct!</span> Great job!`
 					: `<span class="font-semibold">Incorrect.</span> The correct answer was: <strong class="font-medium">${currentQuestion.answer}</strong>`;
@@ -621,7 +621,7 @@ const quizDataForClient = result ? JSON.stringify(result) : null;
 		(!quizData || !quizData.questions || quizData.questions.length === 0)
 	) {
 		// Handle case where server sent data, but it was empty or invalid JSON for questions
-		quizResultArea.innerHTML = `<div class="min-h-[80px] p-4 border border-border-primary rounded-md bg-bg-secondary text-center text-text-muted">
+		quizResultArea.innerHTML = `<div class="min-h-[80px] p-4 border border-border-primary  bg-bg-secondary text-center text-text-muted">
               No valid quiz questions were generated. Please check the URL or try again.
           </div>`;
 	}
