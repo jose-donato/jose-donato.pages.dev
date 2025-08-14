@@ -1,87 +1,58 @@
 ---
-import DarkMode from "./DarkMode.astro";
-
 const pathname = new URL(Astro.request.url).pathname;
 
 const LINKS = [
-	{ name: "Home", href: "/", icon: "material-symbols-home" },
-	{
-		name: "Projects",
-		href: "/projects",
-		icon: "material-symbols-playlist-add-check",
-	},
-	{
-		name: "Tools",
-		href: "/tools",
-		icon: "material-symbols-build",
-	},
-	{
-		name: "Blog",
-		href: "/blog",
-		icon: "material-symbols-article",
-	},
+  { name: "Home", href: "/", icon: "material-symbols-home" },
+  {
+    name: "Projects",
+    href: "/projects",
+    icon: "material-symbols-playlist-add-check",
+  },
+  {
+    name: "Tools",
+    href: "/tools",
+    icon: "material-symbols-build",
+  },
+  {
+    name: "Blog",
+    href: "/blog",
+    icon: "material-symbols-article",
+  },
 ];
 
 // Check if the current path starts with a specific route
 const isActive = (href: string) => {
-	if (href === "/") {
-		return pathname === href;
-	}
-	return pathname === href || pathname.startsWith(`${href}/`);
+  if (href === "/") {
+    return pathname === href;
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
 };
 ---
 
-<div class="flex justify-between items-center mb-10">
-  <div
-    class="flex transition-all ease-in-out gap-5"
+<div class="flex justify-center items-center mb-8 md:mb-12 px-4">
+  <nav
+    class="flex transition-all ease-in-out gap-1 sm:gap-2 bg-bg-secondary/50 backdrop-blur-sm px-1 sm:px-2 py-2 border border-border-primary/50 rounded-lg overflow-x-auto"
   >
-  {
-    LINKS.map((link) => (
-      <a
-        href={link.href}
-        class:list={[
-          "text-lg font-bold uppercase tracking-widest",
-          {
-            "text-zinc-700 dark:text-white": isActive(link.href),
-            "text-zinc-600": !isActive(link.href),
-            "underline-animation": isActive(link.href)
-          },
-        ]}
-        title={link.name}
-      >
-        {link.name}
-      </a>
-    ))
-  }
-  </div>
-  <DarkMode />
+    {
+      LINKS.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            "text-xs sm:text-sm md:text-base font-semibold uppercase tracking-wide transition-all duration-300 px-3 sm:px-4 md:px-6 py-2 md:py-3 relative overflow-hidden whitespace-nowrap rounded-md",
+            {
+              "text-text-primary bg-bullish-600/20 shadow-lg": isActive(
+                link.href,
+              ),
+              "text-text-muted hover:text-text-secondary hover:bg-bg-tertiary/50":
+                !isActive(link.href),
+            },
+          ]}
+          title={link.name}
+        >
+          {link.name}
+        </a>
+      ))
+    }
+  </nav>
 </div>
 
-<style>
-  .underline-animation {
-    position: relative;
-    padding-bottom: 5px;
-  }
-
-  .underline-animation::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background-image: linear-gradient(transparent, transparent), 
-    linear-gradient(#155dfc, #155dfc);
-    background-size: 100% 5px;
-    background-position: 0 100%;
-    background-repeat: no-repeat;
-    transition: background-size 0.5s ease-in-out;
-    rotate: -2deg;
-    animation: animateUnderline 1s;
-  }
-
-  @keyframes animateUnderline {
-    0% { background-size: 0% 5px; }
-    50% { background-size: 100% 5px; }
-  }
-</style>

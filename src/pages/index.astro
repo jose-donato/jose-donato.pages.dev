@@ -2,9 +2,9 @@
 import Icon from "../components/Icon.astro";
 import Layout from "../layouts/Layout.astro";
 import {
-	EDUCATION,
-	PAST_EXPERIENCE_HOMEPAGE,
-	HIGHLIGHTS_HOMEPAGE,
+  EDUCATION,
+  PAST_EXPERIENCE_HOMEPAGE,
+  HIGHLIGHTS_HOMEPAGE,
 } from "../utils/constants";
 import { marked } from "marked";
 ---
@@ -16,9 +16,7 @@ import { marked } from "marked";
       <ul class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         {
           HIGHLIGHTS_HOMEPAGE.map((highlight, idx) => (
-            <div
-              class="card w-fit flex flex-col gap-2 col-span-1"
-            >
+            <div class="card w-fit flex flex-col gap-2 col-span-1">
               <p class="font-bold">{highlight.title}</p>
               <p class="text-sm">{highlight.description}</p>
               <a
@@ -35,91 +33,122 @@ import { marked } from "marked";
       </ul>
     </div>
     <div>
-      <h2 class="text-lg font-bold uppercase tracking-widest">
-        Job Experience
+      <h2 class="text-lg font-bold uppercase tracking-widest mb-8">
+        Professional Experience
       </h2>
-      <ul class="mt-6 space-y-6">
-        {
-          PAST_EXPERIENCE_HOMEPAGE.map((experience) => (
-            <li>
-              <div class="flex gap-2 flex-col">
-                <h3 class="text-base font-semibold flex flex-col md:flex-row gap-1 md:items-center">
-                  {experience.title}{" "}
-                  {experience.place &&
-                    (experience.placeUrl ? (
-                      <a
-                        href={experience.placeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="text-sm font-normal relative w-fit"
-                      >
-                        @ {experience.place}{" "}
-                        <Icon
-                          id="material-symbols-open-in-new-rounded"
-                          className="h-2.5 w-2.5 absolute top-0.5 -right-3"
-                        />
-                      </a>
-                    ) : (
-                      <span class="text-sm font-normal">
-                        @ {experience.place}
+      <div class="relative">
+        <!-- Timeline line -->
+        <div class="absolute left-6 top-0 bottom-0 w-[2px] bg-gradient-to-b from-bullish-500 via-border-primary to-transparent hidden md:block"></div>
+        
+        <div class="space-y-8">
+          {
+            PAST_EXPERIENCE_HOMEPAGE.map((experience, index) => (
+              <div class="relative group">
+                <!-- Timeline dot -->
+                <div class="absolute left-4 top-6 w-4 h-4 bg-bullish-500 rounded-full border-2 border-bg-primary shadow-lg hidden md:block group-hover:scale-110 transition-transform duration-200"></div>
+                
+                <!-- Experience card -->
+                <div class="md:ml-16 card-interactive">
+                  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+                    <div class="flex-1">
+                      <h3 class="text-xl font-bold text-text-primary mb-2">
+                        {experience.title}
+                      </h3>
+                      {experience.place && (
+                        <div class="flex items-center gap-2">
+                          <span class="text-text-muted">@</span>
+                          {experience.placeUrl ? (
+                            <a
+                              href={experience.placeUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="link text-lg font-semibold flex items-center gap-2 group/link"
+                            >
+                              {experience.place}
+                              <Icon
+                                id="material-symbols-open-in-new-rounded"
+                                className="h-4 w-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform duration-200"
+                              />
+                            </a>
+                          ) : (
+                            <span class="text-lg font-semibold text-text-secondary">
+                              {experience.place}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <div class="flex-shrink-0">
+                      <span class="inline-flex items-center px-3 py-1 text-xs font-medium bg-bg-tertiary text-text-secondary border border-border-primary">
+                        {experience.date}
                       </span>
-                    ))}
-                </h3>
-                <p class="text-xs text-zinc-500">{experience.date}</p>
+                    </div>
+                  </div>
+                  
+                  <article
+                    class="prose prose-invert prose-sm max-w-none prose-a:link leading-relaxed"
+                    set:html={marked(experience.description)}
+                  />
+                </div>
               </div>
-              <article
-                class="my-2 prose dark:prose-invert prose-sm max-w-none prose-a:link"
-                set:html={marked(experience.description)}
-              />
-            </li>
-          ))
-        }
-      </ul>
+            ))
+          }
+        </div>
+      </div>
     </div>
     <div>
-      <h2 class="text-lg font-bold uppercase tracking-widest">Education</h2>
-      <ul class="mt-6 space-y-6">
+      <h2 class="text-lg font-bold uppercase tracking-widest mb-8">Education</h2>
+      
+      <div class="space-y-6">
         {
           EDUCATION.map((education) => (
-            <li>
-              <div class="flex gap-2 flex-col">
-                <h3 class="text-base font-semibold flex flex-col md:flex-row gap-1 md:items-center">
-                  {education.title}{" "}
-                  {education.place &&
-                    (education.placeUrl ? (
-                      <a
-                        href={education.placeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="text-sm font-normal relative w-fit"
-                      >
-                        @ {education.place}{" "}
-                        <Icon
-                          id="material-symbols-open-in-new-rounded"
-                          className="h-2.5 w-2.5 absolute top-0.5 -right-3"
-                        />
-                      </a>
-                    ) : (
-                      <span class="text-sm font-normal">
-                        @ {education.place}
-                      </span>
-                    ))}
-                </h3>
-                <p class="text-xs text-zinc-500">{education.date}</p>
+            <div class="card group">
+              <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-text-primary mb-2">
+                    {education.title}
+                  </h3>
+                  
+                  {education.place && (
+                    <div class="flex items-center gap-2 mb-3">
+                      {education.placeUrl ? (
+                        <a
+                          href={education.placeUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="link font-medium flex items-center gap-2"
+                        >
+                          {education.place}
+                          <Icon
+                            id="material-symbols-open-in-new-rounded"
+                            className="h-3 w-3"
+                          />
+                        </a>
+                      ) : (
+                        <span class="font-medium text-text-secondary">
+                          {education.place}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                  
+                  {education.description && (
+                    <p class="text-sm text-text-muted leading-relaxed">
+                      {education.description}
+                    </p>
+                  )}
+                </div>
+                
+                <div class="flex-shrink-0">
+                  <span class="inline-flex items-center px-3 py-1 text-xs font-medium bg-bg-tertiary text-text-secondary border border-border-primary">
+                    {education.date}
+                  </span>
+                </div>
               </div>
-              {/*
-              <article
-                class="my-2 prose dark:prose-invert prose-sm max-w-none"
-                dangerouslySetInnerHTML={{
-                  __html: render(
-                    education.description,
-                  ),
-                }}
-              />*/}
-            </li>
+            </div>
           ))
         }
-      </ul>
+      </div>
     </div>
   </div>
 </Layout>

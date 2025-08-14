@@ -7,14 +7,14 @@ import { getCollection } from "astro:content";
 const allPosts = await getCollection("blog");
 // Extract all topics from posts and create a unique, sorted array
 const allTopics = [
-	...new Set(allPosts.flatMap((post) => post.data.topics?.split(" ") || [])),
+  ...new Set(allPosts.flatMap((post) => post.data.topics?.split(" ") || [])),
 ].sort();
 // Handle filtering by topic
 const url = new URL(Astro.request.url);
 const topic = url.searchParams.get("topic") || "";
 const filteredPosts = topic
-	? allPosts.filter((post) => post.data.topics?.includes(topic))
-	: allPosts;
+  ? allPosts.filter((post) => post.data.topics?.includes(topic))
+  : allPosts;
 ---
 
 <Layout
@@ -25,8 +25,40 @@ const filteredPosts = topic
   }}
 >
   <script async src="https://platform.twitter.com/widgets.js"></script>
-  <div class="space-y-20">
-    <ul class="mt-6 space-y-2">
+
+  <div class="space-y-8">
+    <!-- Quick Stats Bar -->
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-6 text-sm text-text-muted">
+        <span
+          ><strong class="text-bullish-500">{filteredPosts.length}</strong> articles</span
+        >
+        <span class="text-border-primary">•</span>
+        <span
+          ><strong class="text-text-primary">{allTopics.length}</strong> topics</span
+        >
+      </div>
+
+      {
+        topic && (
+          <div class="flex items-center gap-3">
+            <span class="text-sm text-text-muted">Filtered by:</span>
+            <span class="px-3 py-1 text-sm font-medium bg-bullish-600/10 text-bullish-400 border border-bullish-600/20 rounded-lg">
+              {topic}
+            </span>
+            <a
+              href="/blog"
+              class="link text-sm"
+            >
+              Clear filter
+            </a>
+          </div>
+        )
+      }
+    </div>
+
+    <!-- Articles List -->
+    <div class="space-y-4">
       {
         filteredPosts
           .sort((a, b) => {
@@ -47,21 +79,85 @@ const filteredPosts = topic
             // Compare timestamps for descending order
             return dateB.getTime() - dateA.getTime();
           })
-          .map((post) => (
-            <li>
+          .map((post, index) => (
+            <article class="group">
               <a
                 href={`/blog/${post.id}`}
-                class="flex justify-between group items-center py-3 px-4 hover:bg-zinc-50 dark:hover:bg-zinc-900 rounded transition-colors"
+                class="card-interactive block"
               >
-                <h2 class="font-medium group-hover:underline">{post.data.title}</h2>
-                <span class="text-sm text-zinc-600 dark:text-zinc-400 ml-4 flex-shrink-0">
-                  {post.data.date}
-                </span>
+                <div class="flex items-start justify-between gap-6">
+                  <div class="flex-1 min-w-0">
+                    <h2 class="text-xl font-bold text-text-primary group-hover:text-bullish-400 transition-colors mb-2 line-clamp-2">
+                      {post.data.title}
+                    </h2>
+
+                    {post.data.snippet && (
+                      <p class="text-text-secondary text-base leading-relaxed mb-4 line-clamp-2">
+                        {post.data.snippet}
+                      </p>
+                    )}
+
+                    <div class="flex items-center gap-4 text-sm text-text-muted">
+                      {post.data.date && (
+                        <time class="font-mono">{post.data.date}</time>
+                      )}
+                      {post.data.readingTime && (
+                        <>
+                          <span>•</span>
+                          <span>{post.data.readingTime} min read</span>
+                        </>
+                      )}
+                      {post.data.topics && (
+                        <>
+                          <span>•</span>
+                          <div class="flex gap-2">
+                            {post.data.topics
+                              .split(" ")
+                              .slice(0, 2)
+                              .map((topic) => (
+                                <span class="text-bullish-400 hover:text-bullish-300 transition-colors">
+                                  #{topic}
+                                </span>
+                              ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1">
+                    <Icon
+                      id="material-symbols-arrow-outward"
+                      className="w-5 h-5 text-bullish-500"
+                    />
+                  </div>
+                </div>
               </a>
-            </li>
+            </article>
           ))
       }
-    </ul>
+    </div>
+
+    {/* Empty State */}
+    {
+      filteredPosts.length === 0 && (
+        <div class="text-center py-16">
+          <div class="text-6xl mb-4">📝</div>
+          <h3 class="text-xl font-semibold text-text-primary mb-2">
+            No articles found
+          </h3>
+          <p class="text-text-muted">
+            {topic
+              ? `No articles found for topic "${topic}"`
+              : "No articles available yet."}
+          </p>
+          {topic && (
+            <a href="/blog" class="btn-primary mt-4 inline-flex">
+              View All Articles
+            </a>
+          )}
+        </div>
+      )
+    }
   </div>
 </Layout>
-

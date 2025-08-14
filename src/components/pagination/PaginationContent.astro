@@ -1,0 +1,11 @@
+---
+export interface Props {
+    class?: string;
+}
+
+const { class: className, ...props } = Astro.props;
+---
+
+<ul class:list={["flex flex-row items-center gap-1", className]} {...props}>
+    <slot />
+</ul>

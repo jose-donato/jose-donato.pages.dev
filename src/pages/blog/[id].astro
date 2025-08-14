@@ -20,21 +20,91 @@ const hasPDF = post?.data.file?.endsWith(".pdf");
     description: post?.data.snippet || "Blog post details",
   }}
 >
-  <article class="prose dark:prose-invert max-w-none">
-    <h1 class="text-3xl font-bold">{post?.data.title}</h1>
-    
-    {post?.data.date && <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-2">{post.data.date}</p>}
-    
-    {post?.data.author && <p class="text-sm text-zinc-600 dark:text-zinc-400">By {post.data.author}</p>}
-    
-    {hasPDF ? (
-      <PDFViewer 
-        pdfPath={`/assets/${post?.data.file}`} 
-      />
-    ) : (
-      <div class="mt-6">
-        <Content />
+  <div class="max-w-4xl mx-auto">
+    <!-- Article Header -->
+    <header class="mb-12 pb-8 border-b border-border-primary">
+      <div class="mb-6">
+        <h1
+          class="text-4xl md:text-5xl font-bold text-text-primary leading-tight mb-4"
+        >
+          {post?.data.title}
+        </h1>
+
+        {
+          post?.data.snippet && (
+            <p class="text-xl text-text-secondary leading-relaxed">
+              {post.data.snippet}
+            </p>
+          )
+        }
       </div>
-    )}
-  </article>
+
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-6 text-sm text-text-muted">
+          {post?.data.date && <time class="font-mono">{post.data.date}</time>}
+          {
+            post?.data.readingTime && (
+              <>
+                <span>•</span>
+                <span>{post.data.readingTime} min read</span>
+              </>
+            )
+          }
+          {
+            post?.data.author && (
+              <>
+                <span>•</span>
+                <span>By {post.data.author}</span>
+              </>
+            )
+          }
+        </div>
+
+        {
+          post?.data.topics && (
+            <div class="flex gap-2">
+              {post.data.topics.split(" ").map((topic) => (
+                <span class="px-3 py-1 text-sm font-medium bg-bullish-600/10 text-bullish-400 border border-bullish-600/20">
+                  {topic}
+                </span>
+              ))}
+            </div>
+          )
+        }
+      </div>
+    </header>
+
+    <!-- Article Content -->
+    <article class="prose prose-invert prose-lg max-w-none">
+      {
+        hasPDF ? (
+          <PDFViewer pdfPath={`/assets/${post?.data.file}`} />
+        ) : (
+          <Content />
+        )
+      }
+    </article>
+
+    <!-- Back to Blog -->
+    <footer class="mt-16 pt-8 border-t border-border-primary">
+      <a
+        href="/blog"
+        class="inline-flex items-center gap-2 text-text-muted hover:text-bullish-400 transition-colors"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back to all articles
+      </a>
+    </footer>
+  </div>
 </Layout>

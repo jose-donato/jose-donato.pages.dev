@@ -118,7 +118,10 @@ Response JSON:`; // Explicitly ask for JSON
 			}
 		}
 	} catch (apiError) {
-		console.error("Error processing form or generating suggestions:", apiError);
+		console.error(
+			"Error processing form or generating suggestions:",
+			apiError,
+		);
 		// Attempt to provide a more specific error message if available
 		error = "Failed to generate gift suggestions due to an internal error.";
 		result = []; // Ensure result is empty on error
@@ -134,7 +137,8 @@ Response JSON:`; // Explicitly ask for JSON
 
 		<div class="flex justify-center items-center flex-col gap-2 my-5">
 			<p>
-				Get AI-powered gift suggestions based on tags, age, and price range.
+				Get AI-powered gift suggestions based on tags, age, and price
+				range.
 			</p>
 		</div>
 
@@ -151,8 +155,9 @@ Response JSON:`; // Explicitly ask for JSON
 						rows="3"
 						required
 						placeholder="e.g., reading, hiking, coffee lover, board games"
-						class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
-					>{tagsValue}</textarea>
+						class="w-full border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
+						>{tagsValue}</textarea
+					>
 					<p class="text-xs text-gray-500 mt-1">
 						Enter at least {MIN_TAGS} interests separated by commas.
 					</p>
@@ -160,7 +165,10 @@ Response JSON:`; // Explicitly ask for JSON
 
 				<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
 					<div>
-						<label for="minPrice" class="block text-sm font-medium mb-1">
+						<label
+							for="minPrice"
+							class="block text-sm font-medium mb-1"
+						>
 							Min Price ($) <span class="text-red-500">*</span>
 						</label>
 						<input
@@ -170,12 +178,15 @@ Response JSON:`; // Explicitly ask for JSON
 							value={minPriceValue}
 							placeholder="e.g., 25"
 							min="0"
-							class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
+							class="w-full border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
 							required
 						/>
 					</div>
 					<div>
-						<label for="maxPrice" class="block text-sm font-medium mb-1">
+						<label
+							for="maxPrice"
+							class="block text-sm font-medium mb-1"
+						>
 							Max Price ($) <span class="text-red-500">*</span>
 						</label>
 						<input
@@ -185,7 +196,7 @@ Response JSON:`; // Explicitly ask for JSON
 							value={maxPriceValue}
 							placeholder="e.g., 100"
 							min="0"
-							class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
+							class="w-full border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
 							required
 						/>
 					</div>
@@ -200,7 +211,7 @@ Response JSON:`; // Explicitly ask for JSON
 							value={ageValue}
 							placeholder="e.g., 30"
 							min="0"
-							class="w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
+							class="w-full border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
 							required
 						/>
 					</div>
@@ -217,74 +228,88 @@ Response JSON:`; // Explicitly ask for JSON
 				<h2 class="text-lg font-semibold mb-2">Suggested Gifts</h2>
 				<div
 					id="resultDisplay"
-					class="min-h-[80px] p-4 border border-gray-200 rounded-md bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700"
+					class="min-h-[80px] p-4 border border-border-primary bg-bg-secondary text-text-primary"
 				>
 					{/* Display Server-Side Error */}
-					{error && (
-						<div class="text-red-500 mb-2" data-error-message>
-							{error}
-						</div>
-					)}
+					{
+						error && (
+							<div class="text-red-500 mb-2" data-error-message>
+								{error}
+							</div>
+						)
+					}
 
 					{/* Display Server-Side Results */}
-					{result && result.length > 0 && (
-						<ul
-							class="list-none list-inside space-y-1"
-							data-result-list
-						>
-							{result.map((suggestion) => {
-								const productText = suggestion.product?.trim();
-								if (!productText) return null; // Skip if product is empty
+					{
+						result && result.length > 0 && (
+							<ul
+								class="list-none list-inside space-y-1"
+								data-result-list
+							>
+								{result.map((suggestion) => {
+									const productText =
+										suggestion.product?.trim();
+									if (!productText) return null; // Skip if product is empty
 
-								// Construct Amazon search URL
-								let amazonUrl = `https://www.amazon.com/s?k=${encodeURIComponent(productText)}`;
-								if (
-									minPriceValue &&
-									!Number.isNaN(parseFloat(minPriceValue)) &&
-									parseFloat(minPriceValue) >= 0
-								) {
-									amazonUrl += `&low-price=${minPriceValue}`;
-								}
-								if (
-									maxPriceValue &&
-									!Number.isNaN(parseFloat(maxPriceValue)) &&
-									parseFloat(maxPriceValue) >= 0
-								) {
-									amazonUrl += `&high-price=${maxPriceValue}`;
-								}
+									// Construct Amazon search URL
+									let amazonUrl = `https://www.amazon.com/s?k=${encodeURIComponent(productText)}`;
+									if (
+										minPriceValue &&
+										!Number.isNaN(
+											parseFloat(minPriceValue),
+										) &&
+										parseFloat(minPriceValue) >= 0
+									) {
+										amazonUrl += `&low-price=${minPriceValue}`;
+									}
+									if (
+										maxPriceValue &&
+										!Number.isNaN(
+											parseFloat(maxPriceValue),
+										) &&
+										parseFloat(maxPriceValue) >= 0
+									) {
+										amazonUrl += `&high-price=${maxPriceValue}`;
+									}
 
-								return (
-									<li class="flex justify-between items-center gap-2 flex-wrap">
-										<span>{productText}</span>
-										<div class="flex items-center gap-2 text-sm whitespace-nowrap">
-											{suggestion.price && (
-												<span class="text-gray-500">
-													({suggestion.price})
-												</span>
-											)}
-											<a
-												href={amazonUrl}
-												target="_blank"
-												rel="noopener noreferrer"
-												class="link"
-											>
-												Search Amazon
-											</a>
-										</div>
-									</li>
-								);
-							})}
-						</ul>
-					)}
+									return (
+										<li class="flex justify-between items-center gap-2 flex-wrap">
+											<span>{productText}</span>
+											<div class="flex items-center gap-2 text-sm whitespace-nowrap">
+												{suggestion.price && (
+													<span class="text-gray-500">
+														({suggestion.price})
+													</span>
+												)}
+												<a
+													href={amazonUrl}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="link"
+												>
+													Search Amazon
+												</a>
+											</div>
+										</li>
+									);
+								})}
+							</ul>
+						)
+					}
 
 					{/* Initial Empty State / No Results State */}
-					{!error && (!result || result.length === 0) && (
-						<div class="text-center text-gray-500" data-empty-state>
-							{Astro.request.method === "POST"
-								? "No suggestions found for these criteria."
-								: "Your suggested gifts will appear here."}
-						</div>
-					)}
+					{
+						!error && (!result || result.length === 0) && (
+							<div
+								class="text-center text-gray-500"
+								data-empty-state
+							>
+								{Astro.request.method === "POST"
+									? "No suggestions found for these criteria."
+									: "Your suggested gifts will appear here."}
+							</div>
+						)
+					}
 				</div>
 			</div>
 		</div>
@@ -292,16 +317,18 @@ Response JSON:`; // Explicitly ask for JSON
 		<div class="card p-6 mt-6">
 			<h2 class="font-bold text-lg mb-4">How it works</h2>
 			<p>
-				GiftSense uses AI to brainstorm gift ideas. Provide interests, age,
-				and a price range for the best results.
+				GiftSense uses AI to brainstorm gift ideas. Provide interests,
+				age, and a price range for the best results.
 			</p>
 			<ul class="list-disc list-inside space-y-2 mt-2">
 				<li>
-					Enter descriptive tags (comma-separated) related to the person or
-					occasion.
+					Enter descriptive tags (comma-separated) related to the
+					person or occasion.
 				</li>
 				<li>Specify the recipient's age and your budget.</li>
-				<li>Click "Suggest Gifts" to get AI-powered recommendations.</li>
+				<li>
+					Click "Suggest Gifts" to get AI-powered recommendations.
+				</li>
 			</ul>
 		</div>
 	</div>
@@ -310,11 +337,11 @@ Response JSON:`; // Explicitly ask for JSON
 <script>
 	// Scroll to Result Script
 	const resultContainer = document.querySelector(
-		'[data-result-container]',
+		"[data-result-container]",
 	) as HTMLElement;
 	// Check for elements that indicate a result or error was rendered by the server
-	const errorMessage = document.querySelector('[data-error-message]');
-	const resultList = document.querySelector('[data-result-list]');
+	const errorMessage = document.querySelector("[data-error-message]");
+	const resultList = document.querySelector("[data-result-list]");
 
 	// Only scroll if an error message or a result list is present
 	if (resultContainer && (errorMessage || resultList)) {
@@ -322,8 +349,8 @@ Response JSON:`; // Explicitly ask for JSON
 		requestAnimationFrame(() => {
 			window.scrollTo({
 				top: resultContainer.offsetTop - 100, // Adjust offset as needed
-				behavior: 'smooth',
+				behavior: "smooth",
 			});
 		});
 	}
-</script> 
+</script>

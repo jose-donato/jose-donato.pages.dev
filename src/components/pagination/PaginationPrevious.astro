@@ -1,0 +1,44 @@
+---
+import Icon from "../Icon.astro";
+
+export interface Props {
+    class?: string;
+    href?: string;
+}
+
+const { class: className, href, ...props } = Astro.props;
+---
+
+{
+    href ? (
+        <a
+            href={href}
+            class:list={[
+                "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium",
+                "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus",
+                "disabled:pointer-events-none disabled:opacity-50",
+                "h-10 px-4 py-2 gap-1 pl-2.5",
+                "hover:bg-bg-secondary text-text-secondary hover:text-text-primary",
+                className,
+            ]}
+            {...props}
+        >
+            <Icon id="material-symbols-chevron-left" className="h-4 w-4" />
+            <span>Previous</span>
+        </a>
+    ) : (
+        <span
+            class:list={[
+                "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium",
+                "disabled:pointer-events-none disabled:opacity-50",
+                "h-10 px-4 py-2 gap-1 pl-2.5",
+                "text-text-disabled cursor-not-allowed",
+                className,
+            ]}
+            {...props}
+        >
+            <Icon id="material-symbols-chevron-left" className="h-4 w-4" />
+            <span>Previous</span>
+        </span>
+    )
+}

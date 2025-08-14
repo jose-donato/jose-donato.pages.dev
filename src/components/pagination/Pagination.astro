@@ -1,0 +1,16 @@
+---
+export interface Props {
+    class?: string;
+}
+
+const { class: className, ...props } = Astro.props;
+---
+
+<nav
+    role="navigation"
+    aria-label="pagination"
+    class:list={["mx-auto flex w-full justify-center", className]}
+    {...props}
+>
+    <slot />
+</nav>

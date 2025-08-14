@@ -5,33 +5,41 @@ import Floater from "./Floater.astro";
 import { Image } from "astro:assets";
 ---
 
-<div class="flex flex-col md:flex-row items-center gap-10">
-  <div class="flex flex-col">
-    <h1 class="text-xl tracking-wide">
+<div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 mb-8">
+  <div class="flex flex-col flex-1 text-center md:text-left">
+    <h1
+      class="text-xl sm:text-2xl md:text-3xl tracking-tight font-light mb-4 md:mb-2"
+    >
       Hello! My name is
       {" "}
-      <span class="font-bold">José Donato</span>{" "}<span class="wave">👋</span
-      >
+      <span class="font-bold text-bullish-500">José Donato</span>
     </h1>
     <div
-      class="flex flex-col gap-1 text-sm text-zinc-500 dark:text-zinc-300 mt-4"
+      class="flex flex-col gap-4 text-sm sm:text-base text-text-secondary leading-relaxed mt-4 md:mt-6 px-4 md:px-0"
     >
       <p>
-        I'm a Fullstack Engineer from Portugal, specializing in building tools
-        for quants and traders. Currently leading web development at OpenBB,
-        I've architected and built OpenBB Workspace from the ground up over the
-        past 4 years. My passion lies at the intersection of <span
-          class="underline-animation">trading</span
-        > and <span class="underline-animation">web technology</span>.
+        I'm a <strong class="text-text-primary">Fullstack Engineer</strong> from
+        Portugal, specializing in building tools for quants and traders. Currently
+        leading web development at <strong class="text-bullish-500"
+          >OpenBB</strong
+        >, I've architected and built OpenBB Workspace from the ground up over
+        the past 4 years. My passion lies at the intersection of <span
+          class="underline-animation text-text-primary font-medium"
+          >trading</span
+        > and <span class="underline-animation text-text-primary font-medium"
+          >web technology</span
+        >.
       </p>
-      <p>Want to have a quick chat? You can DM me on Twitter or LinkedIn.</p>
+      <p class="text-text-muted">
+        Want to have a quick chat? You can DM me on Twitter or LinkedIn.
+      </p>
     </div>
-    <div class="flex gap-3 mt-4 items-end">
+    <div class="flex gap-4 mt-8 items-center">
       {
         SOCIALS.map((social) => (
           <a
             aria-label={social.name}
-            class="icon-btn"
+            class="icon-btn hover:scale-110 hover:bg-bullish-600/10"
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
@@ -42,23 +50,23 @@ import { Image } from "astro:assets";
       }
     </div>
   </div>
-  <div class="flex md:min-w-[20%]">
+  <div class="flex md:min-w-[240px] avatar-container order-first md:order-last">
     <Image
       src="/avatar.webp"
-      class="rounded-md h-40 object-cover shadow-lg"
-      alt="me"
-      width={160}
-      height={160}
+      class="h-32 w-32 sm:h-40 sm:w-40 md:h-48 md:w-48 object-cover shadow-2xl ring-2 ring-border-primary/20 avatar-glow mx-auto rounded-lg"
+      alt="José Donato"
+      width={192}
+      height={192}
     />
   </div>
 </div>
-<div class="h-[1px] w-full bg-zinc-600/30 dark:bg-zinc-300/50 my-4"></div>
+<div class="divider my-8"></div>
 <Floater />
 
 <style>
   .underline-animation {
     position: relative;
-    padding-bottom: 2px;
+    padding-bottom: 3px;
   }
 
   .underline-animation::after {
@@ -68,12 +76,26 @@ import { Image } from "astro:assets";
     left: 0;
     width: 100%;
     height: 2px;
-    background-image: linear-gradient(transparent, transparent),
-      linear-gradient(#155dfc, #155dfc);
-    background-size: 100% 2px;
-    background-position: 0 100%;
-    background-repeat: no-repeat;
-    rotate: -2deg;
+    background: var(--bullish-500);
+    transform: scaleX(1);
+    transform-origin: left;
+    transition: all 0.3s ease;
+  }
+
+  .underline-animation:hover::after {
+    background: var(--bullish-400);
+    height: 3px;
+  }
+
+  .avatar-container {
+    position: relative;
+  }
+
+  .avatar-glow {
+    position: relative;
+    box-shadow:
+      0 8px 25px -8px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(255, 255, 255, 0.05),
+      0 0 15px rgba(16, 185, 129, 0.15);
   }
 </style>
-

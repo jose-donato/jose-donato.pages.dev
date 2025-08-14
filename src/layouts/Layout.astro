@@ -23,16 +23,7 @@ const ogImageUrl = "/og_image.png";
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script is:inline>
-      // Immediately set the theme based on local storage or system preference
-      const theme =
-        localStorage.getItem("theme") ||
-        (window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light");
-      document.documentElement.classList.toggle("dark", theme === "dark");
-      // This ensures the theme is applied as early as possible, reducing flicker
-    </script>
+    <!-- Trading-focused dark mode only - no theme switching needed -->
 
     <link
       rel="apple-touch-icon"

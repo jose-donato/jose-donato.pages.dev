@@ -82,7 +82,7 @@ export const EDUCATION = [
 
 export const PAST_EXPERIENCE_HOMEPAGE = [
 	{
-		title: "Fullstack Developer",
+		title: "Fullstack Engineer",
 		place: "OpenBB",
 		placeUrl: "https://openbb.co",
 		description: `Currently working at OpenBB with the mission of building modern investment research platforms for everyone. Our primary product, [OpenBB Workspace](https://pro.openbb.co), is a web application built with React, TailwindCSS, Zustand, and other amazing technologies that enables AI workflows while guaranteeing full control over your data. I've also contributed to other projects including [openbb.co](https://openbb.co), our company website built with remix.run, and [my.openbb.co](https://my.openbb.co), our product management platform. Sign up for OpenBB Workspace [today](https://pro.openbb.co).`,
@@ -97,7 +97,7 @@ export const PAST_EXPERIENCE_HOMEPAGE = [
 		date: "2019 - 2020",
 	},
 	{
-		title: "Freelance Fullstack Developer",
+		title: "Freelance Fullstack Engineer",
 		place: "",
 		description: `In 2018, I built the credential platform for Queima das Fitas, one of the biggest festivals in Portugal - it enabled the creation of the credentials and included an application (in Flutter) to read the QR codes at the festivals' entrance. I have also built a [native application for a high school in my hometown](https://appadvice.com/app/myesjf/1462460664) and a different [application for Queima das Fitas](https://noticias.uc.pt/multimedia/videos/queimapp-chegou-a-primeira-aplicacao-mobile-dedicada-a-queima-das-fitas/) which later evolved into [EveApp](https://www.facebook.com/EveApp2019/). All these applications were built using React Native. Later, I developed several applications professionally including a website for a nation-wide radio [ruc.pt](https://ruc.pt) using Next.js, TailwindCSS for the frontend and Wordpress, GraphQL for the backend, as well as other web applications using Next.js and Firebase for clients in Upwork freelancing platform.`,
 		date: "2018 - 2020",

@@ -1,48 +1,54 @@
 ---
 import {
-	Pagination,
-	PaginationEllipsis,
-	PaginationContent,
-	PaginationItem,
-	PaginationLink,
-	PaginationNext,
-	PaginationPrevious,
-} from "@/components/starwind/pagination";
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/pagination";
 
 interface Props {
-	pdfPath: string;
-	workerPath?: string;
+  pdfPath: string;
+  workerPath?: string;
+  title?: string;
 }
 
 const {
-	pdfPath,
-	workerPath = "//unpkg.com/pdfjs-dist@4.0.269/build/pdf.worker.min.mjs",
-	title = "PDF Viewer",
+  pdfPath,
+  workerPath = "//unpkg.com/pdfjs-dist@4.0.269/build/pdf.worker.min.mjs",
+  title = "PDF Viewer",
 } = Astro.props;
 ---
 
 <div class="pdf-container">
-  <pdf-viewer 
-    data-pdf-path={pdfPath} 
+  <pdf-viewer
+    data-pdf-path={pdfPath}
     data-worker-path={workerPath}
     class="w-full"
   >
   </pdf-viewer>
-  
+
   <div class="pdf-navigation mt-4">
     <Pagination>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious  id="prev-page">Prev</PaginationPrevious>
+          <PaginationPrevious>
+            <span id="prev-page">Prev</span>
+          </PaginationPrevious>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink id="current-page">
-            <span id="current-page-number">1</span>/
-            <span id="total-pages">1</span>
+          <PaginationLink>
+            <span id="current-page">
+              <span id="current-page-number">1</span>/
+              <span id="total-pages">1</span>
+            </span>
           </PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationNext  id="next-page">Next</PaginationNext>
+          <PaginationNext>
+            <span id="next-page">Next</span>
+          </PaginationNext>
         </PaginationItem>
       </PaginationContent>
     </Pagination>
@@ -94,18 +100,18 @@ const {
           box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
       `;
-      
+
       this.shadowRoot?.append(style, this.canvas);
     }
 
     async renderPage(pageNum: number) {
       if (!this.pdfDocument) return;
-      
+
       this.currentPage = pageNum;
-      
+
       // Request the page
       const pdfPage = await this.pdfDocument.getPage(pageNum);
-      
+
       // Display page with responsive scaling
       const viewport = pdfPage.getViewport({ scale: 1.0 });
       const ctx = this.canvas.getContext("2d");
@@ -126,119 +132,119 @@ const {
         canvasContext: ctx,
         viewport,
       });
-      
+
       await renderTask.promise;
       this.updatePaginationUI();
     }
 
     updatePaginationUI() {
       // Update current page and total pages display
-      const currentPageSpan = document.getElementById('current-page-number');
-      const totalPagesSpan = document.getElementById('total-pages');
-      
+      const currentPageSpan = document.getElementById("current-page-number");
+      const totalPagesSpan = document.getElementById("total-pages");
+
       if (currentPageSpan) {
         currentPageSpan.textContent = this.currentPage.toString();
       }
       if (totalPagesSpan) {
         totalPagesSpan.textContent = this.totalPages.toString();
       }
-      
-      const paginationPages = document.getElementById('pagination-pages');
+
+      const paginationPages = document.getElementById("pagination-pages");
       if (!paginationPages) return;
-      
-      paginationPages.innerHTML = '';
-      
+
+      paginationPages.innerHTML = "";
+
       // Create pagination based on total pages
       const displayPages = Math.min(this.totalPages, 5);
       let startPage = Math.max(1, this.currentPage - 2);
       let endPage = Math.min(this.totalPages, startPage + displayPages - 1);
-      
+
       // Adjust start page if we're near the end
       if (endPage - startPage < displayPages - 1) {
         startPage = Math.max(1, endPage - displayPages + 1);
       }
-      
+
       // Add first page if not included in range
       if (startPage > 1) {
-        const item = document.createElement('pagination-item');
-        const link = document.createElement('pagination-link');
-        link.setAttribute('href', '#');
-        link.textContent = '1';
-        link.addEventListener('click', (e) => {
+        const item = document.createElement("pagination-item");
+        const link = document.createElement("pagination-link");
+        link.setAttribute("href", "#");
+        link.textContent = "1";
+        link.addEventListener("click", (e) => {
           e.preventDefault();
           this.renderPage(1);
         });
         item.appendChild(link);
         paginationPages.appendChild(item);
-        
+
         if (startPage > 2) {
-          const ellipsis = document.createElement('pagination-item');
-          const ellipsisContent = document.createElement('pagination-ellipsis');
+          const ellipsis = document.createElement("pagination-item");
+          const ellipsisContent = document.createElement("pagination-ellipsis");
           ellipsis.appendChild(ellipsisContent);
           paginationPages.appendChild(ellipsis);
         }
       }
-      
+
       // Add page numbers
       for (let i = startPage; i <= endPage; i++) {
-        const item = document.createElement('pagination-item');
-        const link = document.createElement('pagination-link');
-        link.setAttribute('href', '#');
+        const item = document.createElement("pagination-item");
+        const link = document.createElement("pagination-link");
+        link.setAttribute("href", "#");
         if (i === this.currentPage) {
-          link.setAttribute('isActive', 'true');
+          link.setAttribute("isActive", "true");
         }
         link.textContent = i.toString();
-        link.addEventListener('click', (e) => {
+        link.addEventListener("click", (e) => {
           e.preventDefault();
           this.renderPage(i);
         });
         item.appendChild(link);
         paginationPages.appendChild(item);
       }
-      
+
       // Add last page if not included in range
       if (endPage < this.totalPages) {
         if (endPage < this.totalPages - 1) {
-          const ellipsis = document.createElement('pagination-item');
-          const ellipsisContent = document.createElement('pagination-ellipsis');
+          const ellipsis = document.createElement("pagination-item");
+          const ellipsisContent = document.createElement("pagination-ellipsis");
           ellipsis.appendChild(ellipsisContent);
           paginationPages.appendChild(ellipsis);
         }
-        
-        const item = document.createElement('pagination-item');
-        const link = document.createElement('pagination-link');
-        link.setAttribute('href', '#');
+
+        const item = document.createElement("pagination-item");
+        const link = document.createElement("pagination-link");
+        link.setAttribute("href", "#");
         link.textContent = this.totalPages.toString();
-        link.addEventListener('click', (e) => {
+        link.addEventListener("click", (e) => {
           e.preventDefault();
           this.renderPage(this.totalPages);
         });
         item.appendChild(link);
         paginationPages.appendChild(item);
       }
-      
+
       // Update prev/next buttons
-      const prevButton = document.getElementById('prev-page');
-      const nextButton = document.getElementById('next-page');
-      
+      const prevButton = document.getElementById("prev-page");
+      const nextButton = document.getElementById("next-page");
+
       if (prevButton) {
         if (this.currentPage <= 1) {
-          prevButton.setAttribute('disabled', 'true');
+          prevButton.setAttribute("disabled", "true");
         } else {
-          prevButton.removeAttribute('disabled');
-          prevButton.addEventListener('click', (e) => {
+          prevButton.removeAttribute("disabled");
+          prevButton.addEventListener("click", (e) => {
             e.preventDefault();
             this.renderPage(this.currentPage - 1);
           });
         }
       }
-      
+
       if (nextButton) {
         if (this.currentPage >= this.totalPages) {
-          nextButton.setAttribute('disabled', 'true');
+          nextButton.setAttribute("disabled", "true");
         } else {
-          nextButton.removeAttribute('disabled');
-          nextButton.addEventListener('click', (e) => {
+          nextButton.removeAttribute("disabled");
+          nextButton.addEventListener("click", (e) => {
             e.preventDefault();
             this.renderPage(this.currentPage + 1);
           });
@@ -251,29 +257,29 @@ const {
 
       this.pdfDocument = await this.loadingTask.promise;
       this.totalPages = this.pdfDocument.numPages;
-      
+
       // Set up pagination controls
       this.setupPaginationControls();
-      
+
       // Render first page
       this.renderPage(1);
     }
-    
+
     setupPaginationControls() {
-      const prevButton = document.getElementById('prev-page');
-      const nextButton = document.getElementById('next-page');
-      
+      const prevButton = document.getElementById("prev-page");
+      const nextButton = document.getElementById("next-page");
+
       if (prevButton) {
-        prevButton.addEventListener('click', (e) => {
+        prevButton.addEventListener("click", (e) => {
           e.preventDefault();
           if (this.currentPage > 1) {
             this.renderPage(this.currentPage - 1);
           }
         });
       }
-      
+
       if (nextButton) {
-        nextButton.addEventListener('click', (e) => {
+        nextButton.addEventListener("click", (e) => {
           e.preventDefault();
           if (this.currentPage < this.totalPages) {
             this.renderPage(this.currentPage + 1);
@@ -297,50 +303,58 @@ const {
     disconnectedCallback() {
       window.removeEventListener(
         "DOMContentLoaded",
-        this.handleLoaded.bind(this)
+        this.handleLoaded.bind(this),
       );
     }
   }
 
   customElements.define("pdf-viewer", PDFViewer);
-  
+
   // Define custom elements for pagination
-  customElements.define('pagination-item', class extends HTMLElement {});
-  customElements.define('pagination-link', class extends HTMLElement {
-    static get observedAttributes() { return ['isActive']; }
-    
-    constructor() {
-      super();
-      this.style.display = 'inline-flex';
-      this.style.alignItems = 'center';
-      this.style.justifyContent = 'center';
-      this.style.cursor = 'pointer';
-      this.style.padding = '0.5rem';
-      this.style.margin = '0 0.25rem';
-      this.style.borderRadius = '0.375rem';
-      this.style.transition = 'background-color 0.2s';
-    }
-    
-    attributeChangedCallback(name, oldValue, newValue) {
-      if (name === 'isActive' && newValue === 'true') {
-        this.style.backgroundColor = 'rgb(229, 231, 235)';
-        this.style.fontWeight = 'bold';
-      } else {
-        this.style.backgroundColor = 'transparent';
-        this.style.fontWeight = 'normal';
+  customElements.define("pagination-item", class extends HTMLElement {});
+  customElements.define(
+    "pagination-link",
+    class extends HTMLElement {
+      static get observedAttributes() {
+        return ["isActive"];
       }
-    }
-  });
-  customElements.define('pagination-ellipsis', class extends HTMLElement {
-    constructor() {
-      super();
-      this.textContent = '...';
-      this.style.display = 'inline-flex';
-      this.style.alignItems = 'center';
-      this.style.justifyContent = 'center';
-      this.style.padding = '0.5rem';
-    }
-  });
+
+      constructor() {
+        super();
+        this.style.display = "inline-flex";
+        this.style.alignItems = "center";
+        this.style.justifyContent = "center";
+        this.style.cursor = "pointer";
+        this.style.padding = "0.5rem";
+        this.style.margin = "0 0.25rem";
+        this.style.borderRadius = "0.375rem";
+        this.style.transition = "background-color 0.2s";
+      }
+
+      attributeChangedCallback(name, oldValue, newValue) {
+        if (name === "isActive" && newValue === "true") {
+          this.style.backgroundColor = "rgb(229, 231, 235)";
+          this.style.fontWeight = "bold";
+        } else {
+          this.style.backgroundColor = "transparent";
+          this.style.fontWeight = "normal";
+        }
+      }
+    },
+  );
+  customElements.define(
+    "pagination-ellipsis",
+    class extends HTMLElement {
+      constructor() {
+        super();
+        this.textContent = "...";
+        this.style.display = "inline-flex";
+        this.style.alignItems = "center";
+        this.style.justifyContent = "center";
+        this.style.padding = "0.5rem";
+      }
+    },
+  );
 </script>
 
 <style>
@@ -348,7 +362,7 @@ const {
     margin: 2rem 0;
     width: 100%;
   }
-  
+
   .pdf-navigation {
     display: flex;
     justify-content: center;
