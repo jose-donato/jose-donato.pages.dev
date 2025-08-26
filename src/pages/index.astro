@@ -48,7 +48,7 @@ import { marked } from "marked";
                 <div class="absolute left-4 top-6 w-4 h-4 bg-bullish-500 rounded-full border-2 border-bg-primary shadow-lg hidden md:block group-hover:scale-110 transition-transform duration-200"></div>
                 
                 <!-- Experience card -->
-                <div class="md:ml-16 card-interactive">
+                <div class="md:ml-16 card">
                   <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
                     <div class="flex-1">
                       <h3 class="text-xl font-bold text-text-primary mb-2">
@@ -98,56 +98,83 @@ import { marked } from "marked";
     </div>
     <div>
       <h2 class="text-lg font-bold uppercase tracking-widest mb-8">Education</h2>
-      
-      <div class="space-y-6">
-        {
-          EDUCATION.map((education) => (
-            <div class="card group">
-              <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                <div class="flex-1">
-                  <h3 class="text-lg font-semibold text-text-primary mb-2">
-                    {education.title}
-                  </h3>
-                  
-                  {education.place && (
-                    <div class="flex items-center gap-2 mb-3">
-                      {education.placeUrl ? (
-                        <a
-                          href={education.placeUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="link font-medium flex items-center gap-2"
-                        >
-                          {education.place}
-                          <Icon
-                            id="material-symbols-open-in-new-rounded"
-                            className="h-3 w-3"
-                          />
-                        </a>
-                      ) : (
-                        <span class="font-medium text-text-secondary">
-                          {education.place}
-                        </span>
+      <div class="relative">
+        <!-- Timeline line -->
+        <div class="absolute left-6 top-0 bottom-0 w-[2px] bg-gradient-to-b from-bullish-500 via-border-primary to-transparent hidden md:block"></div>
+        
+        <div class="space-y-8">
+          {
+            EDUCATION.map((education, index) => (
+              <div class="relative group">
+                <!-- Timeline dot -->
+                <div class="absolute left-4 top-6 w-4 h-4 bg-bullish-500 rounded-full border-2 border-bg-primary shadow-lg hidden md:block group-hover:scale-110 transition-transform duration-200"></div>
+                
+                <!-- Education card -->
+                <div class="md:ml-16 card">
+                  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+                    <div class="flex-1">
+                      <h3 class="text-xl font-bold text-text-primary mb-2">
+                        {education.title}
+                      </h3>
+                      {education.place && (
+                        <div class="flex items-center gap-2">
+                          <span class="text-text-muted">@</span>
+                          {education.placeUrl ? (
+                            <a
+                              href={education.placeUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="link text-lg font-semibold flex items-center gap-2 group/link"
+                            >
+                              {education.place}
+                              <Icon
+                                id="material-symbols-open-in-new-rounded"
+                                className="h-4 w-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform duration-200"
+                              />
+                            </a>
+                          ) : (
+                            <span class="text-lg font-semibold text-text-secondary">
+                              {education.place}
+                            </span>
+                          )}
+                        </div>
                       )}
                     </div>
-                  )}
+                    <div class="flex-shrink-0">
+                      <span class="inline-flex items-center px-3 py-1 text-xs font-medium bg-bg-tertiary text-text-secondary border border-border-primary">
+                        {education.date}
+                      </span>
+                    </div>
+                  </div>
                   
                   {education.description && (
-                    <p class="text-sm text-text-muted leading-relaxed">
+                    <p class="text-sm text-text-muted leading-relaxed mb-4">
                       {education.description}
                     </p>
                   )}
                 </div>
-                
-                <div class="flex-shrink-0">
-                  <span class="inline-flex items-center px-3 py-1 text-xs font-medium bg-bg-tertiary text-text-secondary border border-border-primary">
-                    {education.date}
-                  </span>
-                </div>
               </div>
+            ))
+          }
+          
+          <!-- Learning motivation element -->
+          <div class="relative group">
+            <!-- Timeline dot with special styling -->
+            <div class="absolute left-4 top-6 w-4 h-4 bg-gradient-to-r from-bullish-400 to-bullish-600 rounded-full border-2 border-bg-primary shadow-lg hidden md:block group-hover:scale-110 transition-transform duration-200 animate-pulse"></div>
+            
+            <!-- Motivation card -->
+            <div class="md:ml-16 card border-bullish-600/20 bg-gradient-to-br from-bg-secondary to-bg-tertiary">
+              <div class="flex items-center gap-3 mb-3">
+                <h3 class="text-lg font-bold text-text-primary">
+                  Continuous Learning
+                </h3>
+              </div>
+              <p class="text-sm text-text-muted leading-relaxed">
+                My journey in technology is driven by an insatiable curiosity and commitment to continuous improvement. I actively engage with emerging technologies, contribute to open-source projects, and stay current with industry trends to deliver innovative solutions.
+              </p>
             </div>
-          ))
-        }
+          </div>
+        </div>
       </div>
     </div>
   </div>

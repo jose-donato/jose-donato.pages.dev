@@ -351,7 +351,7 @@
 }
 
 @utility card-interactive {
-  @apply card hover:bg-bg-tertiary cursor-pointer hover:scale-[1.02] hover:shadow-lg active:scale-[0.98];
+  @apply card hover:bg-bg-tertiary cursor-pointer hover:shadow-lg;
 }
 
 @utility link {
