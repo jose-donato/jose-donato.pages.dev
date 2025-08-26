@@ -1,0 +1,62 @@
+---
+import { Tweet } from "@astro-community/astro-embed-twitter";
+import { YouTube } from "@astro-community/astro-embed-youtube";
+import type { SocialMediaItem } from "../data/socialMedia";
+
+interface Props {
+  item: SocialMediaItem;
+}
+
+const { item } = Astro.props;
+---
+
+<article class="social-media-item">
+  <div class="card-interactive block group">
+    <div class="flex flex-col gap-4">
+      <!-- Social Media Content -->
+      <div class="social-media-embed">
+        {item.type === "tweet" && <Tweet theme="dark" id={item.url} />}
+        {item.type === "youtube" && <YouTube id={item.id} />}
+      </div>
+
+      <!-- Metadata -->
+      <div class="flex items-center justify-between text-sm text-text-muted">
+        <div class="flex items-center gap-4">
+          <time class="font-mono">{item.date}</time>
+          <span>•</span>
+          <span class="capitalize font-medium text-bullish-400">
+            {item.type === "tweet" ? "Twitter" : "YouTube"}
+          </span>
+          {
+            item.title && (
+              <>
+                <span>•</span>
+                <span class="text-text-secondary">{item.title}</span>
+              </>
+            )
+          }
+        </div>
+
+        {
+          item.tags && (
+            <div class="flex gap-2">
+              {item.tags.slice(0, 2).map((tag) => (
+                <span class="text-bullish-400 hover:text-bullish-300 transition-colors">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )
+        }
+      </div>
+
+      {
+        item.description && (
+          <p class="text-text-secondary text-sm leading-relaxed">
+            {item.description}
+          </p>
+        )
+      }
+    </div>
+  </div>
+</article>
