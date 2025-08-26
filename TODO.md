@@ -17,3 +17,6 @@
 - [ ] add https://astro-embed.netlify.app/components/youtube/ for pyth video
 - [ ] add https://astro-embed.netlify.app/components/twitter for good tweets, like a carousel in blog or something
 - [ ] think about a way to embed telegram bots
+
+- [ ] merge projects and tools somehow with two different sections.
+- [ ] on projects add ability to attach screenshot/gif think of a good UI for that.

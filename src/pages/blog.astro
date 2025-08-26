@@ -8,7 +8,9 @@ import { socialMediaContent, parseDate } from "../data/socialMedia";
 const allPosts = await getCollection("blog");
 
 // Extract all topics from posts and social media content
-const postTopics = allPosts.flatMap((post) => post.data.topics?.split(" ") || []);
+const postTopics = allPosts.flatMap(
+  (post) => post.data.topics?.split(" ") || [],
+);
 const socialTopics = socialMediaContent.flatMap((item) => item.tags || []);
 const allTopics = [...new Set([...postTopics, ...socialTopics])].sort();
 
@@ -29,22 +31,22 @@ const filteredSocialMedia = topic
 
 // Create unified content array for mixed display
 interface UnifiedContent {
-  type: 'article' | 'social';
+  type: "article" | "social";
   date: string;
   data: any;
 }
 
 const unifiedContent: UnifiedContent[] = [
-  ...filteredPosts.map(post => ({
-    type: 'article' as const,
-    date: post.data.date || '01-01-1970',
-    data: post
+  ...filteredPosts.map((post) => ({
+    type: "article" as const,
+    date: post.data.date || "01-01-1970",
+    data: post,
   })),
-  ...filteredSocialMedia.map(item => ({
-    type: 'social' as const,
+  ...filteredSocialMedia.map((item) => ({
+    type: "social" as const,
     date: item.date,
-    data: item
-  }))
+    data: item,
+  })),
 ];
 
 // Sort all content by date (newest first)
@@ -55,11 +57,14 @@ const sortedContent = unifiedContent.sort((a, b) => {
 });
 
 // Filter by content type
-const finalContent = contentType === 'all'
-  ? sortedContent
-  : sortedContent.filter(item =>
-      contentType === 'articles' ? item.type === 'article' : item.type === 'social'
-    );
+const finalContent =
+  contentType === "all"
+    ? sortedContent
+    : sortedContent.filter((item) =>
+        contentType === "articles"
+          ? item.type === "article"
+          : item.type === "social",
+      );
 ---
 
 <Layout
@@ -80,7 +85,8 @@ const finalContent = contentType === 'all'
         >
         <span class="text-border-primary">•</span>
         <span
-          ><strong class="text-bullish-400">{filteredSocialMedia.length}</strong> social posts</span
+          ><strong class="text-bullish-400">{filteredSocialMedia.length}</strong
+          > social posts</span
         >
         <span class="text-border-primary">•</span>
         <span
@@ -90,7 +96,7 @@ const finalContent = contentType === 'all'
 
       <div class="flex items-center gap-3 flex-wrap">
         {
-          (topic || contentType !== 'all') && (
+          (topic || contentType !== "all") && (
             <div class="flex items-center gap-3">
               <span class="text-sm text-text-muted">Filtered by:</span>
               {topic && (
@@ -98,15 +104,12 @@ const finalContent = contentType === 'all'
                   {topic}
                 </span>
               )}
-              {contentType !== 'all' && (
+              {contentType !== "all" && (
                 <span class="px-3 py-1 text-sm font-medium bg-purple-600/10 text-purple-400 border border-purple-600/20 rounded-lg">
                   {contentType}
                 </span>
               )}
-              <a
-                href="/blog"
-                class="link text-sm"
-              >
+              <a href="/blog" class="link text-sm">
                 Clear filters
               </a>
             </div>
@@ -120,31 +123,31 @@ const finalContent = contentType === 'all'
       <span class="text-sm font-medium text-text-primary">Show:</span>
       <div class="flex gap-2">
         <a
-          href={`/blog${topic ? `?topic=${topic}` : ''}`}
+          href={`/blog${topic ? `?topic=${topic}` : ""}`}
           class={`px-3 py-1 text-sm rounded-lg transition-colors ${
-            contentType === 'all'
-              ? 'bg-bullish-600/20 text-bullish-300 border border-bullish-600/30'
-              : 'text-text-muted hover:text-text-primary hover:bg-surface-secondary'
+            contentType === "all"
+              ? "bg-bullish-600/20 text-bullish-300 border border-bullish-600/30"
+              : "text-text-muted hover:text-text-primary hover:bg-surface-secondary"
           }`}
         >
           All Content
         </a>
         <a
-          href={`/blog?type=articles${topic ? `&topic=${topic}` : ''}`}
+          href={`/blog?type=articles${topic ? `&topic=${topic}` : ""}`}
           class={`px-3 py-1 text-sm rounded-lg transition-colors ${
-            contentType === 'articles'
-              ? 'bg-bullish-600/20 text-bullish-300 border border-bullish-600/30'
-              : 'text-text-muted hover:text-text-primary hover:bg-surface-secondary'
+            contentType === "articles"
+              ? "bg-bullish-600/20 text-bullish-300 border border-bullish-600/30"
+              : "text-text-muted hover:text-text-primary hover:bg-surface-secondary"
           }`}
         >
           Articles Only
         </a>
         <a
-          href={`/blog?type=social${topic ? `&topic=${topic}` : ''}`}
+          href={`/blog?type=social${topic ? `&topic=${topic}` : ""}`}
           class={`px-3 py-1 text-sm rounded-lg transition-colors ${
-            contentType === 'social'
-              ? 'bg-bullish-600/20 text-bullish-300 border border-bullish-600/30'
-              : 'text-text-muted hover:text-text-primary hover:bg-surface-secondary'
+            contentType === "social"
+              ? "bg-bullish-600/20 text-bullish-300 border border-bullish-600/30"
+              : "text-text-muted hover:text-text-primary hover:bg-surface-secondary"
           }`}
         >
           Social Media
@@ -156,7 +159,7 @@ const finalContent = contentType === 'all'
     <div class="space-y-6">
       {
         finalContent.map((item, index) => {
-          if (item.type === 'article') {
+          if (item.type === "article") {
             const post = item.data;
             return (
               <article>
@@ -165,44 +168,54 @@ const finalContent = contentType === 'all'
                   class="card-interactive block group"
                 >
                   <div class="flex items-start justify-between gap-6">
-                    <div class="flex-1 min-w-0">
-                      <h2 class="text-xl font-bold text-text-primary mb-2 line-clamp-2">
-                        {post.data.title}
-                      </h2>
+                    <div class="flex items-start gap-3 flex-1 min-w-0">
+                      <div class="flex-shrink-0 w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center mt-1">
+                        <Icon
+                          id="material-symbols-article"
+                          className="w-5 h-5 text-green-400"
+                        />
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <h2 class="text-xl font-bold text-text-primary mb-2 line-clamp-2">
+                          {post.data.title}
+                        </h2>
 
-                      {post.data.snippet && (
-                        <p class="text-text-secondary text-base leading-relaxed mb-4 line-clamp-2">
-                          {post.data.snippet}
-                        </p>
-                      )}
+                        {post.data.snippet && (
+                          <p class="text-text-secondary text-base leading-relaxed mb-4 line-clamp-2">
+                            {post.data.snippet}
+                          </p>
+                        )}
 
-                      <div class="flex items-center gap-4 text-sm text-text-muted">
-                        {post.data.date && (
-                          <time class="font-mono">{post.data.date}</time>
-                        )}
-                        {post.data.readingTime && (
-                          <>
-                            <span>•</span>
-                            <span>{post.data.readingTime} min read</span>
-                          </>
-                        )}
-                        <span>•</span>
-                        <span class="text-green-400 font-medium">Article</span>
-                        {post.data.topics && (
-                          <>
-                            <span>•</span>
-                            <div class="flex gap-2">
-                              {post.data.topics
-                                .split(" ")
-                                .slice(0, 2)
-                                .map((topic) => (
-                                  <span class="text-bullish-400 hover:text-bullish-300 transition-colors">
-                                    #{topic}
-                                  </span>
-                                ))}
-                            </div>
-                          </>
-                        )}
+                        <div class="flex items-center gap-4 text-sm text-text-muted">
+                          {post.data.date && (
+                            <time class="font-mono">{post.data.date}</time>
+                          )}
+                          {post.data.readingTime && (
+                            <>
+                              <span>•</span>
+                              <span>{post.data.readingTime} min read</span>
+                            </>
+                          )}
+                          <span>•</span>
+                          <span class="text-green-400 font-medium">
+                            Article
+                          </span>
+                          {post.data.topics && (
+                            <>
+                              <span>•</span>
+                              <div class="flex gap-2">
+                                {post.data.topics
+                                  .split(" ")
+                                  .slice(0, 2)
+                                  .map((topic) => (
+                                    <span class="text-bullish-400 hover:text-bullish-300 transition-colors">
+                                      #{topic}
+                                    </span>
+                                  ))}
+                              </div>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -236,13 +249,13 @@ const finalContent = contentType === 'all'
           <p class="text-text-muted">
             {topic
               ? `No content found for topic "${topic}"`
-              : contentType === 'articles'
-              ? "No articles available yet."
-              : contentType === 'social'
-              ? "No social media posts available yet."
-              : "No content available yet."}
+              : contentType === "articles"
+                ? "No articles available yet."
+                : contentType === "social"
+                  ? "No social media posts available yet."
+                  : "No content available yet."}
           </p>
-          {(topic || contentType !== 'all') && (
+          {(topic || contentType !== "all") && (
             <a href="/blog" class="btn-primary mt-4 inline-flex">
               View All Content
             </a>

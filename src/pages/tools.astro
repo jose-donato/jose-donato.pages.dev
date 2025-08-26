@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Icon from "../components/Icon.astro";
 import { TOOLS } from "../utils/constants";
 ---
 
@@ -7,15 +8,35 @@ import { TOOLS } from "../utils/constants";
   <div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       {
-        TOOLS.map((tool) => (
-          <a
-            href={`/tools/${tool.slug}`}
-            class="card-interactive"
-          >
-            <h2 class="text-xl font-semibold mb-2">{tool.title}</h2>
-            <p class="text-sm text-text-muted">{tool.description}</p>
-          </a>
-        ))
+        TOOLS.map((tool) => {
+          // Assign icons based on tool type
+          let iconId = "material-symbols-build";
+          if (tool.title.includes("Sprite")) {
+            iconId = "material-symbols-extension";
+          } else if (tool.title.includes("EmojiSense")) {
+            iconId = "material-symbols-psychology";
+          } else if (tool.title.includes("BTC")) {
+            iconId = "bitcoin-logo";
+          } else if (tool.title.includes("Gift")) {
+            iconId = "material-symbols-lightbulb-outline";
+          } else if (tool.title.includes("Quiz")) {
+            iconId = "material-symbols-playlist-add-check";
+          }
+
+          return (
+            <a href={`/tools/${tool.slug}`} class="card-interactive">
+              <div class="flex items-start gap-3 mb-3">
+                <div class="flex-shrink-0 w-10 h-10 bg-bullish-500/10 rounded-lg flex items-center justify-center">
+                  <Icon id={iconId} className="w-5 h-5 text-bullish-400" />
+                </div>
+                <div class="flex-1">
+                  <h2 class="text-xl font-semibold mb-2">{tool.title}</h2>
+                </div>
+              </div>
+              <p class="text-sm text-text-muted">{tool.description}</p>
+            </a>
+          );
+        })
       }
     </div>
   </div>
