@@ -6,6 +6,16 @@ interface Project {
 	url: string;
 	githubUrl?: string;
 	stars?: number;
+	screenshot?: string;
+	gif?: string;
+}
+
+interface Tool {
+	title: string;
+	slug: string;
+	description: string;
+	screenshot?: string;
+	gif?: string;
 }
 
 export const LINKS = [
@@ -14,8 +24,8 @@ export const LINKS = [
 		name: "About",
 	},
 	{
-		url: "/projects",
-		name: "Projects",
+		url: "/work",
+		name: "Work",
 	},
 	{
 		url: "/blog",
@@ -23,24 +33,27 @@ export const LINKS = [
 	},
 ];
 
-export const TOOLS = [
+export const TOOLS: Tool[] = [
 	{
 		title: "Sprite your SVGs",
 		slug: "sprite-your-svgs",
 		description:
 			"Transform and optimize your SVGs by generating an efficient sprite. Reduce HTTP requests, style with CSS, and externalize icon data.",
+		screenshot: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop&crop=center",
 	},
 	{
 		title: "EmojiSense",
 		slug: "emoji-sense",
 		description:
 			"AI-powered emoji suggestion tool that helps you find the perfect emojis for your text. Get customized emoji recommendations instantly.",
+		gif: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=400&fit=crop&crop=center",
 	},
 	{
 		title: "BTC 100K Countdown",
 		slug: "btc-100k",
 		description:
 			"A real-time Bitcoin price tracker that shows the progress towards $100,000, powered by Pyth Network's price feeds.",
+		screenshot: "https://images.unsplash.com/photo-1640340434855-6084b1f4901c?w=800&h=400&fit=crop&crop=center",
 	},
 	{
 		title: "Gift Helper",
@@ -140,6 +153,7 @@ export const PROJECTS: Project[] = [
 		],
 		description: "The company website for OpenBB.",
 		url: "https://openbb.co",
+		screenshot: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop&crop=center",
 	},
 	{
 		title: "OpenBB Workspace",
@@ -147,6 +161,7 @@ export const PROJECTS: Project[] = [
 		technologies: ["React", "TailwindCSS", "Zustand", "Tanstack/React Query"],
 		description: "Enterprise UI built for AI workflows.",
 		url: "https://pro.openbb.co",
+		gif: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop&crop=center",
 	},
 	{
 		title: "ollama-reply",
@@ -162,6 +177,7 @@ export const PROJECTS: Project[] = [
 		description:
 			"An open-source browser extension that leverages the power of the Ollama Llama3 model to generate engaging replies for social media growth.",
 		url: "https://github.com/jose-donato/ollama-reply",
+		screenshot: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=400&fit=crop&crop=center",
 	},
 	{
 		title: "Race Stack",
