@@ -82,18 +82,16 @@ const projectsWithStars = await Promise.all(
                         return (
                             <div class="card group flex flex-col">
                                 {/* Content Section */}
-                                <div class="flex items-start gap-3 mb-3">
+                                <div class="flex items-center gap-3 mb-3">
                                     <div class="flex-shrink-0 w-10 h-10 bg-bullish-500/10 rounded-lg flex items-center justify-center">
                                         <Icon
                                             id={iconId}
                                             className="w-5 h-5 text-bullish-400"
                                         />
                                     </div>
-                                    <div class="flex-1">
-                                        <h2 class="text-xl font-semibold mb-2">
-                                            {tool.title}
-                                        </h2>
-                                    </div>
+                                    <h2 class="text-xl font-semibold">
+                                        {tool.title}
+                                    </h2>
                                 </div>
                                 <p class="text-sm text-text-muted mb-4">
                                     {tool.description}
@@ -185,18 +183,20 @@ const projectsWithStars = await Promise.all(
                         return (
                             <div class="card group flex flex-col">
                                 {/* Content Section */}
-                                <div class="flex items-start gap-3 mb-3">
-                                    <div class="flex-shrink-0 w-10 h-10 bg-bullish-500/10 rounded-lg flex items-center justify-center">
-                                        <Icon
-                                            id={iconId}
-                                            className="w-5 h-5 text-bullish-400"
-                                        />
-                                    </div>
-                                    <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-3 justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-bullish-500/10 rounded-lg flex items-center justify-center">
+                                            <Icon
+                                                id={iconId}
+                                                className="w-5 h-5 text-bullish-400"
+                                            />
+                                        </div>
                                         <h2 class="font-bold">
                                             {project.title}
                                         </h2>
-                                        <p class="date mt-1">{project.type}</p>
+                                    </div>
+                                    <div class="">
+                                        <p class="date">{project.type}</p>
                                     </div>
                                 </div>
 

@@ -226,7 +226,7 @@ export const PROJECTS: Project[] = [
 		url: "https://github.com/OpenBB-finance/OpenBB",
 	},
 	{
-		title: "Credential Platform for Queima das Fitas",
+		title: "Credential Platform",
 		type: "mobile app",
 		technologies: ["Flutter", "Flask", "MySQL"],
 		description:
@@ -234,7 +234,7 @@ export const PROJECTS: Project[] = [
 		url: "",
 	},
 	{
-		title: "Native Application for a High School",
+		title: "High School App",
 		type: "mobile app",
 		technologies: ["React Native", "Expo"],
 		description: "A native application for a high school in my hometown.",

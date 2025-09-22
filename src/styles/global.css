@@ -358,7 +358,7 @@
 }
 
 @utility date {
-  @apply inline-flex items-center px-3 py-1 text-xs font-medium bg-bg-tertiary text-text-secondary border border-border-primary;
+  @apply inline-flex items-center px-3 py-1 text-xs font-medium bg-bg-tertiary text-text-secondary border border-border-primary whitespace-nowrap;
 }
 
 /* Professional wave animation */
