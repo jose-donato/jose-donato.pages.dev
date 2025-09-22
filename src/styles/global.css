@@ -338,7 +338,7 @@
 
 @utility icon-btn {
   @apply btn;
-  @apply aspect-square h-10 w-10 p-0 flex items-center justify-center;
+  @apply aspect-square h-9 w-9 p-0 flex items-center justify-center;
 }
 
 @utility card {
