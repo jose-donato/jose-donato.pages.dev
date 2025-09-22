@@ -101,26 +101,29 @@
 
 :root {
   --radius: 0.375rem;
-  
-  /* Base Colors - Dark Theme Foundation */
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #1a1a1a;
-  --bg-tertiary: #242424;
-  --bg-quaternary: #2d2d2d;
-  --bg-overlay: #374151;
+}
+
+/* Light Theme */
+:root {
+  /* Base Colors - Light Theme Foundation */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-quaternary: #e2e8f0;
+  --bg-overlay: #64748b;
   
   /* Text Hierarchy */
-  --text-primary: #ffffff;
-  --text-secondary: #e5e7eb;
-  --text-muted: #9ca3af;
-  --text-disabled: #6b7280;
-  --text-inverse: #0a0a0a;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-disabled: #94a3b8;
+  --text-inverse: #ffffff;
   
   /* Border System */
-  --border-primary: #374151;
-  --border-secondary: #4b5563;
+  --border-primary: #e2e8f0;
+  --border-secondary: #cbd5e1;
   --border-focus: #3b82f6;
-  --border-hover: #6b7280;
+  --border-hover: #94a3b8;
   
   /* Trading Colors - Bullish/Positive */
   --bullish-50: #eff6ff;
@@ -181,6 +184,50 @@
   --alert-info-text: #bfdbfe;
   --alert-info-icon: #60a5fa;
   
+  --alert-success-bg: #dcfdf4;
+  --alert-success-border: #10b981;
+  --alert-success-text: #065f46;
+  --alert-success-icon: #059669;
+}
+
+/* Dark Theme */
+.dark {
+  /* Base Colors - Dark Theme Foundation */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #242424;
+  --bg-quaternary: #2d2d2d;
+  --bg-overlay: #374151;
+  
+  /* Text Hierarchy */
+  --text-primary: #ffffff;
+  --text-secondary: #e5e7eb;
+  --text-muted: #9ca3af;
+  --text-disabled: #6b7280;
+  --text-inverse: #0a0a0a;
+  
+  /* Border System */
+  --border-primary: #374151;
+  --border-secondary: #4b5563;
+  --border-focus: #3b82f6;
+  --border-hover: #6b7280;
+  
+  /* Alert System Colors */
+  --alert-critical-bg: #7f1d1d;
+  --alert-critical-border: #dc2626;
+  --alert-critical-text: #fecaca;
+  --alert-critical-icon: #ef4444;
+  
+  --alert-warning-bg: #78350f;
+  --alert-warning-border: #f59e0b;
+  --alert-warning-text: #fed7aa;
+  --alert-warning-icon: #fbbf24;
+  
+  --alert-info-bg: #1e3a8a;
+  --alert-info-border: #3b82f6;
+  --alert-info-text: #bfdbfe;
+  --alert-info-icon: #60a5fa;
+  
   --alert-success-bg: #1e3a8a;
   --alert-success-border: #3b82f6;
   --alert-success-text: #dbeafe;
@@ -194,6 +241,23 @@
   body {
     @apply bg-bg-primary text-text-primary font-sans;
   }
+}
+
+/* Adaptive grid background */
+.bg-grid-pattern {
+  background-image: 
+    radial-gradient(circle at center, transparent 0%, transparent 60%, var(--bg-primary) 100%),
+    linear-gradient(var(--border-primary) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+  background-size: 
+    100% 100%,
+    24px 24px,
+    24px 24px;
+  background-position: 
+    center,
+    0 0,
+    0 0;
+  opacity: 0.3;
 }
 
 /* Custom animations for real-time data */

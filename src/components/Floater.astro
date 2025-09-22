@@ -33,7 +33,7 @@ const isActive = (href: string) => {
 
 <div class="flex justify-center items-center mb-8 md:mb-12 px-4">
   <nav
-    class="flex transition-all ease-in-out gap-2 bg-bg-secondary/50 backdrop-blur-sm px-2 py-2 border border-border-primary/50 rounded-lg overflow-x-auto"
+    class="flex transition-all ease-in-out gap-2 bg-bg-secondary/50 backdrop-blur-sm px-2 py-2 border border-border-primary/50 rounded-lg overflow-x-auto shadow"
   >
     {
       LINKS.map((link) => (
@@ -42,9 +42,7 @@ const isActive = (href: string) => {
           class:list={[
             "text-xs sm:text-sm md:text-base font-semibold uppercase tracking-wide transition-all duration-300 px-6 py-3 relative overflow-hidden whitespace-nowrap rounded-md",
             {
-              "text-text-primary bg-bullish-600/20 shadow-lg": isActive(
-                link.href,
-              ),
+              "text-text-primary bg-bullish-600/20": isActive(link.href),
               "text-text-muted hover:text-text-secondary hover:bg-bg-tertiary/50":
                 !isActive(link.href),
             },

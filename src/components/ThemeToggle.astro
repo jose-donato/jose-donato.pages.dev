@@ -1,0 +1,70 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<button
+  id="theme-toggle"
+  aria-label="Toggle theme"
+  class="icon-btn hover:scale-110 hover:bg-bg-tertiary items-center justify-center"
+>
+  <Icon
+    id="material-symbols-light-mode-outline-rounded"
+    className="h-4 w-4 hidden dark:block"
+  />
+  <Icon
+    id="material-symbols-dark-mode-outline-rounded"
+    className="h-4 w-4 block dark:hidden"
+  />
+</button>
+
+<script>
+  function initTheme() {
+    const toggle = document.getElementById("theme-toggle");
+
+    // Get initial theme from localStorage or system preference
+    const getInitialTheme = () => {
+      const stored = localStorage.getItem("theme");
+      if (stored) return stored;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+    };
+
+    let currentTheme = getInitialTheme();
+
+    // Apply theme to document
+    const applyTheme = (theme: string) => {
+      document.documentElement.classList.toggle("dark", theme === "dark");
+      localStorage.setItem("theme", theme);
+    };
+
+    // Initial theme application
+    applyTheme(currentTheme);
+
+    // Toggle theme on button click
+    toggle?.addEventListener("click", () => {
+      currentTheme = currentTheme === "dark" ? "light" : "dark";
+      applyTheme(currentTheme);
+    });
+
+    // Listen for system theme changes
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (e) => {
+        if (!localStorage.getItem("theme")) {
+          currentTheme = e.matches ? "dark" : "light";
+          applyTheme(currentTheme);
+        }
+      });
+  }
+
+  // Initialize on page load
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initTheme);
+  } else {
+    initTheme();
+  }
+
+  // Re-initialize on page navigation (for SPA-like behavior)
+  document.addEventListener("astro:page-load", initTheme);
+</script>
