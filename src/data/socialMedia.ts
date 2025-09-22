@@ -49,9 +49,9 @@ export const socialMediaContent: SocialMediaItem[] = [
     type: 'youtube',
     url: 'https://www.youtube.com/watch?v=LWUioH_ncQk',
     date: '15-01-2025',
-    title: 'YouTube Video',
-    description: 'A video from José Donato',
-    tags: ['youtube', 'video']
+    title: 'Pyth Integration: Real-Time Data + AI',
+    description: 'Developed OpenBB\'s first real-time widget using Pyth Network integration, showcasing the future of finance through a combination of real-time data feeds, and AI capabilities.',
+    tags: ['openbb', 'pyth', 'ai', 'realtime', 'finance']
   }
 ];
 

@@ -2,22 +2,36 @@
 import { getEntry } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import PDFViewer from "../../components/PDFViewer.astro";
+import Icon from "../../components/Icon.astro";
 import { render } from "astro:content";
+import { socialMediaContent, extractYouTubeId } from "../../data/socialMedia";
 
 const { id = "" } = Astro.params;
 
+// Try to get blog post first
 const post = await getEntry("blog", id);
 
-const { Content } = await render(post);
+// If no blog post found, check if it's a video
+const video = !post ? socialMediaContent.find(item => item.type === 'youtube' && item.id === id) : null;
+
+// If neither found, redirect to blog
+if (!post && !video) {
+  return Astro.redirect('/blog');
+}
+
+const Content = post ? (await render(post)).Content : null;
 
 // Check if post has PDF file
 const hasPDF = post?.data.file?.endsWith(".pdf");
+
+// Video-specific data
+const videoId = video ? extractYouTubeId(video.url) : null;
 ---
 
 <Layout
   seo={{
-    title: post?.data.title || "Blog Post",
-    description: post?.data.snippet || "Blog post details",
+    title: post?.data.title || video?.title || "Content",
+    description: post?.data.snippet || video?.description || "Content details",
   }}
 >
   <div class="max-w-4xl mx-auto">
@@ -27,13 +41,13 @@ const hasPDF = post?.data.file?.endsWith(".pdf");
         <h1
           class="text-4xl md:text-5xl font-bold text-text-primary leading-tight mb-4"
         >
-          {post?.data.title}
+          {post?.data.title || video?.title || 'Content'}
         </h1>
 
         {
-          post?.data.snippet && (
+          (post?.data.snippet || video?.description) && (
             <p class="text-xl text-text-secondary leading-relaxed">
-              {post.data.snippet}
+              {post?.data.snippet || video?.description}
             </p>
           )
         }
@@ -41,12 +55,20 @@ const hasPDF = post?.data.file?.endsWith(".pdf");
 
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-6 text-sm text-text-muted">
-          {post?.data.date && <time>{post.data.date}</time>}
+          {(post?.data.date || video?.date) && <time>{post?.data.date || video?.date}</time>}
           {
             post?.data.readingTime && (
               <>
                 <span>•</span>
                 <span>{post.data.readingTime} min read</span>
+              </>
+            )
+          }
+          {
+            video && (
+              <>
+                <span>•</span>
+                <span class="text-bullish-400 font-medium">Video</span>
               </>
             )
           }
@@ -65,8 +87,19 @@ const hasPDF = post?.data.file?.endsWith(".pdf");
             post?.data.topics && (
               <div class="flex gap-2">
                 {post.data.topics.split(" ").map((topic) => (
-                  <span class="px-3 py-1 text-sm font-medium bg-bullish-600/10 text-bullish-400 border border-bullish-600/20">
+                  <span class="px-3 py-1 text-sm font-medium bg-bullish-600/10 text-bullish-400 border border-bullish-600/20 rounded">
                     {topic}
+                  </span>
+                ))}
+              </div>
+            )
+          }
+          {
+            video?.tags && (
+              <div class="flex gap-2">
+                {video.tags.map((tag) => (
+                  <span class="px-3 py-1 text-sm font-medium bg-bullish-600/10 text-bullish-400 border border-bullish-600/20 rounded">
+                    #{tag}
                   </span>
                 ))}
               </div>
@@ -95,17 +128,47 @@ const hasPDF = post?.data.file?.endsWith(".pdf");
               </a>
             )
           }
+          {
+            video && (
+              <a
+                href={video.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-3 py-1 text-sm font-medium text-text-muted hover:text-bullish-400 transition-colors border border-border-primary hover:border-bullish-600/20 rounded"
+              >
+                <Icon id="material-symbols-open-in-new-rounded" className="w-4 h-4" />
+                Watch on YouTube
+              </a>
+            )
+          }
         </div>
       </div>
     </header>
 
-    <!-- Article Content -->
-    <article class="prose prose-invert prose-lg max-w-none">
+    <!-- Content -->
+    <article class="mb-16">
       {
-        hasPDF ? (
+        video ? (
+          <div class="bg-bg-secondary rounded-lg overflow-hidden border border-border-primary mb-8">
+            <div class="video-container">
+              <iframe
+                class="w-full"
+                src={`https://www.youtube.com/embed/${videoId}?rel=0`}
+                title={video.title || 'YouTube Video'}
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                style="aspect-ratio: 16/9;"
+              >
+              </iframe>
+            </div>
+          </div>
+        ) : hasPDF ? (
           <PDFViewer pdfPath={`/assets/${post?.data.file}`} />
         ) : (
-          <Content />
+          <div class="prose prose-invert prose-lg max-w-none">
+            <Content />
+          </div>
         )
       }
     </article>
@@ -128,8 +191,15 @@ const hasPDF = post?.data.file?.endsWith(".pdf");
             stroke-width="2"
             d="M15 19l-7-7 7-7"></path>
         </svg>
-        Back to all articles
+Back to all content
       </a>
     </footer>
   </div>
 </Layout>
+
+<style>
+  .video-container {
+    position: relative;
+    width: 100%;
+  }
+</style>

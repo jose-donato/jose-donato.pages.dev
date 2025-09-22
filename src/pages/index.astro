@@ -3,6 +3,7 @@ import Icon from "../components/Icon.astro";
 import Layout from "../layouts/Layout.astro";
 import VideoModal from "../components/VideoModal.astro";
 import PDFModal from "../components/PDFModal.astro";
+import TwitterDemosModal from "../components/TwitterDemosModal.astro";
 import {
   EDUCATION,
   PAST_EXPERIENCE_HOMEPAGE,
@@ -28,6 +29,8 @@ function getYouTubeVideoId(url: string): string | null {
             let iconId = "material-symbols-lightbulb-outline";
             if (highlight.title.includes("OpenBB Workspace")) {
               iconId = "material-symbols-rocket-launch";
+            } else if (highlight.title.includes("Twitter Posts")) {
+              iconId = "material-symbols-trending-up";
             } else if (highlight.title.includes("Pyth")) {
               iconId = "material-symbols-trending-up";
             } else if (highlight.title.includes("Performance")) {
@@ -47,6 +50,16 @@ function getYouTubeVideoId(url: string): string | null {
                 >
                   Sign up
                 </a>
+              );
+            } else if (highlight.title.includes("Twitter Posts")) {
+              // Twitter posts modal button
+              actionElement = (
+                <button
+                  class="inline-flex items-center gap-2 text-sm link mt-auto self-end"
+                  onclick="showTwitterDemosModal()"
+                >
+                  View posts
+                </button>
               );
             } else if (highlight.title.includes("Pyth")) {
               // Video demo button for Pyth
@@ -262,4 +275,5 @@ function getYouTubeVideoId(url: string): string | null {
   <!-- Modals (hidden by default) -->
   <VideoModal videoId="LWUioH_ncQk" title="Pyth Integration: Real-Time Data + AI" />
   <PDFModal pdfPath="/master_thesis.pdf" title="Comparing the Performance of Web Applications to Native Applications" />
+  <TwitterDemosModal />
 </Layout>

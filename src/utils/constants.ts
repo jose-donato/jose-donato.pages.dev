@@ -125,6 +125,12 @@ export const HIGHLIGHTS_HOMEPAGE = [
 		url: "https://pro.openbb.co",
 	},
 	{
+		title: "Twitter Posts",
+		description:
+			"Browse a curated collection of my Twitter posts in a dedicated modal. See demos, tools, and projects I share, with quick access to follow my development journey.",
+		url: "#twitter-demos",
+	},
+	{
 		title: "Pyth Integration: Real-Time Data + AI",
 		description:
 			"Developed OpenBB's first real-time widget using Pyth Network integration, showcasing the future of finance through a combination of real-time data feeds, and AI capabilities.",
