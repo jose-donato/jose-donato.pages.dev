@@ -119,20 +119,20 @@
   /* Border System */
   --border-primary: #374151;
   --border-secondary: #4b5563;
-  --border-focus: #10b981;
+  --border-focus: #3b82f6;
   --border-hover: #6b7280;
   
   /* Trading Colors - Bullish/Positive */
-  --bullish-50: #ecfdf5;
-  --bullish-100: #d1fae5;
-  --bullish-200: #a7f3d0;
-  --bullish-300: #6ee7b7;
-  --bullish-400: #34d399;
-  --bullish-500: #10b981;
-  --bullish-600: #059669;
-  --bullish-700: #047857;
-  --bullish-800: #065f46;
-  --bullish-900: #064e3b;
+  --bullish-50: #eff6ff;
+  --bullish-100: #dbeafe;
+  --bullish-200: #bfdbfe;
+  --bullish-300: #93c5fd;
+  --bullish-400: #60a5fa;
+  --bullish-500: #3b82f6;
+  --bullish-600: #2563eb;
+  --bullish-700: #1d4ed8;
+  --bullish-800: #1e40af;
+  --bullish-900: #1e3a8a;
   
   /* Trading Colors - Bearish/Negative */
   --bearish-50: #fef2f2;
@@ -181,10 +181,10 @@
   --alert-info-text: #bfdbfe;
   --alert-info-icon: #60a5fa;
   
-  --alert-success-bg: #064e3b;
-  --alert-success-border: #10b981;
-  --alert-success-text: #d1fae5;
-  --alert-success-icon: #34d399;
+  --alert-success-bg: #1e3a8a;
+  --alert-success-border: #3b82f6;
+  --alert-success-text: #dbeafe;
+  --alert-success-icon: #60a5fa;
 }
 
 @layer base {
@@ -212,14 +212,14 @@
   100% { opacity: 1; }
 }
 
-@keyframes pulse-green {
+@keyframes pulse-blue {
   0%, 100% {
     opacity: 1;
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
   }
   50% {
     opacity: 0.8;
-    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
   }
 }
 
@@ -247,8 +247,8 @@
   animation: fadeIn 0.2s ease-in;
 }
 
-.animate-pulse-green {
-  animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.animate-pulse-blue {
+  animation: pulse-blue 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .animate-pulse-red {
@@ -427,9 +427,9 @@
   width: 100%;
   opacity: 0.03;
   background-image:
-    radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 75% 75%, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
-    linear-gradient(135deg, transparent 0%, rgba(16, 185, 129, 0.02) 50%, transparent 100%);
+    linear-gradient(135deg, transparent 0%, rgba(59, 130, 246, 0.02) 50%, transparent 100%);
   background-size: 800px 800px, 600px 600px, 100% 100%;
   background-position: 0px 0px, 100% 100%, 0px 0px;
   pointer-events: none;
