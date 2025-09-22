@@ -93,29 +93,6 @@ const finalContent =
           ><strong class="text-text-primary">{allTopics.length}</strong> topics</span
         >
       </div>
-
-      <div class="flex items-center gap-3 flex-wrap">
-        {
-          (topic || contentType !== "all") && (
-            <div class="flex items-center gap-3">
-              <span class="text-sm text-text-muted">Filtered by:</span>
-              {topic && (
-                <span class="px-3 py-1 text-sm font-medium bg-bullish-600/10 text-bullish-400 border border-bullish-600/20 rounded-lg">
-                  {topic}
-                </span>
-              )}
-              {contentType !== "all" && (
-                <span class="px-3 py-1 text-sm font-medium bg-purple-600/10 text-purple-400 border border-purple-600/20 rounded-lg">
-                  {contentType}
-                </span>
-              )}
-              <a href="/blog" class="link text-sm">
-                Clear filters
-              </a>
-            </div>
-          )
-        }
-      </div>
     </div>
 
     <!-- Content Type Filter -->
