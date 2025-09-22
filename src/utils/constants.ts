@@ -93,7 +93,7 @@ export const PAST_EXPERIENCE_HOMEPAGE = [
 		title: "Fullstack Engineer",
 		place: "OpenBB",
 		placeUrl: "https://openbb.co",
-		description: `Currently working at OpenBB with the mission of building modern investment research platforms for everyone. Our primary product, [OpenBB Workspace](https://pro.openbb.co), is a web application built with React, TailwindCSS, Zustand, and other amazing technologies that enable AI workflows while guaranteeing full control over your data. I've also contributed to other projects including [openbb.co](https://openbb.co), our company website built with remix.run, and [my.openbb.co](https://my.openbb.co), our product management platform. Sign up for OpenBB Workspace [today](https://pro.openbb.co).`,
+		description: `Currently at OpenBB, my team is building a modern investment research platform. Our flagship product, [OpenBB Workspace](https://pro.openbb.co), is a React-based web app powered by TailwindCSS, Zustand, and other cutting-edge tech that supports AI workflows while ensuring full control of your data. I've also contributed to [openbb.co](https://openbb.co), our Remix-run company website, and [my.openbb.co](https://my.openbb.co), our product management platform. You can sign up and explore the Workspace for [free](https://pro.openbb.co).`,
 		date: "2021 - Present",
 	},
 	{
@@ -117,19 +117,22 @@ export const HIGHLIGHTS_HOMEPAGE = [
 		title: "Building OpenBB Workspace",
 		description:
 			"Leading the development of OpenBB Workspace, a performant web application highly customizable that enables AI workflows while guaranteeing full control over your data.",
-		url: "https://pro.openbb.co",
+		url: "https://openbb.co/products/workspace",
+		icon: "uis-graph-bar",
 	},
 	{
 		title: "Twitter Posts",
 		description:
-			"Explore the demos, tools, and projects I’ve recently shared on Twitter and learn a bit about my development journey.",
+			"Explore the demos, tools, and projects I've recently shared on Twitter and learn a bit about my development journey.",
 		url: "#twitter-demos",
+		icon: "proicons-x-twitter",
 	},
 	{
 		title: "Pyth Integration: Real-Time Data + AI",
 		description:
 			"Developed OpenBB's first real-time widget using Pyth Network integration, showcasing the future of finance through a combination of real-time data feeds, and AI capabilities.",
 		url: "https://www.youtube.com/watch?v=LWUioH_ncQk",
+		icon: "material-symbols-play-circle",
 	},
 	{
 		title:
@@ -137,6 +140,7 @@ export const HIGHLIGHTS_HOMEPAGE = [
 		description:
 			"In my master's thesis, I conducted a comparative study between web and native applications for mobile devices, exploring their reliability and performance.",
 		url: "/master_thesis.pdf",
+		icon: "material-symbols-menu-book-rounded",
 	},
 ];
 
@@ -318,7 +322,7 @@ export const SOCIALS = [
 	},
 	{
 		url: "https://twitter.com/intent/follow?screen_name=josedonato__",
-		icon: "mdi-twitter",
+		icon: "proicons-x-twitter",
 		name: "Twitter",
 	},
 	{

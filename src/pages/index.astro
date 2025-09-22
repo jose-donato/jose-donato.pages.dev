@@ -25,17 +25,8 @@ function getYouTubeVideoId(url: string): string | null {
       <ul class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         {
           HIGHLIGHTS_HOMEPAGE.map((highlight, idx) => {
-            // Assign icons based on content
-            let iconId = "material-symbols-lightbulb-outline";
-            if (highlight.title.includes("OpenBB Workspace")) {
-              iconId = "material-symbols-rocket-launch";
-            } else if (highlight.title.includes("Twitter Posts")) {
-              iconId = "material-symbols-trending-up";
-            } else if (highlight.title.includes("Pyth")) {
-              iconId = "material-symbols-trending-up";
-            } else if (highlight.title.includes("Performance")) {
-              iconId = "material-symbols-smartphone";
-            }
+            // Use the icon from the highlight object, with fallback
+            const iconId = highlight.icon || "material-symbols-lightbulb-outline";
 
             // Determine action type and action text
             let actionElement;
@@ -48,7 +39,7 @@ function getYouTubeVideoId(url: string): string | null {
                   target="_blank"
                   rel="noreferrer noopener"
                 >
-                  Sign up
+                  See more
                 </a>
               );
             } else if (highlight.title.includes("Twitter Posts")) {
@@ -232,7 +223,7 @@ function getYouTubeVideoId(url: string): string | null {
                   </div>
                   
                   {education.description && (
-                    <p class="text-sm text-text-muted leading-relaxed mb-4">
+                    <p class="prose prose-invert prose-sm max-w-none prose-a:text-bullish-500 leading-relaxed text-text-muted">
                       {education.description}
                     </p>
                   )}
@@ -253,7 +244,7 @@ function getYouTubeVideoId(url: string): string | null {
                   Continuous Learning
                 </h3>
               </div>
-              <p class="text-sm text-text-muted leading-relaxed">
+              <p class="prose prose-invert prose-sm max-w-none prose-a:text-bullish-500 leading-relaxed text-text-muted">
                 My journey in technology is driven by an insatiable curiosity and commitment to continuous improvement. I actively engage with emerging technologies, contribute to open-source projects, and stay current with industry trends to deliver innovative solutions.
               </p>
             </div>
