@@ -107,7 +107,7 @@ export const PAST_EXPERIENCE_HOMEPAGE = [
 	{
 		title: "Freelance Fullstack Engineer",
 		place: "",
-		description: `In 2018, I built the credential platform for Queima das Fitas, one of the biggest festivals in Portugal - it enabled the creation of the credentials and included an application (in Flutter) to read the QR codes at the festivals' entrance. I have also built a [native application for a high school in my hometown](https://appadvice.com/app/myesjf/1462460664) and a different [application for Queima das Fitas](https://noticias.uc.pt/multimedia/videos/queimapp-chegou-a-primeira-aplicacao-mobile-dedicada-a-queima-das-fitas/) which later evolved into [EveApp](https://www.facebook.com/EveApp2019/). All these applications were built using React Native. Later, I developed several applications professionally including a website for a nation-wide radio [ruc.pt](https://ruc.pt) using Next.js, TailwindCSS for the frontend and Wordpress, GraphQL for the backend, as well as other web applications using Next.js and Firebase for clients in Upwork freelancing platform.`,
+		description: `In 2018, I built the credentialing system for Queima das Fitas, one of Portugal's largest festivals, including a Flutter app for QR code entry. I also developed a [native app for my high school](https://appadvice.com/app/myesjf/1462460664) and [another for Queima das Fitas](https://noticias.uc.pt/multimedia/videos/queimapp-chegou-a-primeira-aplicacao-mobile-dedicada-a-queima-das-fitas/), which later inspired [EveApp](https://www.facebook.com/EveApp2019/), both built in React Native. Since then, I've worked professionally on multiple projects, such as [ruc.pt](https://ruc.pt) (a nationwide radio website) using Next.js, TailwindCSS, WordPress, and GraphQL, along with various web apps for clients on Upwork using Next.js and Firebase.`,
 		date: "2018 - 2020",
 	},
 ];
@@ -116,13 +116,13 @@ export const HIGHLIGHTS_HOMEPAGE = [
 	{
 		title: "Building OpenBB Workspace",
 		description:
-			"Leading the development of OpenBB Workspace, a performant web application highly customizable that enables AI workflows while guaranteeing full control over your data. Sign up below.",
+			"Leading the development of OpenBB Workspace, a performant web application highly customizable that enables AI workflows while guaranteeing full control over your data.",
 		url: "https://pro.openbb.co",
 	},
 	{
 		title: "Twitter Posts",
 		description:
-			"Browse a curated collection of my Twitter posts in a dedicated modal. See demos, tools, and projects I share, with quick access to follow my development journey.",
+			"Explore the demos, tools, and projects I’ve recently shared on Twitter and learn a bit about my development journey.",
 		url: "#twitter-demos",
 	},
 	{
