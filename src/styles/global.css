@@ -321,19 +321,19 @@
 
 /* Trading-focused utility classes */
 @utility btn {
-  @apply w-fit text-text-primary bg-bg-secondary hover:bg-bg-tertiary border border-border-primary focus:ring-4 focus:ring-border-focus/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md rounded-lg active:scale-[0.98];
+  @apply w-fit cursor-pointer text-text-primary bg-bg-secondary hover:bg-bg-tertiary border border-border-primary focus:ring-4 focus:ring-border-focus/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md rounded-lg active:scale-[0.98];
 }
 
 @utility btn-primary {
-  @apply w-fit text-text-inverse bg-bullish-600 hover:bg-bullish-700 border border-bullish-600 focus:ring-4 focus:ring-bullish-500/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-lg rounded-lg active:scale-[0.98];
+  @apply w-fit cursor-pointer text-text-inverse bg-bullish-600 hover:bg-bullish-700 border border-bullish-600 focus:ring-4 focus:ring-bullish-500/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-lg rounded-lg active:scale-[0.98];
 }
 
 @utility btn-danger {
-  @apply w-fit text-text-primary bg-bearish-600 hover:bg-bearish-700 border border-bearish-600 focus:ring-4 focus:ring-bearish-500/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-lg rounded-lg active:scale-[0.98];
+  @apply w-fit cursor-pointer text-text-primary bg-bearish-600 hover:bg-bearish-700 border border-bearish-600 focus:ring-4 focus:ring-bearish-500/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-lg rounded-lg active:scale-[0.98];
 }
 
 @utility btn-outline {
-  @apply w-fit text-text-secondary bg-transparent hover:bg-bg-secondary border border-border-primary focus:ring-4 focus:ring-border-focus/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 hover:text-text-primary rounded-lg active:scale-[0.98];
+  @apply w-fit cursor-pointer text-text-secondary bg-transparent hover:bg-bg-secondary border border-border-primary focus:ring-4 focus:ring-border-focus/20 font-medium text-sm px-4 py-2 text-center inline-flex items-center gap-2 transition-all duration-200 hover:text-text-primary rounded-lg active:scale-[0.98];
 }
 
 @utility icon-btn {

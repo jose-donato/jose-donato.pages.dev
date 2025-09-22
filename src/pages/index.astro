@@ -40,7 +40,7 @@ function getYouTubeVideoId(url: string): string | null {
               // Sign up button for OpenBB Workspace
               actionElement = (
                 <a
-                  class="bg-bullish-500 hover:bg-bullish-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors mt-auto self-end"
+                  class="btn-primary text-white mt-auto self-end"
                   href={highlight.url}
                   target="_blank"
                   rel="noreferrer noopener"
@@ -53,10 +53,9 @@ function getYouTubeVideoId(url: string): string | null {
               const videoId = getYouTubeVideoId(highlight.url);
               actionElement = (
                 <button
-                  class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors mt-auto self-end flex items-center gap-2"
+                  class="btn-primary text-white mt-auto self-end"
                   onclick={`showVideoModal('${videoId}', '${highlight.title}')`}
                 >
-                  <Icon id="material-symbols-play-circle-outline" className="w-4 h-4" />
                   Watch demo
                 </button>
               );
@@ -64,10 +63,9 @@ function getYouTubeVideoId(url: string): string | null {
               // Thesis popup for Performance study
               actionElement = (
                 <button
-                  class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors mt-auto self-end flex items-center gap-2"
+                  class="btn-primary text-white mt-auto self-end"
                   onclick={`showPDFModal('${highlight.url}', '${highlight.title}')`}
                 >
-                  <Icon id="material-symbols-description-outline" className="w-4 h-4" />
                   Read thesis
                 </button>
               );
