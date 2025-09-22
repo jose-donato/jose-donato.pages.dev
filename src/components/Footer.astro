@@ -1,4 +1,24 @@
-<p class="text-center text-xs text-text-muted mt-16 pb-10">
+---
+import Icon from "./Icon.astro";
+import { SOCIALS } from "../utils/constants";
+---
+
+<div class="flex gap-4 mt-12 items-center justify-center">
+  {
+    SOCIALS.map((social) => (
+      <a
+        aria-label={social.name}
+        class="icon-btn hover:scale-110 hover:bg-bullish-600/10"
+        href={social.url}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <Icon id={social.icon} />
+      </a>
+    ))
+  }
+</div>
+<p class="text-center text-xs text-text-muted mt-8 pb-10">
   Made with ❤️ by <a href="https://jose-donato.pages.dev" class="link"
     >José Donato</a
   >. <br />Open source on <a

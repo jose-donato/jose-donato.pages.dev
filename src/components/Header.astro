@@ -1,6 +1,4 @@
 ---
-import Icon from "./Icon.astro";
-import { SOCIALS } from "../utils/constants";
 import Floater from "./Floater.astro";
 import { Image } from "astro:assets";
 ---
@@ -20,8 +18,8 @@ import { Image } from "astro:assets";
       <p>
         I'm a <strong class="text-text-primary">Fullstack Engineer</strong> from
         Portugal, specializing in building tools for quants and traders. Currently
-        leading web development at <strong class="text-bullish-500"
-          >OpenBB</strong
+        leading web development at <span
+          class="underline-animation text-text-primary font-medium">OpenBB</span
         >, I've architected and built OpenBB Workspace from the ground up over
         the past 4 years. My passion lies at the intersection of <span
           class="underline-animation text-text-primary font-medium"
@@ -31,23 +29,19 @@ import { Image } from "astro:assets";
         >.
       </p>
       <p class="text-text-muted">
-        Want to chat? DM me on X/Twitter or LinkedIn.
+        Want to chat? DM me on <a
+          href="https://x.com/josedonato__"
+          class="underline"
+          target="_blank"
+          rel="noreferrer noopener">X/Twitter</a
+        >
+        or <a
+          href="https://www.linkedin.com/in/jose-donato"
+          class="underline"
+          target="_blank"
+          rel="noreferrer noopener">LinkedIn</a
+        >
       </p>
-    </div>
-    <div class="flex gap-4 mt-8 items-center justify-center sm:justify-start">
-      {
-        SOCIALS.map((social) => (
-          <a
-            aria-label={social.name}
-            class="icon-btn hover:scale-110 hover:bg-bullish-600/10"
-            href={social.url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Icon id={social.icon} />
-          </a>
-        ))
-      }
     </div>
   </div>
   <div class="flex md:min-w-[240px] avatar-container order-first md:order-last">
