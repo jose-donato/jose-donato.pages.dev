@@ -10,27 +10,16 @@ import {
 
 const allPosts = await getCollection("blog");
 
-// Extract all topics from posts and social media content
-const postTopics = allPosts.flatMap(
-  (post) => post.data.topics?.split(" ") || [],
-);
-const socialTopics = socialMediaContent.flatMap((item) => item.tags || []);
-const allTopics = [...new Set([...postTopics, ...socialTopics])].sort();
-
-// Handle filtering by topic and content type
+// Handle filtering by content type
 const url = new URL(Astro.request.url);
-const topic = url.searchParams.get("topic") || "";
 const contentType = url.searchParams.get("type") || "all"; // all, articles, social
 
-// Filter posts by topic
-const filteredPosts = topic
-  ? allPosts.filter((post) => post.data.topics?.includes(topic))
-  : allPosts;
+// Get all posts and social media content
+const filteredPosts = allPosts;
 
-// Filter social media content by topic and only include YouTube
+// Filter social media content to only include YouTube
 const filteredSocialMedia = socialMediaContent
-  .filter((item) => item.type === "youtube")
-  .filter((item) => (topic ? item.tags?.includes(topic) : true));
+  .filter((item) => item.type === "youtube");
 
 // Create unified content array for mixed display
 interface UnifiedContent {
@@ -80,30 +69,13 @@ const finalContent =
   <script async src="https://platform.twitter.com/widgets.js"></script>
 
   <div class="space-y-8">
-    <!-- Quick Stats Bar -->
-    <div class="flex items-center justify-between flex-wrap gap-4">
-      <div class="flex items-center gap-6 text-sm text-text-muted">
-        <span
-          ><strong class="text-bullish-500">{filteredPosts.length}</strong> articles</span
-        >
-        <span class="text-border-primary">•</span>
-        <span
-          ><strong class="text-bullish-400">{filteredSocialMedia.length}</strong
-          > videos</span
-        >
-        <span class="text-border-primary">•</span>
-        <span
-          ><strong class="text-text-primary">{allTopics.length}</strong> topics</span
-        >
-      </div>
-    </div>
-
     <!-- Content Type Filter -->
-    <div class="flex items-center gap-4 pb-4 border-b border-border-primary">
-      <span class="text-sm font-medium text-text-primary">Show:</span>
-      <div class="flex gap-2">
+    <div class="flex items-center justify-between gap-4 pb-4 border-b border-border-primary">
+      <div class="flex items-center gap-4">
+        <span class="text-sm font-medium text-text-primary">Show:</span>
+        <div class="flex gap-2">
         <a
-          href={`/blog${topic ? `?topic=${topic}` : ""}`}
+          href="/blog"
           class={`px-3 py-1 text-sm rounded-lg transition-colors ${
             contentType === "all"
               ? "bg-bullish-600/20 text-bullish-300 border border-bullish-600/30"
@@ -113,7 +85,7 @@ const finalContent =
           All Content
         </a>
         <a
-          href={`/blog?type=articles${topic ? `&topic=${topic}` : ""}`}
+          href="/blog?type=articles"
           class={`px-3 py-1 text-sm rounded-lg transition-colors ${
             contentType === "articles"
               ? "bg-bullish-600/20 text-bullish-300 border border-bullish-600/30"
@@ -123,7 +95,7 @@ const finalContent =
           Articles Only
         </a>
         <a
-          href={`/blog?type=social${topic ? `&topic=${topic}` : ""}`}
+          href="/blog?type=social"
           class={`px-3 py-1 text-sm rounded-lg transition-colors ${
             contentType === "social"
               ? "bg-bullish-600/20 text-bullish-300 border border-bullish-600/30"
@@ -138,7 +110,7 @@ const finalContent =
     <!-- Mixed Content List -->
     <div class="space-y-6">
       {
-        finalContent.map((item, index) => {
+        finalContent.map((item) => {
           if (item.type === "article") {
             const post = item.data;
             return (
@@ -178,21 +150,6 @@ const finalContent =
                           <span class="text-bullish-400 font-medium">
                             Article
                           </span>
-                          {post.data.topics && (
-                            <>
-                              <span>•</span>
-                              <div class="flex gap-2">
-                                {post.data.topics
-                                  .split(" ")
-                                  .slice(0, 2)
-                                  .map((topic) => (
-                                    <span class="text-bullish-400 hover:text-bullish-300 transition-colors">
-                                      #{topic}
-                                    </span>
-                                  ))}
-                              </div>
-                            </>
-                          )}
                         </div>
                       </div>
                     </div>
@@ -244,18 +201,6 @@ const finalContent =
                           <span class="text-bullish-400 font-medium">
                             Video
                           </span>
-                          {videoItem.tags && (
-                            <>
-                              <span>•</span>
-                              <div class="flex gap-2">
-                                {videoItem.tags.slice(0, 2).map((tag) => (
-                                  <span class="text-bullish-400 hover:text-bullish-300 transition-colors">
-                                    #{tag}
-                                  </span>
-                                ))}
-                              </div>
-                            </>
-                          )}
                         </div>
                       </div>
                     </div>
@@ -294,15 +239,13 @@ const finalContent =
             No content found
           </h3>
           <p class="text-text-muted">
-            {topic
-              ? `No content found for topic "${topic}"`
-              : contentType === "articles"
-                ? "No articles available yet."
-                : contentType === "social"
-                  ? "No videos available yet."
-                  : "No content available yet."}
+            {contentType === "articles"
+              ? "No articles available yet."
+              : contentType === "social"
+                ? "No videos available yet."
+                : "No content available yet."}
           </p>
-          {(topic || contentType !== "all") && (
+          {contentType !== "all" && (
             <a href="/blog" class="btn-primary mt-4 inline-flex">
               View All Content
             </a>

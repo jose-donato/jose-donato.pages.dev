@@ -84,28 +84,6 @@ const videoId = video ? extractYouTubeId(video.url) : null;
 
         <div class="flex items-center gap-4">
           {
-            post?.data.topics && (
-              <div class="flex gap-2">
-                {post.data.topics.split(" ").map((topic) => (
-                  <span class="px-3 py-1 text-sm font-medium bg-bullish-600/10 text-bullish-400 border border-bullish-600/20 rounded">
-                    {topic}
-                  </span>
-                ))}
-              </div>
-            )
-          }
-          {
-            video?.tags && (
-              <div class="flex gap-2">
-                {video.tags.map((tag) => (
-                  <span class="px-3 py-1 text-sm font-medium bg-bullish-600/10 text-bullish-400 border border-bullish-600/20 rounded">
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )
-          }
-          {
             hasPDF && (
               <a
                 href={`/assets/${post?.data.file}`}
