@@ -75,7 +75,7 @@ export const EDUCATION = [
 		place: "University of Coimbra",
 		placeUrl: "https://www.uc.pt/en",
 		description:
-			"Final grade of 18/20.",
+			"Final grade: 18/20",
 		date: "2018 - 2020",
 	},
 	{
@@ -83,7 +83,7 @@ export const EDUCATION = [
 		place: "University of Coimbra",
 		placeUrl: "https://www.uc.pt/en",
 		description:
-			"I've completed my bachelor in Informatics Engineering at the University of Coimbra with a final grade of 16/20.",
+			"Final grade: 16/20",
 		date: "2015 - 2018",
 	},
 ];
@@ -101,7 +101,7 @@ export const PAST_EXPERIENCE_HOMEPAGE = [
 		place: "University of Coimbra",
 		placeUrl: "https://www.uc.pt/en",
 		description:
-			"As part of my master internship, I was awarded a research scholarship from FCT (the Portuguese public agency that supports science, technology and innovation). This enabled me to work independently while having the support of my supervisor. It was a great challenge that came with a lot of freedom, but also with huge responsibilities. The focus of this internship (and my dissertation) was to assess whether web applications were already a viable alternative to native ones in mobile devices. Based on this, I delivered my master thesis, which was a comparative study between web and native applications, you can read it [here](/master_thesis.pdf). I also wrote about several cybersecurity topics, you can read them in my [blog](/blog).",
+			"During my master’s internship, I received a research scholarship from FCT, Portugal’s public agency for science and innovation. This opportunity allowed me to work independently with guidance from my supervisor, balancing freedom with responsibility. My thesis assessed whether web applications were a viable alternative to native apps on mobile devices, culminating in a comparative study you can read [here](/master_thesis.pdf). I’ve also written on various cybersecurity topics, available on my [blog](/blog).",
 		date: "2019 - 2020",
 	},
 	{
@@ -220,7 +220,7 @@ export const PROJECTS: Project[] = [
 		type: "website",
 		technologies: ["remix.run", "TailwindCSS", "TypeScript"],
 		description: "The company website for OpenBB.",
-		url: "https://hub.openbb.co",
+		url: "https://my.openbb.co",
 	},
 	{
 		title: "OpenBB Platform",
