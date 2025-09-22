@@ -21,7 +21,7 @@ function getYouTubeVideoId(url: string): string | null {
   <div class="space-y-20">
     <div>
       <h2 class="text-lg font-bold uppercase tracking-widest">Highlights</h2>
-      <ul class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 [&>*:last-child]:col-span-2">
+      <ul class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         {
           HIGHLIGHTS_HOMEPAGE.map((highlight, idx) => {
             // Assign icons based on content
@@ -40,7 +40,7 @@ function getYouTubeVideoId(url: string): string | null {
               // Sign up button for OpenBB Workspace
               actionElement = (
                 <a
-                  class="btn-primary text-white mt-auto self-end"
+                  class="inline-flex items-center gap-2 text-sm link mt-auto self-end"
                   href={highlight.url}
                   target="_blank"
                   rel="noreferrer noopener"
@@ -53,7 +53,7 @@ function getYouTubeVideoId(url: string): string | null {
               const videoId = getYouTubeVideoId(highlight.url);
               actionElement = (
                 <button
-                  class="btn-primary text-white mt-auto self-end"
+                  class="inline-flex items-center gap-2 text-sm link mt-auto self-end"
                   onclick={`showVideoModal('${videoId}', '${highlight.title}')`}
                 >
                   Watch demo
@@ -63,7 +63,7 @@ function getYouTubeVideoId(url: string): string | null {
               // Thesis popup for Performance study
               actionElement = (
                 <button
-                  class="btn-primary text-white mt-auto self-end"
+                  class="inline-flex items-center gap-2 text-sm link mt-auto self-end"
                   onclick={`showPDFModal('${highlight.url}', '${highlight.title}')`}
                 >
                   Read thesis
@@ -73,7 +73,7 @@ function getYouTubeVideoId(url: string): string | null {
               // Default read more link
               actionElement = (
                 <a
-                  class="link text-sm mt-auto self-end"
+                  class="inline-flex items-center gap-2 text-sm link mt-auto self-end"
                   href={highlight.url}
                   target="_blank"
                   rel="noreferrer noopener"
@@ -151,7 +151,7 @@ function getYouTubeVideoId(url: string): string | null {
                       )}
                     </div>
                     <div class="flex-shrink-0">
-                      <span class="inline-flex items-center px-3 py-1 text-xs font-medium bg-bg-tertiary text-text-secondary border border-border-primary">
+                      <span class="date">
                         {experience.date}
                       </span>
                     </div>
@@ -218,7 +218,7 @@ function getYouTubeVideoId(url: string): string | null {
                       )}
                     </div>
                     <div class="flex-shrink-0">
-                      <span class="inline-flex items-center px-3 py-1 text-xs font-medium bg-bg-tertiary text-text-secondary border border-border-primary">
+                      <span class="date">
                         {education.date}
                       </span>
                     </div>

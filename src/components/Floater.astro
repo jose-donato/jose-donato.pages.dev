@@ -4,8 +4,8 @@ const pathname = new URL(Astro.request.url).pathname;
 const LINKS = [
   { name: "Home", href: "/", icon: "material-symbols-home" },
   {
-    name: "Work",
-    href: "/work",
+    name: "Projects",
+    href: "/projects",
     icon: "material-symbols-work",
   },
   {
@@ -19,6 +19,13 @@ const LINKS = [
 const isActive = (href: string) => {
   if (href === "/") {
     return pathname === href;
+  }
+  if (href === "/projects") {
+    return (
+      pathname === href ||
+      pathname.startsWith(`${href}/`) ||
+      pathname.startsWith("/tools")
+    );
   }
   return pathname === href || pathname.startsWith(`${href}/`);
 };

@@ -350,11 +350,15 @@
 }
 
 @utility link {
-  @apply text-bullish-500 hover:text-bullish-400 transition-colors duration-200 ease-in-out font-medium;
+  @apply text-bullish-500 hover:text-bullish-400 transition-colors duration-200 ease-in-out font-medium cursor-pointer;
 }
 
 @utility divider {
   @apply h-[1px] w-full bg-gradient-to-r from-transparent via-border-primary to-transparent;
+}
+
+@utility date {
+  @apply inline-flex items-center px-3 py-1 text-xs font-medium bg-bg-tertiary text-text-secondary border border-border-primary;
 }
 
 /* Professional wave animation */
