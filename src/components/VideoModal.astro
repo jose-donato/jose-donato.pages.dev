@@ -29,15 +29,7 @@ const { videoId, title = "Video" } = Astro.props;
       </div>
       <div class="modal-body">
         <div class="video-container">
-          <iframe
-            class="video-iframe"
-            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
-            title={title}
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          >
-          </iframe>
+          <!-- Iframe will be dynamically loaded when modal opens -->
         </div>
       </div>
     </div>
@@ -50,13 +42,14 @@ const { videoId, title = "Video" } = Astro.props;
     private backdrop: HTMLElement | null = null;
     private closeButton: HTMLElement | null = null;
     private iframe: HTMLIFrameElement | null = null;
+    private videoContainer: HTMLElement | null = null;
 
     constructor() {
       super();
       this.modal = this.querySelector(".modal-backdrop");
       this.backdrop = this.querySelector(".modal-backdrop");
       this.closeButton = this.querySelector(".modal-close");
-      this.iframe = this.querySelector(".video-iframe");
+      this.videoContainer = this.querySelector(".video-container");
     }
 
     connectedCallback() {
@@ -89,9 +82,31 @@ const { videoId, title = "Video" } = Astro.props;
       if (this.modal) {
         this.modal.style.display = "flex";
         document.body.style.overflow = "hidden";
+        
+        // Create iframe dynamically
+        this.createIframe();
 
         // Focus management
         this.closeButton?.focus();
+      }
+    }
+
+    private createIframe() {
+      if (!this.iframe && this.videoContainer) {
+        const videoId = this.getAttribute("data-video-id");
+        const title = this.getAttribute("data-title") || "Video";
+        
+        if (videoId) {
+          this.iframe = document.createElement("iframe");
+          this.iframe.className = "video-iframe";
+          this.iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+          this.iframe.title = title;
+          this.iframe.frameBorder = "0";
+          this.iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+          this.iframe.allowFullscreen = true;
+          
+          this.videoContainer.appendChild(this.iframe);
+        }
       }
     }
 
@@ -100,11 +115,10 @@ const { videoId, title = "Video" } = Astro.props;
         this.modal.style.display = "none";
         document.body.style.overflow = "";
 
-        // Stop video by resetting iframe src
-        if (this.iframe) {
-          const currentSrc = this.iframe.src;
-          this.iframe.src = "";
-          this.iframe.src = currentSrc.replace("autoplay=1", "autoplay=0");
+        // Remove iframe to stop video and save resources
+        if (this.iframe && this.videoContainer) {
+          this.videoContainer.removeChild(this.iframe);
+          this.iframe = null;
         }
       }
     }
@@ -141,14 +155,7 @@ const { videoId, title = "Video" } = Astro.props;
             </div>
             <div class="modal-body">
               <div class="video-container">
-                <iframe 
-                  class="video-iframe"
-                  src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0"
-                  title="${title || "Video"}"
-                  frameborder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen>
-                </iframe>
+                <!-- Iframe will be dynamically loaded when modal opens -->
               </div>
             </div>
           </div>

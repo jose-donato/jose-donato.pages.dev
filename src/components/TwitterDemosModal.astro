@@ -16,8 +16,6 @@ const twitterContent = socialMediaContent
 ---
 
 <twitter-demos-modal>
-  <script is:inline async src="https://platform.twitter.com/widgets.js"
-  ></script>
   <div class="modal-backdrop">
     <div class="modal-content">
       <div class="modal-header">
@@ -234,10 +232,25 @@ const twitterContent = socialMediaContent
         document.body.style.overflow = "hidden";
         this.currentIndex = 0;
         this.updateCarousel();
+        
+        // Load Twitter embed script dynamically
+        this.loadTwitterScript();
 
         // Focus management
         this.closeButton?.focus();
       }
+    }
+
+    private loadTwitterScript() {
+      // Check if script is already loaded
+      if (document.querySelector('script[src="https://platform.twitter.com/widgets.js"]')) {
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://platform.twitter.com/widgets.js';
+      document.head.appendChild(script);
     }
 
     hide() {
