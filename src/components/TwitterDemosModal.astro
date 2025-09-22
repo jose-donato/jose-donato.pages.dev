@@ -1,7 +1,7 @@
 ---
 import { Tweet } from "@astro-community/astro-embed-twitter";
 import Icon from "./Icon.astro";
-import { socialMediaContent, extractTwitterId } from "../data/socialMedia";
+import { socialMediaContent } from "../data/socialMedia";
 
 // Filter and sort Twitter content only by date (newest first)
 const twitterContent = socialMediaContent
@@ -16,7 +16,8 @@ const twitterContent = socialMediaContent
 ---
 
 <twitter-demos-modal>
-  <script async src="https://platform.twitter.com/widgets.js"></script>
+  <script is:inline async src="https://platform.twitter.com/widgets.js"
+  ></script>
   <div class="modal-backdrop">
     <div class="modal-content">
       <div class="modal-header">
@@ -49,65 +50,52 @@ const twitterContent = socialMediaContent
       <div class="modal-body">
         <p class="text-text-muted text-sm mb-6 leading-relaxed">
           Check out my latest Twitter posts showcasing demos, tools, and
-          projects. Follow along for real-time updates on my development
-          journey.
-        </p>
-
-        <div class="demos-grid">
-          {
-            twitterContent.map((item) => (
-              <article class="demo-item">
-                <div class="demo-content">
-                  <Tweet theme="dark" id={item.url} />
-                </div>
-
-                <div class="demo-metadata">
-                  <div class="flex items-center gap-3 text-sm text-text-muted">
-                    <time>{item.date}</time>
-                    <span>•</span>
-                    <span class="font-medium text-bullish-400">Twitter</span>
-                    {item.title && (
-                      <>
-                        <span>•</span>
-                        <span class="text-text-secondary">{item.title}</span>
-                      </>
-                    )}
-                  </div>
-
-                  {item.tags && (
-                    <div class="flex gap-2 mt-2">
-                      {item.tags.slice(0, 3).map((tag) => (
-                        <span class="text-xs px-2 py-1 bg-bullish-600/20 text-bullish-300 rounded-full">
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {item.description && (
-                  <p class="text-text-secondary text-sm leading-relaxed mt-3">
-                    {item.description}
-                  </p>
-                )}
-              </article>
-            ))
-          }
-        </div>
-
-        <div class="mt-8 text-center">
+          projects.
           <a
             href="https://twitter.com/josedonato__"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 text-sm link group"
+            class="inline-flex items-center gap-1 text-bullish-400 hover:text-bullish-300 transition-colors"
           >
             Follow me on Twitter
-            <Icon
-              id="material-symbols-arrow-outward"
-              className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200"
-            />
           </a>
+          for real-time updates on my development journey.
+        </p>
+
+        <div class="carousel-container">
+          <button class="carousel-nav prev" aria-label="Previous tweet">
+            <Icon id="material-symbols-chevron-left-rounded" className="w-5 h-5" />
+          </button>
+
+          <div class="carousel-wrapper">
+            <div class="carousel-track">
+              {
+                twitterContent.map((item, index) => (
+                  <div class="carousel-slide" data-index={index}>
+                    <div class="tweet-container">
+                      <Tweet theme="dark" id={item.url} />
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+
+          <button class="carousel-nav next" aria-label="Next tweet">
+            <Icon id="material-symbols-chevron-right-rounded" className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div class="carousel-indicators">
+          {
+            twitterContent.map((_, index) => (
+              <button
+                class="indicator"
+                data-index={index}
+                aria-label={`Go to tweet ${index + 1}`}
+              />
+            ))
+          }
         </div>
       </div>
     </div>
@@ -119,16 +107,32 @@ const twitterContent = socialMediaContent
     private modal: HTMLElement | null = null;
     private backdrop: HTMLElement | null = null;
     private closeButton: HTMLElement | null = null;
+    private carouselTrack: HTMLElement | null = null;
+    private prevButton: HTMLButtonElement | null = null;
+    private nextButton: HTMLButtonElement | null = null;
+    private indicators: NodeListOf<HTMLElement> | null = null;
+    private currentIndex: number = 0;
+    private totalSlides: number = 0;
 
     constructor() {
       super();
       this.modal = this.querySelector(".modal-backdrop");
       this.backdrop = this.querySelector(".modal-backdrop");
       this.closeButton = this.querySelector(".modal-close");
+      this.carouselTrack = this.querySelector(".carousel-track");
+      this.prevButton = this.querySelector(
+        ".carousel-nav.prev",
+      ) as HTMLButtonElement;
+      this.nextButton = this.querySelector(
+        ".carousel-nav.next",
+      ) as HTMLButtonElement;
+      this.indicators = this.querySelectorAll(".indicator");
+      this.totalSlides = this.querySelectorAll(".carousel-slide").length;
     }
 
     connectedCallback() {
       this.setupEventListeners();
+      this.updateCarousel();
       this.hide(); // Initially hidden
     }
 
@@ -149,14 +153,81 @@ const twitterContent = socialMediaContent
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && this.isVisible()) {
           this.hide();
+        } else if (this.isVisible()) {
+          if (e.key === "ArrowLeft") {
+            this.goToPrev();
+          } else if (e.key === "ArrowRight") {
+            this.goToNext();
+          }
         }
       });
+
+      // Carousel navigation
+      this.prevButton?.addEventListener("click", () => {
+        this.goToPrev();
+      });
+
+      this.nextButton?.addEventListener("click", () => {
+        this.goToNext();
+      });
+
+      // Indicator clicks
+      this.indicators?.forEach((indicator, index) => {
+        indicator.addEventListener("click", () => {
+          this.goToSlide(index);
+        });
+      });
+    }
+
+    goToPrev() {
+      this.currentIndex =
+        this.currentIndex > 0 ? this.currentIndex - 1 : this.totalSlides - 1;
+      this.updateCarousel();
+    }
+
+    goToNext() {
+      this.currentIndex =
+        this.currentIndex < this.totalSlides - 1 ? this.currentIndex + 1 : 0;
+      this.updateCarousel();
+    }
+
+    goToSlide(index: number) {
+      this.currentIndex = index;
+      this.updateCarousel();
+    }
+
+    updateCarousel() {
+      if (this.carouselTrack) {
+        const translateX = -this.currentIndex * 100;
+        this.carouselTrack.style.transform = `translateX(${translateX}%)`;
+      }
+
+      // Update indicators
+      this.indicators?.forEach((indicator, index) => {
+        if (index === this.currentIndex) {
+          indicator.classList.add("active");
+        } else {
+          indicator.classList.remove("active");
+        }
+      });
+
+      // Update navigation buttons
+      if (this.prevButton) {
+        this.prevButton.style.opacity = this.totalSlides <= 1 ? "0.3" : "1";
+        this.prevButton.disabled = this.totalSlides <= 1;
+      }
+      if (this.nextButton) {
+        this.nextButton.style.opacity = this.totalSlides <= 1 ? "0.3" : "1";
+        this.nextButton.disabled = this.totalSlides <= 1;
+      }
     }
 
     show() {
       if (this.modal) {
         this.modal.style.display = "flex";
         document.body.style.overflow = "hidden";
+        this.currentIndex = 0;
+        this.updateCarousel();
 
         // Focus management
         this.closeButton?.focus();
@@ -216,10 +287,13 @@ const twitterContent = socialMediaContent
     max-width: 90vw;
     max-height: 90vh;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1000px;
+    height: 80vh;
     position: relative;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   .modal-header {
@@ -260,41 +334,102 @@ const twitterContent = socialMediaContent
 
   .modal-body {
     padding: 1.5rem;
-    max-height: calc(90vh - 120px);
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: hidden;
   }
 
-  .demos-grid {
-    display: grid;
-    gap: 2rem;
-    grid-template-columns: 1fr;
+  .carousel-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-height: 0;
   }
 
-  .demo-item {
-    border: 1px solid var(--border-primary, #333);
+  .carousel-wrapper {
+    flex: 1;
+    overflow: hidden;
     border-radius: 0.75rem;
-    padding: 1.5rem;
+  }
+
+  .carousel-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .carousel-slide {
+    width: 100%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .tweet-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 550px;
+  }
+
+
+  .carousel-nav {
     background: var(--bg-secondary, #2a2a2a);
-    transition: border-color 0.2s;
+    border: 1px solid var(--border-primary, #333);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted, #888);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
   }
 
-  .demo-item:hover {
+  .carousel-nav:hover:not(:disabled) {
+    background: var(--bullish-600, #4ade80);
     border-color: var(--bullish-600, #4ade80);
+    color: var(--bg-primary, #1a1a1a);
+    transform: scale(1.05);
   }
 
-  .demo-content {
-    margin-bottom: 1rem;
+  .carousel-nav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
   }
 
-  .demo-metadata {
-    border-top: 1px solid var(--border-primary, #333);
-    padding-top: 1rem;
+  .carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
   }
 
-  @media (min-width: 768px) {
-    .demos-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  .indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border-primary, #333);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .indicator:hover {
+    background: var(--text-muted, #888);
+    transform: scale(1.2);
+  }
+
+  .indicator.active {
+    background: var(--bullish-600, #4ade80);
+    transform: scale(1.3);
   }
 
   @media (max-width: 768px) {
@@ -315,12 +450,23 @@ const twitterContent = socialMediaContent
       font-size: 1.125rem;
     }
 
-    .demo-item {
-      padding: 1rem;
+    .carousel-container {
+      gap: 0.5rem;
+      margin: 1rem 0;
     }
 
-    .demos-grid {
-      grid-template-columns: 1fr;
+    .carousel-nav {
+      width: 40px;
+      height: 40px;
+    }
+
+    .tweet-container {
+      max-width: 100%;
+    }
+
+    .carousel-slide {
+      padding: 0.5rem;
+      gap: 1rem;
     }
   }
 

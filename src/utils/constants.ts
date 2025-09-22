@@ -75,7 +75,7 @@ export const EDUCATION = [
 		place: "University of Coimbra",
 		placeUrl: "https://www.uc.pt/en",
 		description:
-			"I've completed my master in Informatics Engineering at the University of Coimbra with a final grade of 18/20.",
+			"Final grade of 18/20.",
 		date: "2018 - 2020",
 	},
 	{
@@ -85,11 +85,6 @@ export const EDUCATION = [
 		description:
 			"I've completed my bachelor in Informatics Engineering at the University of Coimbra with a final grade of 16/20.",
 		date: "2015 - 2018",
-	},
-	{
-		title: "English Language Certification - B2",
-		description: "Completed my first English language certification.",
-		date: "2015",
 	},
 ];
 
