@@ -396,7 +396,8 @@ const twitterContent = socialMediaContent
     justify-content: center;
     width: 100%;
     max-width: 550px;
-    overflow: hidden;
+    overflow-y: auto;
+    max-height: 100%;
   }
 
   .tweet-container :global(iframe) {
@@ -549,6 +550,25 @@ const twitterContent = socialMediaContent
   }
 
   .modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--bullish-500, #22c55e);
+  }
+
+  /* Custom scrollbar for tweet containers */
+  .tweet-container::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .tweet-container::-webkit-scrollbar-track {
+    background: var(--bg-secondary, #2a2a2a);
+    border-radius: 3px;
+  }
+
+  .tweet-container::-webkit-scrollbar-thumb {
+    background: var(--bullish-600, #4ade80);
+    border-radius: 3px;
+  }
+
+  .tweet-container::-webkit-scrollbar-thumb:hover {
     background: var(--bullish-500, #22c55e);
   }
 </style>
