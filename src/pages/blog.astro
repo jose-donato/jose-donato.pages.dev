@@ -18,8 +18,9 @@ const contentType = url.searchParams.get("type") || "all"; // all, articles, soc
 const filteredPosts = allPosts;
 
 // Filter social media content to only include YouTube
-const filteredSocialMedia = socialMediaContent
-  .filter((item) => item.type === "youtube");
+const filteredSocialMedia = socialMediaContent.filter(
+  (item) => item.type === "youtube",
+);
 
 // Create unified content array for mixed display
 interface UnifiedContent {
@@ -70,40 +71,55 @@ const finalContent =
 
   <div class="space-y-8">
     <!-- Content Type Filter -->
-    <div class="flex items-center justify-between gap-4 pb-4 border-b border-border-primary">
+    <div
+      class="flex items-center justify-between gap-4 pb-4 border-b border-border-primary"
+    >
       <div class="flex items-center gap-4">
         <span class="text-sm font-medium text-text-primary">Show:</span>
         <div class="flex gap-2">
-        <a
-          href="/blog"
-          class={`px-3 py-1 text-sm rounded-lg transition-colors ${
-            contentType === "all"
-              ? "bg-bullish-600/20 text-bullish-300 border border-bullish-600/30"
-              : "text-text-muted hover:text-text-primary hover:bg-surface-secondary"
-          }`}
+          <a
+            href="/blog"
+            class={`px-3 py-1 text-sm rounded-lg transition-colors ${
+              contentType === "all"
+                ? "bg-bullish-600/20 text-bullish-300 border border-bullish-600/30"
+                : "text-text-muted hover:text-text-primary hover:bg-surface-secondary"
+            }`}
+          >
+            All Content
+          </a>
+          <a
+            href="/blog?type=articles"
+            class={`px-3 py-1 text-sm rounded-lg transition-colors ${
+              contentType === "articles"
+                ? "bg-bullish-600/20 text-bullish-300 border border-bullish-600/30"
+                : "text-text-muted hover:text-text-primary hover:bg-surface-secondary"
+            }`}
+          >
+            Articles
+          </a>
+          <a
+            href="/blog?type=social"
+            class={`px-3 py-1 text-sm rounded-lg transition-colors ${
+              contentType === "social"
+                ? "bg-bullish-600/20 text-bullish-300 border border-bullish-600/30"
+                : "text-text-muted hover:text-text-primary hover:bg-surface-secondary"
+            }`}
+          >
+            Videos
+          </a>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="flex items-center gap-4 text-sm text-text-muted">
+        <span
+          ><strong class="text-bullish-500">{filteredPosts.length}</strong> articles</span
         >
-          All Content
-        </a>
-        <a
-          href="/blog?type=articles"
-          class={`px-3 py-1 text-sm rounded-lg transition-colors ${
-            contentType === "articles"
-              ? "bg-bullish-600/20 text-bullish-300 border border-bullish-600/30"
-              : "text-text-muted hover:text-text-primary hover:bg-surface-secondary"
-          }`}
+        <span class="text-border-primary">•</span>
+        <span
+          ><strong class="text-bullish-400">{filteredSocialMedia.length}</strong
+          > videos</span
         >
-          Articles Only
-        </a>
-        <a
-          href="/blog?type=social"
-          class={`px-3 py-1 text-sm rounded-lg transition-colors ${
-            contentType === "social"
-              ? "bg-bullish-600/20 text-bullish-300 border border-bullish-600/30"
-              : "text-text-muted hover:text-text-primary hover:bg-surface-secondary"
-          }`}
-        >
-          Videos
-        </a>
       </div>
     </div>
 
