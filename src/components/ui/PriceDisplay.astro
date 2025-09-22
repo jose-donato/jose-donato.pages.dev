@@ -29,7 +29,7 @@ const isNegative = change < 0;
 const isNeutral = change === 0;
 
 const priceClasses = [
-    "font-mono font-semibold",
+    "font-semibold",
     isPositive && "price-positive",
     isNegative && "price-negative",
     isNeutral && "price-neutral",
@@ -41,7 +41,7 @@ const priceClasses = [
     .join(" ");
 
 const changeClasses = [
-    "text-sm font-mono ml-2",
+    "text-sm ml-2",
     isPositive && "price-positive",
     isNegative && "price-negative",
     isNeutral && "price-neutral",

@@ -22,7 +22,7 @@ const { item } = Astro.props;
       <!-- Metadata -->
       <div class="flex items-center justify-between text-sm text-text-muted">
         <div class="flex items-center gap-4">
-          <time class="font-mono">{item.date}</time>
+          <time>{item.date}</time>
           <span>•</span>
           <span class="capitalize font-medium text-bullish-400">
             {item.type === "tweet" ? "Twitter" : "YouTube"}

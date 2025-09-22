@@ -255,11 +255,6 @@
   animation: pulse-red 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Professional typography for financial data */
-.font-mono {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace;
-}
-
 .font-sans {
   font-family: 'Inter', system-ui, sans-serif;
 }

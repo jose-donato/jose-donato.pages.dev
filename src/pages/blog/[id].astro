@@ -41,7 +41,7 @@ const hasPDF = post?.data.file?.endsWith(".pdf");
 
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-6 text-sm text-text-muted">
-          {post?.data.date && <time class="font-mono">{post.data.date}</time>}
+          {post?.data.date && <time>{post.data.date}</time>}
           {
             post?.data.readingTime && (
               <>
