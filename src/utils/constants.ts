@@ -90,7 +90,7 @@ export const EDUCATION = [
 
 export const PAST_EXPERIENCE_HOMEPAGE = [
 	{
-		title: "Fullstack Engineer",
+		title: "Founding Engineer",
 		place: "OpenBB",
 		placeUrl: "https://openbb.co",
 		description: `Currently at OpenBB, my team is building a modern investment research platform. Our flagship product, [OpenBB Workspace](https://pro.openbb.co), is a React-based web app powered by TailwindCSS, Zustand, and other cutting-edge tech that supports AI workflows while ensuring full control of your data. I've also contributed to [openbb.co](https://openbb.co), our Remix-run company website, and [my.openbb.co](https://my.openbb.co), our product management platform. You can sign up and explore the Workspace for [free](https://pro.openbb.co).`,
