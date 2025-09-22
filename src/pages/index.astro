@@ -1,12 +1,20 @@
 ---
 import Icon from "../components/Icon.astro";
 import Layout from "../layouts/Layout.astro";
+import VideoModal from "../components/VideoModal.astro";
+import PDFModal from "../components/PDFModal.astro";
 import {
   EDUCATION,
   PAST_EXPERIENCE_HOMEPAGE,
   HIGHLIGHTS_HOMEPAGE,
 } from "../utils/constants";
 import { marked } from "marked";
+
+// Helper function to extract YouTube video ID from URL
+function getYouTubeVideoId(url: string): string | null {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+  return match ? match[1] : null;
+}
 ---
 
 <Layout>
@@ -25,6 +33,57 @@ import { marked } from "marked";
             } else if (highlight.title.includes("Performance")) {
               iconId = "material-symbols-smartphone";
             }
+
+            // Determine action type and action text
+            let actionElement;
+            if (highlight.title.includes("OpenBB Workspace")) {
+              // Sign up button for OpenBB Workspace
+              actionElement = (
+                <a
+                  class="bg-bullish-500 hover:bg-bullish-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors mt-auto self-end"
+                  href={highlight.url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  Sign up
+                </a>
+              );
+            } else if (highlight.title.includes("Pyth")) {
+              // Video demo button for Pyth
+              const videoId = getYouTubeVideoId(highlight.url);
+              actionElement = (
+                <button
+                  class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors mt-auto self-end flex items-center gap-2"
+                  onclick={`showVideoModal('${videoId}', '${highlight.title}')`}
+                >
+                  <Icon id="material-symbols-play-circle-outline" className="w-4 h-4" />
+                  Watch demo
+                </button>
+              );
+            } else if (highlight.title.includes("Performance")) {
+              // Thesis popup for Performance study
+              actionElement = (
+                <button
+                  class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors mt-auto self-end flex items-center gap-2"
+                  onclick={`showPDFModal('${highlight.url}', '${highlight.title}')`}
+                >
+                  <Icon id="material-symbols-description-outline" className="w-4 h-4" />
+                  Read thesis
+                </button>
+              );
+            } else {
+              // Default read more link
+              actionElement = (
+                <a
+                  class="link text-sm mt-auto self-end"
+                  href={highlight.url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  Read more
+                </a>
+              );
+            }
             
             return (
               <div class="card w-fit flex flex-col gap-3 col-span-1">
@@ -35,14 +94,7 @@ import { marked } from "marked";
                   <p class="font-bold flex-1">{highlight.title}</p>
                 </div>
                 <p class="text-sm">{highlight.description}</p>
-                <a
-                  class="link text-sm mt-auto self-end"
-                  href={highlight.url}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  Read more
-                </a>
+                {actionElement}
               </div>
             );
           })
@@ -208,4 +260,8 @@ import { marked } from "marked";
       </div>
     </div>
   </div>
+
+  <!-- Modals (hidden by default) -->
+  <VideoModal videoId="LWUioH_ncQk" title="Pyth Integration: Real-Time Data + AI" />
+  <PDFModal pdfPath="/master_thesis.pdf" title="Comparing the Performance of Web Applications to Native Applications" />
 </Layout>
