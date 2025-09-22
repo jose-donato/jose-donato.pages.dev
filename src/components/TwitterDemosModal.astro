@@ -1,14 +1,14 @@
 ---
 import { Tweet } from "@astro-community/astro-embed-twitter";
 import Icon from "./Icon.astro";
-import { socialMediaContent } from "../data/socialMedia";
+import { socialMediaContent, extractTwitterId } from "../data/socialMedia";
 
 // Filter and sort Twitter content only by date (newest first)
 const twitterContent = socialMediaContent
-  .filter(item => item.type === 'tweet')
+  .filter((item) => item.type === "tweet")
   .sort((a, b) => {
-    const [dayA, monthA, yearA] = a.date.split('-').map(Number);
-    const [dayB, monthB, yearB] = b.date.split('-').map(Number);
+    const [dayA, monthA, yearA] = a.date.split("-").map(Number);
+    const [dayB, monthB, yearB] = b.date.split("-").map(Number);
     const dateA = new Date(yearA, monthA - 1, dayA);
     const dateB = new Date(yearB, monthB - 1, dayB);
     return dateB.getTime() - dateA.getTime();
@@ -16,12 +16,18 @@ const twitterContent = socialMediaContent
 ---
 
 <twitter-demos-modal>
+  <script async src="https://platform.twitter.com/widgets.js"></script>
   <div class="modal-backdrop">
     <div class="modal-content">
       <div class="modal-header">
         <div class="flex items-center gap-3">
-          <div class="flex-shrink-0 w-8 h-8 bg-bullish-500/10 rounded-lg flex items-center justify-center">
-            <Icon id="material-symbols-trending-up" className="w-4 h-4 text-bullish-400" />
+          <div
+            class="flex-shrink-0 w-8 h-8 bg-bullish-500/10 rounded-lg flex items-center justify-center"
+          >
+            <Icon
+              id="material-symbols-trending-up"
+              className="w-4 h-4 text-bullish-400"
+            />
           </div>
           <h3 class="modal-title">Twitter Posts</h3>
         </div>
@@ -42,9 +48,11 @@ const twitterContent = socialMediaContent
       </div>
       <div class="modal-body">
         <p class="text-text-muted text-sm mb-6 leading-relaxed">
-          Check out my latest Twitter posts showcasing demos, tools, and projects. Follow along for real-time updates on my development journey.
+          Check out my latest Twitter posts showcasing demos, tools, and
+          projects. Follow along for real-time updates on my development
+          journey.
         </p>
-        
+
         <div class="demos-grid">
           {
             twitterContent.map((item) => (
@@ -52,14 +60,12 @@ const twitterContent = socialMediaContent
                 <div class="demo-content">
                   <Tweet theme="dark" id={item.url} />
                 </div>
-                
+
                 <div class="demo-metadata">
                   <div class="flex items-center gap-3 text-sm text-text-muted">
                     <time>{item.date}</time>
                     <span>•</span>
-                    <span class="font-medium text-bullish-400">
-                      Twitter
-                    </span>
+                    <span class="font-medium text-bullish-400">Twitter</span>
                     {item.title && (
                       <>
                         <span>•</span>
@@ -67,7 +73,7 @@ const twitterContent = socialMediaContent
                       </>
                     )}
                   </div>
-                  
+
                   {item.tags && (
                     <div class="flex gap-2 mt-2">
                       {item.tags.slice(0, 3).map((tag) => (
@@ -78,7 +84,7 @@ const twitterContent = socialMediaContent
                     </div>
                   )}
                 </div>
-                
+
                 {item.description && (
                   <p class="text-text-secondary text-sm leading-relaxed mt-3">
                     {item.description}
@@ -88,18 +94,18 @@ const twitterContent = socialMediaContent
             ))
           }
         </div>
-        
+
         <div class="mt-8 text-center">
-          <a 
-            href="https://twitter.com/josedonato__" 
+          <a
+            href="https://twitter.com/josedonato__"
             target="_blank"
             rel="noopener noreferrer"
             class="inline-flex items-center gap-2 text-sm link group"
           >
             Follow me on Twitter
-            <Icon 
-              id="material-symbols-arrow-outward" 
-              className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" 
+            <Icon
+              id="material-symbols-arrow-outward"
+              className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200"
             />
           </a>
         </div>
@@ -173,7 +179,9 @@ const twitterContent = socialMediaContent
 
   // Global function to show Twitter demos modal
   window.showTwitterDemosModal = () => {
-    const modal = document.querySelector("twitter-demos-modal") as TwitterDemosModal;
+    const modal = document.querySelector(
+      "twitter-demos-modal",
+    ) as TwitterDemosModal;
     if (modal) {
       modal.show();
     }
