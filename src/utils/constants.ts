@@ -98,7 +98,7 @@ export const PAST_EXPERIENCE_HOMEPAGE = [
 		title: "Fullstack Engineer",
 		place: "OpenBB",
 		placeUrl: "https://openbb.co",
-		description: `Currently working at OpenBB with the mission of building modern investment research platforms for everyone. Our primary product, [OpenBB Workspace](https://pro.openbb.co), is a web application built with React, TailwindCSS, Zustand, and other amazing technologies that enables AI workflows while guaranteeing full control over your data. I've also contributed to other projects including [openbb.co](https://openbb.co), our company website built with remix.run, and [my.openbb.co](https://my.openbb.co), our product management platform. Sign up for OpenBB Workspace [today](https://pro.openbb.co).`,
+		description: `Currently working at OpenBB with the mission of building modern investment research platforms for everyone. Our primary product, [OpenBB Workspace](https://pro.openbb.co), is a web application built with React, TailwindCSS, Zustand, and other amazing technologies that enable AI workflows while guaranteeing full control over your data. I've also contributed to other projects including [openbb.co](https://openbb.co), our company website built with remix.run, and [my.openbb.co](https://my.openbb.co), our product management platform. Sign up for OpenBB Workspace [today](https://pro.openbb.co).`,
 		date: "2021 - Present",
 	},
 	{
