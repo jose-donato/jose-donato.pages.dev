@@ -116,7 +116,7 @@ export const HIGHLIGHTS_HOMEPAGE = [
 	{
 		title: "Building OpenBB Workspace",
 		description:
-			"Leading the development of OpenBB Workspace, a performant web application highly customizable that enables AI workflows while guaranteeing full control over your data.",
+			"Leading the development of OpenBB Workspace, a high-performance, highly customizable web application that enables AI workflows while guaranteeing users full control over their data.",
 		url: "https://openbb.co/products/workspace",
 		icon: "uis-graph-bar",
 	},
