@@ -64,7 +64,10 @@ const twitterContent = socialMediaContent
 
         <div class="carousel-container">
           <button class="carousel-nav prev" aria-label="Previous tweet">
-            <Icon id="material-symbols-chevron-left-rounded" className="w-5 h-5" />
+            <Icon
+              id="material-symbols-chevron-left-rounded"
+              className="w-5 h-5"
+            />
           </button>
 
           <div class="carousel-wrapper">
@@ -82,7 +85,10 @@ const twitterContent = socialMediaContent
           </div>
 
           <button class="carousel-nav next" aria-label="Next tweet">
-            <Icon id="material-symbols-chevron-right-rounded" className="w-5 h-5" />
+            <Icon
+              id="material-symbols-chevron-right-rounded"
+              className="w-5 h-5"
+            />
           </button>
         </div>
 
@@ -336,7 +342,7 @@ const twitterContent = socialMediaContent
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    height: auto;
+    height: 100%;
     overflow: hidden;
   }
 
@@ -353,10 +359,12 @@ const twitterContent = socialMediaContent
     flex: 1;
     overflow: hidden;
     border-radius: 0.75rem;
+    height: 100%;
   }
 
   .carousel-track {
     display: flex;
+    height: 100%;
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -375,8 +383,19 @@ const twitterContent = socialMediaContent
     justify-content: center;
     width: 100%;
     max-width: 550px;
+    overflow: hidden;
   }
 
+  .tweet-container :global(iframe) {
+    max-height: 100% !important;
+    overflow-y: auto;
+  }
+
+  .tweet-container :global(blockquote) {
+    max-height: 100% !important;
+    overflow-y: auto;
+    margin: 0 !important;
+  }
 
   .carousel-nav {
     background: var(--bg-secondary, #2a2a2a);
@@ -462,11 +481,20 @@ const twitterContent = socialMediaContent
 
     .tweet-container {
       max-width: 100%;
+      height: 350px;
     }
 
     .carousel-slide {
       padding: 0.5rem;
       gap: 1rem;
+    }
+
+    .tweet-container :global(iframe) {
+      max-height: 350px !important;
+    }
+
+    .tweet-container :global(blockquote) {
+      max-height: 350px !important;
     }
   }
 

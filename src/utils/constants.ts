@@ -133,7 +133,7 @@ export const HIGHLIGHTS_HOMEPAGE = [
 	},
 	{
 		title:
-			"Comparing the Performance of Web Applications to Native Applications",
+			"Web Applications vs Native Applications",
 		description:
 			"In my master's thesis, I conducted a comparative study between web and native applications for mobile devices, exploring their reliability and performance.",
 		url: "/master_thesis.pdf",
