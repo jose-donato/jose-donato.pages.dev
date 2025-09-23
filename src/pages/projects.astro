@@ -122,40 +122,36 @@ const projectsWithStars = await Promise.all(
 
             {/* Filter Section */}
             <div class="mb-8">
-                <form class="space-y-2">
+                <div class="space-y-2">
                     <div class="flex flex-wrap gap-2">
                         {
                             technologies.map((tech) => (
-                                <button
-                                    type="submit"
-                                    name="q"
-                                    value={tech}
+                                <a
+                                    href={`/projects?q=${tech}`}
                                     class={
                                         query === tech ? "btn" : "btn-outline"
                                     }
                                 >
                                     {tech}
-                                </button>
+                                </a>
                             ))
                         }
                     </div>
                     {
                         query && (
-                            <button
+                            <a
+                                href="/projects"
                                 class="btn gap-2 ml-auto"
-                                type="submit"
-                                name="q"
-                                value=""
                             >
                                 <Icon
                                     id="system-uicons-reset"
                                     className="w-4 h-4"
                                 />
                                 Reset
-                            </button>
+                            </a>
                         )
                     }
-                </form>
+                </div>
             </div>
 
             {/* Projects Grid */}
@@ -232,3 +228,18 @@ const projectsWithStars = await Promise.all(
         </section>
     </div>
 </Layout>
+
+<script>
+    // Preserve scroll position when filtering projects
+    document.addEventListener('astro:before-preparation', () => {
+        sessionStorage.setItem('scrollPosition', window.scrollY.toString());
+    });
+
+    document.addEventListener('astro:after-swap', () => {
+        const scrollPosition = sessionStorage.getItem('scrollPosition');
+        if (scrollPosition) {
+            window.scrollTo(0, parseInt(scrollPosition));
+            sessionStorage.removeItem('scrollPosition');
+        }
+    });
+</script>
