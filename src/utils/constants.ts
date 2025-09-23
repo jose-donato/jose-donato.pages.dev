@@ -146,27 +146,28 @@ export const HIGHLIGHTS_HOMEPAGE = [
 
 export const PROJECTS: Project[] = [
 	{
-		title: "OpenBB Website",
-		type: "website",
-		technologies: [
-			"remix.run",
-			"TailwindCSS",
-			"TypeScript",
-			"mdx-bundler",
-			"Posthog",
-			"Directus",
-		],
-		description: "The company website for OpenBB.",
-		url: "https://openbb.co",
-		screenshot: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop&crop=center",
-	},
-	{
 		title: "OpenBB Workspace",
 		type: "web app",
 		technologies: ["React", "TailwindCSS", "Zustand", "Tanstack/React Query"],
 		description: "Enterprise UI built for AI workflows.",
 		url: "https://pro.openbb.co",
 		gif: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop&crop=center",
+	},
+	{
+		title: "Crypto Futures Arbitrage Scanner",
+		type: "web app",
+		technologies: ["Go", "JavaScript", "WebSocket", "TradingView"],
+		description:
+			"Real-time crypto futures arbitrage scanner connecting to multiple exchanges via WebSocket. Shows live price gaps and market microstructure inefficiencies across 9 exchanges.",
+		url: "https://github.com/jose-donato/crypto-futures-arbitrage-scanner",
+	},
+	{
+		title: "Binance L3 Order Book Estimator",
+		type: "web app",
+		technologies: ["Go", "D3.js", "WebSocket"],
+		description:
+			"Professional-grade real-time L3 order book visualizer for Binance perpetual futures that reconstructs individual order queues from L2 market depth data with K-means clustering.",
+		url: "https://github.com/jose-donato/binancef_l3_estimate_go",
 	},
 	{
 		title: "ollama-reply",
@@ -183,6 +184,29 @@ export const PROJECTS: Project[] = [
 			"An open-source browser extension that leverages the power of the Ollama Llama3 model to generate engaging replies for social media growth.",
 		url: "https://github.com/jose-donato/ollama-reply",
 		screenshot: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=400&fit=crop&crop=center",
+	},
+	{
+		title: "OpenBB Polymarket",
+		type: "web app",
+		technologies: ["Cloudflare", "TypeScript", "OpenBB", "Polymarket API"],
+		description:
+			"OpenBB Workspace app that connects to the Polymarket API, enabling integration of prediction market data with widgets for events, markets, and price history.",
+		url: "https://github.com/jose-donato/openbb-polymarket",
+	},
+	{
+		title: "OpenBB Website",
+		type: "website",
+		technologies: [
+			"remix.run",
+			"TailwindCSS",
+			"TypeScript",
+			"mdx-bundler",
+			"Posthog",
+			"Directus",
+		],
+		description: "The company website for OpenBB.",
+		url: "https://openbb.co",
+		screenshot: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop&crop=center",
 	},
 	{
 		title: "Race Stack",
@@ -312,6 +336,16 @@ export const PROJECTS: Project[] = [
 			"Productivity tool to help you and your attendees ace in presentations. It is a PWA with excellent lighthouse scores.",
 		url: "https://github.com/jose-donato/presentation-helper",
 	},
+
+	{
+		title: "BudgetGuru",
+		type: "web app",
+		technologies: ["SvelteKit", "TailwindCSS", "Hanko", "DrizzleORM", "Chart.js"],
+		description:
+			"AI-powered personal finance mentor that simplifies budgeting, tracking, and optimizing your finances with passkey authentication and intelligent insights.",
+		url: "https://github.com/jose-donato/budgetguru",
+	},
+
 ];
 
 export const SOCIALS = [
