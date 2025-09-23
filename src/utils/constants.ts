@@ -75,7 +75,7 @@ export const EDUCATION = [
 		place: "University of Coimbra",
 		placeUrl: "https://www.uc.pt/en",
 		description:
-			"Final grade: 18/20",
+			"Final grade: 19/20",
 		date: "2018 - 2020",
 	},
 	{
