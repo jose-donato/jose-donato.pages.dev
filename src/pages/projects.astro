@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import Icon from "../components/Icon.astro";
 import SectionIcon from "../components/SectionIcon.astro";
+import ContentCard from "../components/ContentCard.astro";
 import { PROJECTS, TOOLS } from "../utils/constants";
 
 const technologies = Array.from(
@@ -66,35 +67,16 @@ const projectsWithStars = await Promise.all(
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {
                     TOOLS.map((tool) => {
-                        // Assign icons based on tool type
-                        let iconId = "material-symbols-build";
-                        if (tool.title.includes("Sprite")) {
-                            iconId = "material-symbols-extension";
-                        } else if (tool.title.includes("EmojiSense")) {
-                            iconId = "material-symbols-psychology";
-                        } else if (tool.title.includes("BTC")) {
-                            iconId = "bitcoin-logo";
-                        } else if (tool.title.includes("Gift")) {
-                            iconId = "material-symbols-lightbulb-outline";
-                        } else if (tool.title.includes("Quiz")) {
-                            iconId = "material-symbols-playlist-add-check";
-                        }
-
                         return (
-                            <div class="card group flex flex-col">
-                                {/* Content Section */}
-                                <div class="flex items-center gap-3 mb-3">
-                                    <h2 class="font-bold">{tool.title}</h2>
-                                </div>
-                                <p class="text-sm mb-4">{tool.description}</p>
-
-                                <a
-                                    href={`/tools/${tool.slug}`}
-                                    class="inline-flex items-center gap-2 text-sm link mt-auto self-end"
-                                >
-                                    Try it out
-                                </a>
-                            </div>
+                            <ContentCard
+                                title={tool.title}
+                                description={tool.description}
+                                actionButton={{
+                                    text: "Try it out",
+                                    href: `/tools/${tool.slug}`
+                                }}
+                                className="group flex flex-col"
+                            />
                         );
                     })
                 }
@@ -144,69 +126,21 @@ const projectsWithStars = await Promise.all(
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {
                     projectsWithStars.map((project) => {
-                        // Assign icons based on project type
-                        let iconId = "material-symbols-code";
-                        if (project.type === "website") {
-                            iconId = "material-symbols-web";
-                        } else if (project.type === "mobile app") {
-                            iconId = "material-symbols-smartphone";
-                        } else if (project.type === "browser extension") {
-                            iconId = "material-symbols-extension";
-                        } else if (project.type === "desktop app") {
-                            iconId = "material-symbols-build";
-                        } else if (project.type === "web app") {
-                            iconId = "material-symbols-web";
-                        }
-
                         return (
-                            <div class="card group flex flex-col">
-                                {/* Content Section */}
-                                <div class="flex items-center gap-3 mb-3 justify-between">
-                                    <div class="flex items-center gap-2">
-                                        <h2 class="font-bold">
-                                            {project.title}
-                                        </h2>
-                                    </div>
-                                    <div class="">
-                                        <p class="date">{project.type}</p>
-                                    </div>
-                                </div>
-
-                                <p class="text-sm mb-2">
-                                    Technologies used:{" "}
-                                    {project.technologies.join(", ")}
-                                </p>
-                                <p class="text-sm mb-4">
-                                    {project.description}
-                                </p>
-
-                                <div class="flex justify-between items-center mt-auto">
-                                    <div>
-                                        {project.stars !== undefined && (
-                                            <a
-                                                href={project.url}
-                                                target="_blank"
-                                                rel="noreferrer noopener"
-                                                class="flex items-center gap-1 text-sm"
-                                            >
-                                                <Icon
-                                                    id="material-symbols-light-kid-star-sharp"
-                                                    className="w-4 h-4 text-yellow-400"
-                                                />
-                                                <span>{project.stars}</span>
-                                            </a>
-                                        )}
-                                    </div>
-                                    <a
-                                        href={project.url}
-                                        rel="noreferrer noopener"
-                                        target="_blank"
-                                        class="inline-flex items-center gap-2 text-sm link mt-auto self-end"
-                                    >
-                                        View project
-                                    </a>
-                                </div>
-                            </div>
+                            <ContentCard
+                                title={project.title}
+                                description={project.description}
+                                type={project.type}
+                                technologies={project.technologies}
+                                stars={project.stars}
+                                actionButton={{
+                                    text: "View project",
+                                    href: project.url,
+                                    target: "_blank",
+                                    rel: "noreferrer noopener"
+                                }}
+                                className="group flex flex-col"
+                            />
                         );
                     })
                 }

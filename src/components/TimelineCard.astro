@@ -1,0 +1,74 @@
+---
+import { marked } from "marked";
+import Icon from "./Icon.astro";
+
+interface Props {
+  title: string;
+  place?: string;
+  placeUrl?: string;
+  date: string;
+  description?: string;
+  isSpecial?: boolean;
+}
+
+const { title, place, placeUrl, date, description, isSpecial = false } = Astro.props;
+---
+
+<div class="relative group">
+  <!-- Timeline dot -->
+  <div class={`absolute left-4 top-6 w-4 h-4 rounded-full border-2 border-bg-primary shadow-lg hidden md:block group-hover:scale-110 transition-transform duration-200 ${isSpecial ? 'bg-gradient-to-r from-bullish-400 to-bullish-600 animate-pulse' : 'bg-bullish-500'}`}></div>
+  
+  <!-- Card content -->
+  <div class={`md:ml-16 card ${isSpecial ? 'border-bullish-600/20 bg-gradient-to-br from-bg-secondary to-bg-tertiary' : ''}`}>
+    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
+      <div class="flex-1">
+        <div class="flex items-center gap-3 mb-2">
+          <h3 class={`font-bold text-text-primary ${isSpecial ? 'text-lg' : 'text-xl'}`}>
+            {title}
+          </h3>
+        </div>
+        {place && (
+          <div class="flex items-center gap-2">
+            <span class="text-text-muted">@</span>
+            {placeUrl ? (
+              <a
+                href={placeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link text-lg font-semibold flex items-center gap-2 group/link"
+              >
+                {place}
+                <Icon
+                  id="material-symbols-open-in-new-rounded"
+                  className="h-4 w-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform duration-200"
+                />
+              </a>
+            ) : (
+              <span class="text-lg font-semibold text-text-secondary">
+                {place}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+      <div class="flex-shrink-0">
+        <span class="date">
+          {date}
+        </span>
+      </div>
+    </div>
+    
+    {description && (
+      isSpecial ? (
+        <p class="prose prose-invert prose-sm max-w-none prose-a:text-bullish-500 leading-relaxed text-text-muted">
+          {description}
+        </p>
+      ) : (
+        <article
+          class="prose prose-invert prose-sm max-w-none prose-a:text-bullish-500 leading-relaxed text-text-muted"
+          set:html={marked(description)}
+        />
+      )
+    )}
+  </div>
+</div>

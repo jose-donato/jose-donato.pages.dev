@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Icon from "../components/Icon.astro";
+import ContentCard from "../components/ContentCard.astro";
 import { getCollection } from "astro:content";
 import {
   socialMediaContent,
@@ -129,53 +130,18 @@ const finalContent =
             const post = item.data;
             return (
               <article>
-                <a
-                  href={`/blog/${post.id}`}
-                  class="card-interactive block group"
-                >
-                  <div class="flex items-start justify-between gap-3 lg:gap-6">
-                    <div class="flex items-start gap-3 flex-1 min-w-0">
-                      <div class="flex-shrink-0 w-10 h-10 bg-bullish-500/10 rounded-lg flex items-center justify-center mt-1">
-                        <Icon
-                          id="material-symbols-article"
-                          className="w-5 h-5 text-bullish-400"
-                        />
-                      </div>
-                      <div class="flex-1 min-w-0">
-                        <h2 class="text-lg lg:text-xl font-bold text-text-primary mb-2 line-clamp-2">
-                          {post.data.title}
-                        </h2>
-
-                        {post.data.snippet && (
-                          <p class="text-text-secondary text-base leading-relaxed mb-4 line-clamp-2">
-                            {post.data.snippet}
-                          </p>
-                        )}
-
-                        <div class="flex items-center gap-4 text-sm text-text-muted">
-                          {post.data.date && <time>{post.data.date}</time>}
-                          {post.data.readingTime && (
-                            <>
-                              <span>•</span>
-                              <span>{post.data.readingTime} min read</span>
-                            </>
-                          )}
-                          <span>•</span>
-                          <span class="text-bullish-400 font-medium">
-                            Article
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1">
-                      <Icon
-                        id="material-symbols-arrow-outward"
-                        className="w-5 h-5 text-bullish-500"
-                      />
-                    </div>
-                  </div>
-                </a>
+                <ContentCard
+                  title={post.data.title}
+                  description={post.data.snippet || ""}
+                  icon="material-symbols-article"
+                  type="Article"
+                  date={post.data.date}
+                  actionButton={{
+                    text: "",
+                    href: `/blog/${post.id}`
+                  }}
+                  isInteractive={true}
+                />
               </article>
             );
           } else {
@@ -186,57 +152,22 @@ const finalContent =
 
             return (
               <article>
-                <a
-                  href={`/blog/${videoItem.id}`}
-                  class="card-interactive block group"
-                >
-                  <div class="flex items-start justify-between gap-3 lg:gap-6">
-                    <div class="flex items-start gap-3 flex-1 min-w-0">
-                      <div class="flex-shrink-0 w-10 h-10 bg-bullish-500/10 rounded-lg flex items-center justify-center mt-1">
-                        <Icon
-                          id="material-symbols-play-circle"
-                          className="w-5 h-5 text-bullish-400"
-                        />
-                      </div>
-                      <div class="flex-1 min-w-0">
-                        <h2 class="text-lg lg:text-xl font-bold text-text-primary mb-2 line-clamp-2">
-                          {videoItem.title || "YouTube Video"}
-                        </h2>
-
-                        {videoItem.description && (
-                          <p class="text-text-secondary text-base leading-relaxed mb-4 line-clamp-2">
-                            {videoItem.description}
-                          </p>
-                        )}
-
-                        <div class="flex items-center gap-4 text-sm text-text-muted">
-                          {videoItem.date && <time>{videoItem.date}</time>}
-                          <span>•</span>
-                          <span class="text-bullish-400 font-medium">
-                            Video
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Thumbnail preview */}
-                    <div class="hidden lg:block flex-shrink-0 w-24 h-16 bg-bg-secondary rounded-lg overflow-hidden border border-border-primary">
-                      <img
-                        src={thumbnailUrl}
-                        alt={`${videoItem.title || "YouTube Video"} thumbnail`}
-                        class="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
-
-                    <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1">
-                      <Icon
-                        id="material-symbols-arrow-outward"
-                        className="w-5 h-5 text-bullish-500"
-                      />
-                    </div>
-                  </div>
-                </a>
+                <ContentCard
+                  title={videoItem.title || "YouTube Video"}
+                  description={videoItem.description || ""}
+                  icon="material-symbols-play-circle"
+                  type="Video"
+                  date={videoItem.date}
+                  actionButton={{
+                    text: "",
+                    href: `/blog/${videoItem.id}`
+                  }}
+                  thumbnail={{
+                    src: thumbnailUrl,
+                    alt: `${videoItem.title || "YouTube Video"} thumbnail`
+                  }}
+                  isInteractive={true}
+                />
               </article>
             );
           }

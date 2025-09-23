@@ -5,6 +5,8 @@ import VideoModal from "../components/VideoModal.astro";
 import PDFModal from "../components/PDFModal.astro";
 import TwitterDemosModal from "../components/TwitterDemosModal.astro";
 import SectionIcon from "../components/SectionIcon.astro";
+import ContentCard from "../components/ContentCard.astro";
+import TimelineCard from "../components/TimelineCard.astro";
 import {
   EDUCATION,
   PAST_EXPERIENCE_HOMEPAGE,
@@ -30,75 +32,46 @@ function getYouTubeVideoId(url: string): string | null {
             const iconId = highlight.icon || "material-symbols-lightbulb-outline";
 
             // Determine action type and action text
-            let actionElement;
+            let actionButton;
             if (highlight.title.includes("OpenBB Workspace")) {
-              // Sign up button for OpenBB Workspace
-              actionElement = (
-                <a
-                  class="inline-flex items-center gap-2 text-sm link mt-auto self-end"
-                  href={highlight.url}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  See more
-                </a>
-              );
+              actionButton = {
+                text: "See more",
+                href: highlight.url,
+                target: "_blank",
+                rel: "noreferrer noopener"
+              };
             } else if (highlight.title.includes("Twitter Posts")) {
-              // Twitter posts modal button
-              actionElement = (
-                <button
-                  class="inline-flex items-center gap-2 text-sm link mt-auto self-end"
-                  onclick="showTwitterDemosModal()"
-                >
-                  View posts
-                </button>
-              );
+              actionButton = {
+                text: "View posts",
+                onclick: "showTwitterDemosModal()"
+              };
             } else if (highlight.title.includes("Pyth") || highlight.title.includes("Real-Time Data")) {
-              // Video demo button for Pyth
               const videoId = getYouTubeVideoId(highlight.url);
-              actionElement = (
-                <button
-                  class="inline-flex items-center gap-2 text-sm link mt-auto self-end"
-                  onclick={`showVideoModal('${videoId}', '${highlight.title}')`}
-                >
-                  Watch demo
-                </button>
-              );
+              actionButton = {
+                text: "Watch demo",
+                onclick: `showVideoModal('${videoId}', '${highlight.title}')`
+              };
             } else if (highlight.title.includes("Web Applications") || highlight.title.includes("Native Applications")) {
-              // Thesis popup for Web Applications vs Native Applications
-              actionElement = (
-                <button
-                  class="inline-flex items-center gap-2 text-sm link mt-auto self-end"
-                  onclick={`showPDFModal('${highlight.url}', '${highlight.title}')`}
-                >
-                  Read thesis
-                </button>
-              );
+              actionButton = {
+                text: "Read thesis",
+                onclick: `showPDFModal('${highlight.url}', '${highlight.title}')`
+              };
             } else {
-              // Default read more link
-              actionElement = (
-                <a
-                  class="inline-flex items-center gap-2 text-sm link mt-auto self-end"
-                  href={highlight.url}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  Read more
-                </a>
-              );
+              actionButton = {
+                text: "Read more",
+                href: highlight.url,
+                target: "_blank",
+                rel: "noreferrer noopener"
+              };
             }
             
             return (
-              <div class="card w-fit flex flex-col gap-3 col-span-1">
-                <div class="flex items-center gap-3">
-                  <div class="flex-shrink-0 w-10 h-10 bg-bullish-500/10 rounded-lg flex items-center justify-center">
-                    <Icon id={iconId} className="w-5 h-5 text-bullish-400" />
-                  </div>
-                  <p class="font-bold flex-1">{highlight.title}</p>
-                </div>
-                <p class="text-sm">{highlight.description}</p>
-                {actionElement}
-              </div>
+              <ContentCard
+                title={highlight.title}
+                description={highlight.description}
+                icon={iconId}
+                actionButton={actionButton}
+              />
             );
           })
         }
@@ -113,56 +86,13 @@ function getYouTubeVideoId(url: string): string | null {
         <div class="space-y-8">
           {
             PAST_EXPERIENCE_HOMEPAGE.map((experience, index) => (
-              <div class="relative group">
-                <!-- Timeline dot -->
-                <div class="absolute left-4 top-6 w-4 h-4 bg-bullish-500 rounded-full border-2 border-bg-primary shadow-lg hidden md:block group-hover:scale-110 transition-transform duration-200"></div>
-                
-                <!-- Experience card -->
-                <div class="md:ml-16 card">
-                  <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
-                    <div class="flex-1">
-                      <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-xl font-bold text-text-primary">
-                          {experience.title}
-                        </h3>
-                      </div>
-                      {experience.place && (
-                        <div class="flex items-center gap-2">
-                          <span class="text-text-muted">@</span>
-                          {experience.placeUrl ? (
-                            <a
-                              href={experience.placeUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              class="link text-lg font-semibold flex items-center gap-2 group/link"
-                            >
-                              {experience.place}
-                              <Icon
-                                id="material-symbols-open-in-new-rounded"
-                                className="h-4 w-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform duration-200"
-                              />
-                            </a>
-                          ) : (
-                            <span class="text-lg font-semibold text-text-secondary">
-                              {experience.place}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <div class="flex-shrink-0">
-                      <span class="date">
-                        {experience.date}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <article
-                    class="prose prose-invert prose-sm max-w-none prose-a:text-bullish-500 leading-relaxed text-text-muted"
-                    set:html={marked(experience.description)}
-                  />
-                </div>
-              </div>
+              <TimelineCard
+                title={experience.title}
+                place={experience.place}
+                placeUrl={experience.placeUrl}
+                date={experience.date}
+                description={experience.description}
+              />
             ))
           }
         </div>
@@ -177,77 +107,23 @@ function getYouTubeVideoId(url: string): string | null {
         <div class="space-y-8">
           {
             EDUCATION.map((education, index) => (
-              <div class="relative group">
-                <!-- Timeline dot -->
-                <div class="absolute left-4 top-6 w-4 h-4 bg-bullish-500 rounded-full border-2 border-bg-primary shadow-lg hidden md:block group-hover:scale-110 transition-transform duration-200"></div>
-                
-                <!-- Education card -->
-                <div class="md:ml-16 card">
-                  <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
-                    <div class="flex-1">
-                      <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-xl font-bold text-text-primary">
-                          {education.title}
-                        </h3>
-                      </div>
-                      {education.place && (
-                        <div class="flex items-center gap-2">
-                          <span class="text-text-muted">@</span>
-                          {education.placeUrl ? (
-                            <a
-                              href={education.placeUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              class="link text-lg font-semibold flex items-center gap-2 group/link"
-                            >
-                              {education.place}
-                              <Icon
-                                id="material-symbols-open-in-new-rounded"
-                                className="h-4 w-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform duration-200"
-                              />
-                            </a>
-                          ) : (
-                            <span class="text-lg font-semibold text-text-secondary">
-                              {education.place}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <div class="flex-shrink-0">
-                      <span class="date">
-                        {education.date}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {education.description && (
-                    <p class="prose prose-invert prose-sm max-w-none prose-a:text-bullish-500 leading-relaxed text-text-muted">
-                      {education.description}
-                    </p>
-                  )}
-                </div>
-              </div>
+              <TimelineCard
+                title={education.title}
+                place={education.place}
+                placeUrl={education.placeUrl}
+                date={education.date}
+                description={education.description}
+              />
             ))
           }
           
           <!-- Learning motivation element -->
-          <div class="relative group">
-            <!-- Timeline dot with special styling -->
-            <div class="absolute left-4 top-6 w-4 h-4 bg-gradient-to-r from-bullish-400 to-bullish-600 rounded-full border-2 border-bg-primary shadow-lg hidden md:block group-hover:scale-110 transition-transform duration-200 animate-pulse"></div>
-            
-            <!-- Motivation card -->
-            <div class="md:ml-16 card border-bullish-600/20 bg-gradient-to-br from-bg-secondary to-bg-tertiary">
-              <div class="flex items-center gap-3 mb-3">
-                <h3 class="text-lg font-bold text-text-primary">
-                  Continuous Learning
-                </h3>
-              </div>
-              <p class="prose prose-invert prose-sm max-w-none prose-a:text-bullish-500 leading-relaxed text-text-muted">
-                My journey in technology is driven by an insatiable curiosity and commitment to continuous improvement. I actively engage with emerging technologies, contribute to open-source projects, and stay current with industry trends to deliver innovative solutions.
-              </p>
-            </div>
-          </div>
+          <TimelineCard
+            title="Continuous Learning"
+            date=""
+            description="My journey in technology is driven by an insatiable curiosity and commitment to continuous improvement. I actively engage with emerging technologies, contribute to open-source projects, and stay current with industry trends to deliver innovative solutions."
+            isSpecial={true}
+          />
         </div>
       </div>
     </div>
