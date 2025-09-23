@@ -1,6 +1,6 @@
 ---
 import { SEO, type Props as SEOProps } from "astro-seo";
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
@@ -64,7 +64,7 @@ const ogImageUrl = "/og_image.png";
       name="keywords"
       content="josé donato, fullstack, openbb, quant, trading, tools, finance"
     />
-    <Posthog client:idle />
+    <Posthog />
     <SEO
       {...seo}
       title={seo?.title ?? "José Donato"}
@@ -83,7 +83,7 @@ const ogImageUrl = "/og_image.png";
         image: ogImageUrl,
       }}
     />
-    <ViewTransitions />
+    <ClientRouter />
     <script is:inline>
       // Handle theme persistence with View Transitions
       document.addEventListener("astro:before-swap", (ev) => {
