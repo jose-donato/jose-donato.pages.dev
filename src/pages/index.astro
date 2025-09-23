@@ -25,7 +25,7 @@ function getYouTubeVideoId(url: string): string | null {
   <div class="space-y-20">
     <div>
       <SectionIcon iconId="material-symbols-bookmarks-outline" title="Highlights" />
-      <ul class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         {
           HIGHLIGHTS_HOMEPAGE.map((highlight, idx) => {
             // Use the icon from the highlight object, with fallback
@@ -66,16 +66,16 @@ function getYouTubeVideoId(url: string): string | null {
             }
             
             return (
-              <ContentCard
-                title={highlight.title}
-                description={highlight.description}
-                icon={iconId}
-                actionButton={actionButton}
-              />
+                <ContentCard
+                  title={highlight.title}
+                  description={highlight.description}
+                  icon={iconId}
+                  actionButton={actionButton}
+                />
             );
           })
         }
-      </ul>
+      </div>
     </div>
     <div>
       <SectionIcon iconId="majesticons-suitcase-line" title="Professional Experience" />
