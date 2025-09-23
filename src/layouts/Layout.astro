@@ -1,5 +1,6 @@
 ---
 import { SEO, type Props as SEOProps } from "astro-seo";
+import { ViewTransitions } from "astro:transitions";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
@@ -25,6 +26,17 @@ const ogImageUrl = "/og_image.png";
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Trading-focused dark mode only - no theme switching needed -->
+    <script is:inline>
+      // Prevent flash of incorrect theme - must be first script
+      (function () {
+        const theme =
+          localStorage.getItem("theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light");
+        document.documentElement.classList.toggle("dark", theme === "dark");
+      })();
+    </script>
 
     <link
       rel="apple-touch-icon"
@@ -48,17 +60,6 @@ const ogImageUrl = "/og_image.png";
     <meta name="theme-color" content="#ffffff" />
     <meta name="generator" content={Astro.generator} />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <script is:inline>
-      // Prevent flash of incorrect theme
-      (function () {
-        const theme =
-          localStorage.getItem("theme") ||
-          (window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light");
-        document.documentElement.classList.toggle("dark", theme === "dark");
-      })();
-    </script>
     <meta
       name="keywords"
       content="josé donato, fullstack, openbb, quant, trading, tools, finance"
@@ -82,6 +83,15 @@ const ogImageUrl = "/og_image.png";
         image: ogImageUrl,
       }}
     />
+    <ViewTransitions />
+    <script is:inline>
+      // Handle theme persistence with View Transitions
+      document.addEventListener('astro:before-swap', (ev) => {
+        const theme = localStorage.getItem("theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        ev.newDocument.documentElement.classList.toggle("dark", theme === "dark");
+      });
+    </script>
   </head>
   <body>
     <!-- Theme toggle in top right -->
