@@ -47,7 +47,13 @@ const projectsWithStars = await Promise.all(
 );
 ---
 
-<Layout>
+<Layout
+    seo={{
+        title: "José Donato | Projects",
+        description:
+            "Personal portfolio showcasing projects and tools developed by José Donato.",
+    }}
+>
     <div class="space-y-20">
         <!-- Tools Section -->
         <section>
@@ -83,13 +89,9 @@ const projectsWithStars = await Promise.all(
                             <div class="card group flex flex-col">
                                 {/* Content Section */}
                                 <div class="flex items-center gap-3 mb-3">
-                                    <h2 class="font-bold">
-                                        {tool.title}
-                                    </h2>
+                                    <h2 class="font-bold">{tool.title}</h2>
                                 </div>
-                                <p class="text-sm mb-4">
-                                    {tool.description}
-                                </p>
+                                <p class="text-sm mb-4">{tool.description}</p>
 
                                 <a
                                     href={`/tools/${tool.slug}`}
