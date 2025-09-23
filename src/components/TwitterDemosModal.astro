@@ -1,7 +1,6 @@
 ---
 import { Tweet } from "@astro-community/astro-embed-twitter";
 import Icon from "./Icon.astro";
-import LinkCTA from "./LinkCTA.astro";
 import Modal from "./Modal.astro";
 import { socialMediaContent } from "../data/socialMedia";
 
@@ -26,23 +25,25 @@ const titleContent = `
     <span>Twitter/X Posts</span>
   </div>
 `;
+
+const headerActions = `
+  <a
+    href="https://x.com/josedonato__"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="bg-transparent border-none text-text-muted cursor-pointer p-2 rounded-md transition-colors duration-200 hover:text-text-primary hover:bg-bg-secondary text-decoration-none flex items-center justify-center"
+    aria-label="Follow me on X"
+  >
+    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+    </svg>
+  </a>
+`;
 ---
 
 <twitter-demos-modal>
-  <Modal id="twitter" title={titleContent} titleHtml={true} maxWidth="1000px" height="80vh">
+  <Modal id="twitter" title={titleContent} titleHtml={true} maxWidth="1000px" height="80vh" headerActions={headerActions}>
     <div class="flex flex-col h-full">
-      <div class="mb-6 text-center">
-        <p class="text-text-muted text-sm leading-relaxed mb-4">
-          Check out my latest Twitter posts showcasing demos, tools, and projects for real-time updates on my development journey.
-        </p>
-        <LinkCTA 
-          href="https://x.com/josedonato__"
-          text="Follow me on X"
-          iconId="proicons-x-twitter"
-          target="_blank"
-          rel="noopener noreferrer"
-        />
-      </div>
 
       <div class="carousel-container relative flex-1 overflow-hidden">
         <!-- Navigation buttons positioned absolutely -->

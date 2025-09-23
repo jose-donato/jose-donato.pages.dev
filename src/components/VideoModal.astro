@@ -1,5 +1,5 @@
 ---
-import Modal from './Modal.astro';
+import Modal from "./Modal.astro";
 
 interface Props {
   videoId: string;
@@ -26,9 +26,7 @@ const { videoId, title = "Video" } = Astro.props;
 
     constructor() {
       super();
-      console.log('VideoModal constructor called');
       this.videoContainer = this.querySelector(".video-container");
-      console.log('Found video container:', !!this.videoContainer);
     }
 
     connectedCallback() {
@@ -59,18 +57,15 @@ const { videoId, title = "Video" } = Astro.props;
     }
 
     show() {
-      console.log('VideoModal show() called');
       const backdrop = this.querySelector(".modal-backdrop");
-      console.log('Found backdrop:', !!backdrop);
       if (backdrop) {
         backdrop.classList.remove("hidden");
         backdrop.classList.add("flex");
         document.body.style.overflow = "hidden";
-        console.log('About to create iframe');
         this.createIframe();
-        
+
         // Dispatch custom event
-        this.dispatchEvent(new CustomEvent('modal:show'));
+        this.dispatchEvent(new CustomEvent("modal:show"));
       }
     }
 
@@ -90,27 +85,23 @@ const { videoId, title = "Video" } = Astro.props;
     }
 
     private createIframe() {
-      console.log('createIframe called');
-      console.log('iframe exists:', !!this.iframe);
-      console.log('videoContainer exists:', !!this.videoContainer);
-      
       if (!this.iframe && this.videoContainer) {
         const videoId = this.getAttribute("data-video-id");
         const title = this.getAttribute("data-title") || "Video";
-        
-        console.log('videoId:', videoId, 'title:', title);
-        
+
         if (videoId) {
           this.iframe = document.createElement("iframe");
-          this.iframe.className = "absolute top-0 left-0 w-full h-full rounded-lg";
+          this.iframe.className =
+            "absolute top-0 left-0 w-full h-full rounded-lg";
           this.iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
           this.iframe.title = title;
           this.iframe.setAttribute("frameborder", "0");
-          this.iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+          this.iframe.allow =
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
           this.iframe.allowFullscreen = true;
-          
+
           this.videoContainer.appendChild(this.iframe);
-          console.log('iframe created and appended');
+          1;
         }
       }
     }
@@ -123,41 +114,34 @@ const { videoId, title = "Video" } = Astro.props;
     }
   }
 
-  console.log('Registering VideoModal custom element');
   if (!customElements.get("video-modal")) {
     customElements.define("video-modal", VideoModal);
-    console.log('VideoModal custom element registered');
   } else {
-    console.log('VideoModal custom element already exists');
   }
 
   // Global function to show video modal
   window.showVideoModal = (videoId: string, title?: string) => {
-    console.log('showVideoModal called with:', videoId, title);
-    
     // Use the existing VideoModal on the page
     let modal = document.querySelector("video-modal") as VideoModal;
-    console.log('Found modal:', !!modal);
-    console.log('Modal is instance of VideoModal:', modal instanceof VideoModal);
 
     if (modal) {
       // Update the existing modal with new video data
       modal.setAttribute("data-video-id", videoId);
       modal.setAttribute("data-title", title || "Video");
-      
+
       // Update the modal title
       const titleElement = modal.querySelector(".modal-title");
       if (titleElement) {
         titleElement.textContent = title || "Video";
       }
-      
+
       // Force the show by directly manipulating the DOM if the custom element isn't working
       const backdrop = modal.querySelector(".modal-backdrop");
       if (backdrop) {
         backdrop.classList.remove("hidden");
         backdrop.classList.add("flex");
         document.body.style.overflow = "hidden";
-        
+
         // Manually create iframe
         const videoContainer = modal.querySelector(".video-container");
         if (videoContainer) {
@@ -168,13 +152,13 @@ const { videoId, title = "Video" } = Astro.props;
             iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
             iframe.title = title || "Video";
             iframe.setAttribute("frameborder", "0");
-            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+            iframe.allow =
+              "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
             iframe.allowFullscreen = true;
             videoContainer.appendChild(iframe);
-            console.log('Iframe manually created and appended');
           }
         }
-        
+
         // Setup close functionality
         const closeButton = modal.querySelector(".modal-close");
         const hideModal = () => {
@@ -188,22 +172,20 @@ const { videoId, title = "Video" } = Astro.props;
             videoContainer.removeChild(iframe);
           }
         };
-        
+
         closeButton?.addEventListener("click", hideModal);
         backdrop?.addEventListener("click", (e) => {
           if (e.target === backdrop) {
             hideModal();
           }
         });
-        
+
         document.addEventListener("keydown", (e) => {
           if (e.key === "Escape" && backdrop.classList.contains("flex")) {
             hideModal();
           }
         });
       }
-    } else {
-      console.log('No video modal found on page');
     }
   };
 
@@ -214,4 +196,3 @@ const { videoId, title = "Video" } = Astro.props;
     }
   }
 </script>
-

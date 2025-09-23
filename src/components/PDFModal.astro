@@ -256,12 +256,15 @@ const downloadAction = `
     }
 
     handleLoaded() {
+      console.log("handleLoaded called", { pdfPath: this.pdfPath, workerPath: this.workerPath });
       if (!window.pdfjsLib) {
+        console.log("pdfjsLib not available, retrying...");
         setTimeout(() => this.handleLoaded(), 100);
         return;
       }
 
       try {
+        console.log("Setting up PDF.js worker and loading document");
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = this.workerPath;
         this.loadingTask = window.pdfjsLib.getDocument(this.pdfPath);
         this.load();
@@ -271,14 +274,24 @@ const downloadAction = `
     }
 
     connectedCallback() {
-      if (!this.pdfPath || !this.workerPath) return;
+      // Don't load PDF immediately, wait for explicit load call
+    }
+
+    loadPDF() {
+      console.log("loadPDF called", { pdfPath: this.pdfPath, workerPath: this.workerPath });
+      if (!this.pdfPath || !this.workerPath) {
+        console.error("Missing pdfPath or workerPath");
+        return;
+      }
 
       if (document.readyState === "loading") {
+        console.log("Document still loading, waiting for DOMContentLoaded");
         window.addEventListener(
           "DOMContentLoaded",
           this.handleLoaded.bind(this),
         );
       } else {
+        console.log("Document ready, calling handleLoaded");
         this.handleLoaded();
       }
     }
@@ -321,11 +334,31 @@ const downloadAction = `
     }
 
     show() {
+      console.log("PDFModal show() called");
       const backdrop = this.querySelector(".modal-backdrop");
       if (backdrop) {
         backdrop.classList.remove("hidden");
         backdrop.classList.add("flex");
         document.body.style.overflow = "hidden";
+        
+        // Load PDF only when modal is shown
+        setTimeout(() => {
+          console.log("Attempting to load PDF", { pdfViewer: this.pdfViewer });
+          if (this.pdfViewer && typeof this.pdfViewer.loadPDF === 'function') {
+            console.log("Loading PDF via this.pdfViewer");
+            this.pdfViewer.loadPDF();
+          } else {
+            // Fallback: find pdf-viewer in the modal
+            const pdfViewer = this.querySelector("pdf-viewer") as PDFModalViewer;
+            console.log("Fallback: found pdf-viewer", pdfViewer);
+            if (pdfViewer && typeof pdfViewer.loadPDF === 'function') {
+              console.log("Loading PDF via fallback pdfViewer");
+              pdfViewer.loadPDF();
+            } else {
+              console.error("No PDF viewer found or loadPDF method missing");
+            }
+          }
+        }, 100);
       }
     }
 
@@ -434,6 +467,32 @@ const downloadAction = `
       `;
 
       document.body.appendChild(modal);
+      
+      // Set up the PDF viewer reference after adding to DOM
+      const pdfViewer = modal.querySelector("pdf-viewer") as PDFModalViewer;
+      if (pdfViewer) {
+        (modal as any).pdfViewer = pdfViewer;
+      }
+      
+      // Set up event listeners for the dynamically created modal
+      const backdrop = modal.querySelector(".modal-backdrop");
+      const closeButton = modal.querySelector(".modal-close");
+
+      backdrop?.addEventListener("click", (e) => {
+        if (e.target === backdrop) {
+          (modal as PDFModal).hide();
+        }
+      });
+
+      closeButton?.addEventListener("click", () => {
+        (modal as PDFModal).hide();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && (modal as PDFModal).isVisible()) {
+          (modal as PDFModal).hide();
+        }
+      });
     }
 
     modal.show();
