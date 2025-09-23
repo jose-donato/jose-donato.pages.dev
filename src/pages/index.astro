@@ -1,5 +1,4 @@
 ---
-import Icon from "../components/Icon.astro";
 import Layout from "../layouts/Layout.astro";
 import VideoModal from "../components/VideoModal.astro";
 import PDFModal from "../components/PDFModal.astro";
@@ -12,7 +11,6 @@ import {
   PAST_EXPERIENCE_HOMEPAGE,
   HIGHLIGHTS_HOMEPAGE,
 } from "../utils/constants";
-import { marked } from "marked";
 
 // Helper function to extract YouTube video ID from URL
 function getYouTubeVideoId(url: string): string | null {
@@ -24,65 +22,81 @@ function getYouTubeVideoId(url: string): string | null {
 <Layout>
   <div class="space-y-20">
     <div>
-      <SectionIcon iconId="material-symbols-bookmarks-outline" title="Highlights" />
+      <SectionIcon
+        iconId="material-symbols-bookmarks-outline"
+        title="Highlights"
+      />
       <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         {
           HIGHLIGHTS_HOMEPAGE.map((highlight, idx) => {
             // Use the icon from the highlight object, with fallback
-            const iconId = highlight.icon || "material-symbols-lightbulb-outline";
+            const iconId =
+              highlight.icon || "material-symbols-lightbulb-outline";
 
             // Determine action type and action text
             let actionButton;
             if (highlight.title.includes("OpenBB Workspace")) {
               actionButton = {
-                text: "See more",
+                text: "View OpenBB Workspace",
                 href: highlight.url,
                 target: "_blank",
-                rel: "noreferrer noopener"
+                rel: "noreferrer noopener",
               };
             } else if (highlight.title.includes("Twitter Posts")) {
               actionButton = {
                 text: "View posts",
-                onclick: "showTwitterDemosModal()"
+                onclick: "showTwitterDemosModal()",
               };
-            } else if (highlight.title.includes("Pyth") || highlight.title.includes("Real-Time Data")) {
+            } else if (
+              highlight.title.includes("Pyth") ||
+              highlight.title.includes("Real-Time Data")
+            ) {
               const videoId = getYouTubeVideoId(highlight.url);
               actionButton = {
                 text: "Watch demo",
-                onclick: `showVideoModal('${videoId}', '${highlight.title}')`
+                onclick: `showVideoModal('${videoId}', '${highlight.title}')`,
               };
-            } else if (highlight.title.includes("Web Applications") || highlight.title.includes("Native Applications")) {
+            } else if (
+              highlight.title.includes("Web Applications") ||
+              highlight.title.includes("Native Applications")
+            ) {
               actionButton = {
                 text: "Read thesis",
-                onclick: `showPDFModal('${highlight.url}', '${highlight.title}')`
+                onclick: `showPDFModal('${highlight.url}', '${highlight.title}')`,
               };
             } else {
               actionButton = {
                 text: "Read more",
                 href: highlight.url,
                 target: "_blank",
-                rel: "noreferrer noopener"
+                rel: "noreferrer noopener",
               };
             }
-            
+
             return (
-                <ContentCard
-                  title={highlight.title}
-                  description={highlight.description}
-                  icon={iconId}
-                  actionButton={actionButton}
-                />
+              <ContentCard
+                title={highlight.title}
+                description={highlight.description}
+                icon={iconId}
+                actionButton={actionButton}
+              />
             );
           })
         }
       </div>
     </div>
     <div>
-      <SectionIcon iconId="majesticons-suitcase-line" title="Professional Experience" />
+      <SectionIcon
+        iconId="majesticons-suitcase-line"
+        title="Professional Experience"
+      />
       <div class="relative">
         <!-- Timeline line -->
-        <div class="absolute left-6 top-0 bottom-0 w-[2px] bg-gradient-to-b from-bullish-500 via-border-primary to-transparent hidden md:block"></div>
-        
+        <div
+          class="absolute left-6 top-0 bottom-0 w-[2px] bg-gradient-to-b from-bullish-500 via-border-primary to-transparent hidden md:block"
+        >
+        </div>
+
         <div class="space-y-8">
           {
             PAST_EXPERIENCE_HOMEPAGE.map((experience, index) => (
@@ -102,8 +116,11 @@ function getYouTubeVideoId(url: string): string | null {
       <SectionIcon iconId="cil-education" title="Education" />
       <div class="relative">
         <!-- Timeline line -->
-        <div class="absolute left-6 top-0 bottom-0 w-[2px] bg-gradient-to-b from-bullish-500 via-border-primary to-transparent hidden md:block"></div>
-        
+        <div
+          class="absolute left-6 top-0 bottom-0 w-[2px] bg-gradient-to-b from-bullish-500 via-border-primary to-transparent hidden md:block"
+        >
+        </div>
+
         <div class="space-y-8">
           {
             EDUCATION.map((education, index) => (
@@ -116,7 +133,7 @@ function getYouTubeVideoId(url: string): string | null {
               />
             ))
           }
-          
+
           <!-- Learning motivation element -->
           <TimelineCard
             title="Continuous Learning"
@@ -130,7 +147,13 @@ function getYouTubeVideoId(url: string): string | null {
   </div>
 
   <!-- Modals (hidden by default) -->
-  <VideoModal videoId="LWUioH_ncQk" title="Pyth Integration: Real-Time Data + AI" />
-  <PDFModal pdfPath="/master_thesis.pdf" title="Comparing the Performance of Web Applications to Native Applications" />
+  <VideoModal
+    videoId="LWUioH_ncQk"
+    title="Pyth Integration: Real-Time Data + AI"
+  />
+  <PDFModal
+    pdfPath="/master_thesis.pdf"
+    title="Comparing the Performance of Web Applications to Native Applications"
+  />
   <TwitterDemosModal />
 </Layout>

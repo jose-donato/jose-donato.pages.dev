@@ -101,7 +101,7 @@ export const PAST_EXPERIENCE_HOMEPAGE = [
 		place: "University of Coimbra",
 		placeUrl: "https://www.uc.pt/en",
 		description:
-			"During my master’s internship, I received a research scholarship from FCT, Portugal’s public agency for science and innovation. This opportunity allowed me to work independently with guidance from my supervisor, balancing freedom with responsibility. My thesis assessed whether web applications were a viable alternative to native apps on mobile devices, culminating in a comparative study you can read [here](/master_thesis.pdf). I’ve also written on various cybersecurity topics, available on my [blog](/blog).",
+			"During my master's internship, I received a research scholarship from FCT, Portugal's public agency for science and innovation. This opportunity allowed me to work independently with guidance from my supervisor, balancing freedom with responsibility. My thesis assessed whether web applications were a viable alternative to native apps on mobile devices, culminating in a comparative study you can read [in my master's thesis](/master_thesis.pdf). I've also written on various cybersecurity topics, available on my [blog](/blog).",
 		date: "2019 - 2020",
 	},
 	{
