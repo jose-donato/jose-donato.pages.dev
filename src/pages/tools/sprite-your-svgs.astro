@@ -2,7 +2,12 @@
 import Layout from "../../layouts/Layout.astro";
 ---
 
-<Layout>
+<Layout
+  seo={{
+    title: "Sprite Your SVGs | José Donato",
+    description: "A tool to optimize and sprite your SVG files for better web performance and easier management.",
+  }}
+>
   <div class="max-w-full mx-auto">
     <iframe
       src="https://sprite-your-svgs.vercel.app/?simplify=true"

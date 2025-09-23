@@ -30,7 +30,7 @@ const videoId = video ? extractYouTubeId(video.url) : null;
 
 <Layout
   seo={{
-    title: post?.data.title || video?.title || "Content",
+    title: `${post?.data.title || video?.title || "Content"} | José Donato`,
     description: post?.data.snippet || video?.description || "Content details",
   }}
 >
