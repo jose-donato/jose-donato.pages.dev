@@ -4,6 +4,7 @@ import Layout from "../layouts/Layout.astro";
 import VideoModal from "../components/VideoModal.astro";
 import PDFModal from "../components/PDFModal.astro";
 import TwitterDemosModal from "../components/TwitterDemosModal.astro";
+import SectionIcon from "../components/SectionIcon.astro";
 import {
   EDUCATION,
   PAST_EXPERIENCE_HOMEPAGE,
@@ -21,7 +22,7 @@ function getYouTubeVideoId(url: string): string | null {
 <Layout>
   <div class="space-y-20">
     <div>
-      <h2 class="text-lg font-bold uppercase tracking-widest">Highlights</h2>
+      <SectionIcon iconId="material-symbols-bookmarks-outline" title="Highlights" />
       <ul class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         {
           HIGHLIGHTS_HOMEPAGE.map((highlight, idx) => {
@@ -104,9 +105,7 @@ function getYouTubeVideoId(url: string): string | null {
       </ul>
     </div>
     <div>
-      <h2 class="text-lg font-bold uppercase tracking-widest mb-8">
-        Professional Experience
-      </h2>
+      <SectionIcon iconId="majesticons-suitcase-line" title="Professional Experience" />
       <div class="relative">
         <!-- Timeline line -->
         <div class="absolute left-6 top-0 bottom-0 w-[2px] bg-gradient-to-b from-bullish-500 via-border-primary to-transparent hidden md:block"></div>
@@ -170,7 +169,7 @@ function getYouTubeVideoId(url: string): string | null {
       </div>
     </div>
     <div>
-      <h2 class="text-lg font-bold uppercase tracking-widest mb-8">Education</h2>
+      <SectionIcon iconId="cil-education" title="Education" />
       <div class="relative">
         <!-- Timeline line -->
         <div class="absolute left-6 top-0 bottom-0 w-[2px] bg-gradient-to-b from-bullish-500 via-border-primary to-transparent hidden md:block"></div>

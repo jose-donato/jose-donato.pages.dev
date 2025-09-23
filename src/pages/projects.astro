@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Icon from "../components/Icon.astro";
+import SectionIcon from "../components/SectionIcon.astro";
 import { PROJECTS, TOOLS } from "../utils/constants";
 
 const technologies = Array.from(
@@ -57,17 +58,11 @@ const projectsWithStars = await Promise.all(
     <div class="space-y-20">
         <!-- Tools Section -->
         <section>
-            <div class="flex items-center gap-3 mb-8">
-                <div
-                    class="w-8 h-8 bg-bullish-500/10 rounded-lg flex items-center justify-center"
-                >
-                    <Icon
-                        id="material-symbols-build"
-                        className="w-4 h-4 text-bullish-400"
-                    />
-                </div>
-                <h1 class="text-2xl font-bold">Tools</h1>
-            </div>
+            <SectionIcon
+                iconId="material-symbols-tools-wrench-outline-rounded"
+                title="Tools"
+                className="text-2xl"
+            />
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {
                     TOOLS.map((tool) => {
@@ -108,17 +103,11 @@ const projectsWithStars = await Promise.all(
 
         <!-- Projects Section -->
         <section>
-            <div class="flex items-center gap-3 mb-8">
-                <div
-                    class="w-8 h-8 bg-bullish-500/10 rounded-lg flex items-center justify-center"
-                >
-                    <Icon
-                        id="material-symbols-code"
-                        className="w-4 h-4 text-bullish-400"
-                    />
-                </div>
-                <h1 class="text-2xl font-bold">Projects</h1>
-            </div>
+            <SectionIcon
+                iconId="material-symbols-code"
+                title="Projects"
+                className="text-2xl"
+            />
 
             {/* Filter Section */}
             <div class="mb-8">
@@ -139,10 +128,7 @@ const projectsWithStars = await Promise.all(
                     </div>
                     {
                         query && (
-                            <a
-                                href="/projects"
-                                class="btn gap-2 ml-auto"
-                            >
+                            <a href="/projects" class="btn gap-2 ml-auto">
                                 <Icon
                                     id="system-uicons-reset"
                                     className="w-4 h-4"
@@ -231,15 +217,15 @@ const projectsWithStars = await Promise.all(
 
 <script>
     // Preserve scroll position when filtering projects
-    document.addEventListener('astro:before-preparation', () => {
-        sessionStorage.setItem('scrollPosition', window.scrollY.toString());
+    document.addEventListener("astro:before-preparation", () => {
+        sessionStorage.setItem("scrollPosition", window.scrollY.toString());
     });
 
-    document.addEventListener('astro:after-swap', () => {
-        const scrollPosition = sessionStorage.getItem('scrollPosition');
+    document.addEventListener("astro:after-swap", () => {
+        const scrollPosition = sessionStorage.getItem("scrollPosition");
         if (scrollPosition) {
             window.scrollTo(0, parseInt(scrollPosition));
-            sessionStorage.removeItem('scrollPosition');
+            sessionStorage.removeItem("scrollPosition");
         }
     });
 </script>
