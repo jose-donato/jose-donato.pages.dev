@@ -1,0 +1,34 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  href: string;
+  text: string;
+  iconId?: string;
+  target?: string;
+  rel?: string;
+  download?: boolean;
+  className?: string;
+}
+
+const { 
+  href, 
+  text, 
+  iconId, 
+  target, 
+  rel, 
+  download,
+  className = ""
+} = Astro.props;
+---
+
+<a
+  href={href}
+  target={target}
+  rel={rel}
+  download={download}
+  class={`inline-flex items-center gap-2 px-3 py-1 text-sm font-medium text-text-muted hover:text-bullish-400 transition-colors border border-border-primary hover:border-bullish-600/20 rounded ${className}`}
+>
+  {iconId && <Icon id={iconId} className="w-4 h-4" />}
+  {text}
+</a>

@@ -1,6 +1,7 @@
 ---
 import { Tweet } from "@astro-community/astro-embed-twitter";
 import Icon from "./Icon.astro";
+import LinkCTA from "./LinkCTA.astro";
 import { socialMediaContent } from "../data/socialMedia";
 
 // Filter and sort Twitter content only by date (newest first)
@@ -46,19 +47,18 @@ const twitterContent = socialMediaContent
         </button>
       </div>
       <div class="modal-body">
-        <p class="text-text-muted text-sm mb-6 leading-relaxed">
-          Check out my latest Twitter posts showcasing demos, tools, and
-          projects.
-          <a
+        <div class="mb-6 text-center">
+          <p class="text-text-muted text-sm leading-relaxed mb-4">
+            Check out my latest Twitter posts showcasing demos, tools, and projects for real-time updates on my development journey.
+          </p>
+          <LinkCTA 
             href="https://x.com/josedonato__"
+            text="Follow me on X"
+            iconId="proicons-x-twitter"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-1 text-bullish-400 hover:text-bullish-300 transition-colors"
-          >
-            Follow me on X
-          </a>
-          for real-time updates on my development journey.
-        </p>
+          />
+        </div>
 
         <div class="carousel-container">
           <button class="carousel-nav prev" aria-label="Previous tweet">
