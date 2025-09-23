@@ -1,4 +1,6 @@
 ---
+import Modal from "./Modal.astro";
+
 interface Props {
   pdfPath: string;
   title?: string;
@@ -7,20 +9,44 @@ interface Props {
 const { pdfPath, title = "PDF Document" } = Astro.props;
 ---
 
-<pdf-modal data-pdf-path={pdfPath} data-title={title}>
-  <div class="modal-backdrop">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">{title}</h3>
-        <div class="modal-actions">
-          <a
-            href={pdfPath}
-            download
-            class="modal-download"
-            aria-label="Download PDF"
+<Modal id={`pdf-${Math.random().toString(36).substr(2, 9)}`} title={title} size="lg" headerActions={true}>
+  <a slot="header-actions"
+    href={pdfPath}
+    download
+    class="modal-download"
+    aria-label="Download PDF"
+  >
+    <svg
+      class="w-5 h-5"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+    </svg>
+  </a>
+
+  <pdf-content data-pdf-path={pdfPath} data-title={title}>
+    <div class="pdf-wrapper">
+      <pdf-viewer
+        data-pdf-path={pdfPath}
+        data-worker-path="//unpkg.com/pdfjs-dist@4.0.269/build/pdf.worker.min.mjs"
+        class="w-full"
+      >
+      </pdf-viewer>
+
+      <div class="pdf-navigation mt-4">
+        <div class="flex items-center justify-center gap-4">
+          <button
+            id="modal-prev-page"
+            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus h-10 px-4 py-2 gap-1 pl-2.5 hover:bg-bg-secondary text-text-secondary hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg
-              class="w-5 h-5"
+              class="h-4 w-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -29,12 +55,27 @@ const { pdfPath, title = "PDF Document" } = Astro.props;
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                d="M15 19l-7-7 7-7"></path>
             </svg>
-          </a>
-          <button class="modal-close" aria-label="Close modal">
+            <span>Previous</span>
+          </button>
+
+          <span
+            id="modal-current-page"
+            class="flex items-center gap-2 px-4 py-2 text-sm"
+          >
+            <span id="modal-current-page-number">1</span>
+            <span>/</span>
+            <span id="modal-total-pages">1</span>
+          </span>
+
+          <button
+            id="modal-next-page"
+            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus h-10 px-4 py-2 gap-1 pr-2.5 hover:bg-bg-secondary text-text-secondary hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span>Next</span>
             <svg
-              class="w-6 h-6"
+              class="h-4 w-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -43,75 +84,14 @@ const { pdfPath, title = "PDF Document" } = Astro.props;
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"></path>
+                d="M9 5l7 7-7 7"></path>
             </svg>
           </button>
         </div>
       </div>
-      <div class="modal-body">
-        <div class="pdf-wrapper">
-          <pdf-viewer
-            data-pdf-path={pdfPath}
-            data-worker-path="//unpkg.com/pdfjs-dist@4.0.269/build/pdf.worker.min.mjs"
-            class="w-full"
-          >
-          </pdf-viewer>
-
-          <div class="pdf-navigation mt-4">
-            <div class="flex items-center justify-center gap-4">
-              <button
-                id="modal-prev-page"
-                class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus h-10 px-4 py-2 gap-1 pl-2.5 hover:bg-bg-secondary text-text-secondary hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <svg
-                  class="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 19l-7-7 7-7"></path>
-                </svg>
-                <span>Previous</span>
-              </button>
-
-              <span
-                id="modal-current-page"
-                class="flex items-center gap-2 px-4 py-2 text-sm"
-              >
-                <span id="modal-current-page-number">1</span>
-                <span>/</span>
-                <span id="modal-total-pages">1</span>
-              </span>
-
-              <button
-                id="modal-next-page"
-                class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus h-10 px-4 py-2 gap-1 pr-2.5 hover:bg-bg-secondary text-text-secondary hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span>Next</span>
-                <svg
-                  class="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 5l7 7-7 7"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-</pdf-modal>
+  </pdf-content>
+</Modal>
 
 <script
   is:inline
@@ -123,6 +103,22 @@ const { pdfPath, title = "PDF Document" } = Astro.props;
     interface Window {
       pdfjsLib?: any;
       showPDFModal?: (pdfPath: string, title?: string) => void;
+    }
+  }
+
+  class PDFContent extends HTMLElement {
+    private modal: HTMLElement | null = null;
+
+    constructor() {
+      super();
+      const pdfPath = this.getAttribute("data-pdf-path");
+      // Generate a more stable ID for PDF modals
+      const modalId = `pdf-${btoa(pdfPath || '').replace(/[^a-zA-Z0-9]/g, '').substring(0, 10)}`;
+      this.modal = document.querySelector(`modal-component[data-modal-id="${modalId}"]`);
+    }
+
+    connectedCallback() {
+      // No special handling needed - PDF viewer is already initialized
     }
   }
 
@@ -368,77 +364,83 @@ const { pdfPath, title = "PDF Document" } = Astro.props;
     }
   }
 
+  customElements.define("pdf-content", PDFContent);
   customElements.define("pdf-viewer", PDFModalViewer);
   customElements.define("pdf-modal", PDFModal);
 
   // Global function to show PDF modal
   window.showPDFModal = (pdfPath: string, title?: string) => {
+    // Generate a stable modal ID based on the PDF path
+    const modalId = `pdf-${btoa(pdfPath).replace(/[^a-zA-Z0-9]/g, '').substring(0, 10)}`;
     let modal = document.querySelector(
-      `pdf-modal[data-pdf-path="${pdfPath}"]`,
-    ) as PDFModal;
+      `modal-component[data-modal-id="${modalId}"]`,
+    );
 
     if (!modal) {
-      modal = document.createElement("pdf-modal") as PDFModal;
-      modal.setAttribute("data-pdf-path", pdfPath);
-      modal.setAttribute("data-title", title || "PDF Document");
+      modal = document.createElement("modal-component");
+      modal.setAttribute("data-modal-id", modalId);
 
       modal.innerHTML = `
         <div class="modal-backdrop">
-          <div class="modal-content">
+          <div class="modal-content" style="max-width: 900px;">
             <div class="modal-header">
-              <h3 class="modal-title">${title || "PDF Document"}</h3>
-              <div class="modal-actions">
-                <a href="${pdfPath}" download class="modal-download" aria-label="Download PDF">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                  </svg>
-                </a>
-                <button class="modal-close" aria-label="Close modal">
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-            <div class="modal-body">
-              <div class="pdf-wrapper">
-                <pdf-viewer
-                  data-pdf-path="${pdfPath}"
-                  data-worker-path="//unpkg.com/pdfjs-dist@4.0.269/build/pdf.worker.min.mjs"
-                  class="w-full"
-                >
-                </pdf-viewer>
-                
-                <div class="pdf-navigation mt-4">
-                  <div class="flex items-center justify-center gap-4">
-                    <button 
-                      id="modal-prev-page"
-                      class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus h-10 px-4 py-2 gap-1 pl-2.5 hover:bg-bg-secondary text-text-secondary hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                      </svg>
-                      <span>Previous</span>
-                    </button>
-                    
-                    <span id="modal-current-page" class="flex items-center gap-2 px-4 py-2 text-sm">
-                      <span id="modal-current-page-number">1</span>
-                      <span>/</span>
-                      <span id="modal-total-pages">1</span>
-                    </span>
-                    
-                    <button 
-                      id="modal-next-page"
-                      class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus h-10 px-4 py-2 gap-1 pr-2.5 hover:bg-bg-secondary text-text-secondary hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <span>Next</span>
-                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                      </svg>
-                    </button>
-                  </div>
+              <div class="modal-header-content">
+                <h3 class="modal-title">${title || "PDF Document"}</h3>
+                <div class="modal-actions">
+                  <a href="${pdfPath}" download class="modal-download" aria-label="Download PDF">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                  </a>
                 </div>
               </div>
+              <button class="modal-close" aria-label="Close modal">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="modal-body">
+              <pdf-content data-pdf-path="${pdfPath}" data-title="${title || "PDF Document"}">
+                <div class="pdf-wrapper">
+                  <pdf-viewer
+                    data-pdf-path="${pdfPath}"
+                    data-worker-path="//unpkg.com/pdfjs-dist@4.0.269/build/pdf.worker.min.mjs"
+                    class="w-full"
+                  >
+                  </pdf-viewer>
+                  
+                  <div class="pdf-navigation mt-4">
+                    <div class="flex items-center justify-center gap-4">
+                      <button 
+                        id="modal-prev-page"
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus h-10 px-4 py-2 gap-1 pl-2.5 hover:bg-bg-secondary text-text-secondary hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        <span>Previous</span>
+                      </button>
+                      
+                      <span id="modal-current-page" class="flex items-center gap-2 px-4 py-2 text-sm">
+                        <span id="modal-current-page-number">1</span>
+                        <span>/</span>
+                        <span id="modal-total-pages">1</span>
+                      </span>
+                      
+                      <button 
+                        id="modal-next-page"
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus h-10 px-4 py-2 gap-1 pr-2.5 hover:bg-bg-secondary text-text-secondary hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span>Next</span>
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </pdf-content>
             </div>
           </div>
         </div>
@@ -447,7 +449,7 @@ const { pdfPath, title = "PDF Document" } = Astro.props;
       document.body.appendChild(modal);
     }
 
-    modal.show();
+    window.showModal(modalId);
   };
 </script>
 
