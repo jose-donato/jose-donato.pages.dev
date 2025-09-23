@@ -1,26 +1,45 @@
 ---
+import Modal from './Modal.astro';
+
 interface Props {
   pdfPath: string;
   title?: string;
 }
 
 const { pdfPath, title = "PDF Document" } = Astro.props;
+
+const downloadAction = `
+  <a
+    href="${pdfPath}"
+    download
+    class="bg-transparent border-none text-text-muted cursor-pointer p-2 rounded-md transition-colors duration-200 hover:text-text-primary hover:bg-bg-secondary text-decoration-none flex items-center justify-center"
+    aria-label="Download PDF"
+  >
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+    </svg>
+  </a>
+`;
 ---
 
 <pdf-modal data-pdf-path={pdfPath} data-title={title}>
-  <div class="modal-backdrop">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">{title}</h3>
-        <div class="modal-actions">
-          <a
-            href={pdfPath}
-            download
-            class="modal-download"
-            aria-label="Download PDF"
+  <Modal id="pdf" title={title} maxWidth="900px" headerActions={downloadAction}>
+    <div class="flex flex-col items-center">
+      <pdf-viewer
+        data-pdf-path={pdfPath}
+        data-worker-path="//unpkg.com/pdfjs-dist@4.0.269/build/pdf.worker.min.mjs"
+        class="w-full"
+      >
+      </pdf-viewer>
+
+      <div class="pdf-navigation mt-4">
+        <div class="flex items-center justify-center gap-4">
+          <button
+            id="modal-prev-page"
+            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus h-10 px-4 py-2 gap-1 pl-2.5 hover:bg-bg-secondary text-text-secondary hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg
-              class="w-5 h-5"
+              class="h-4 w-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -29,12 +48,27 @@ const { pdfPath, title = "PDF Document" } = Astro.props;
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                d="M15 19l-7-7 7-7"></path>
             </svg>
-          </a>
-          <button class="modal-close" aria-label="Close modal">
+            <span>Previous</span>
+          </button>
+
+          <span
+            id="modal-current-page"
+            class="flex items-center gap-2 px-4 py-2 text-sm"
+          >
+            <span id="modal-current-page-number">1</span>
+            <span>/</span>
+            <span id="modal-total-pages">1</span>
+          </span>
+
+          <button
+            id="modal-next-page"
+            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus h-10 px-4 py-2 gap-1 pr-2.5 hover:bg-bg-secondary text-text-secondary hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span>Next</span>
             <svg
-              class="w-6 h-6"
+              class="h-4 w-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -43,74 +77,13 @@ const { pdfPath, title = "PDF Document" } = Astro.props;
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"></path>
+                d="M9 5l7 7-7 7"></path>
             </svg>
           </button>
         </div>
       </div>
-      <div class="modal-body">
-        <div class="pdf-wrapper">
-          <pdf-viewer
-            data-pdf-path={pdfPath}
-            data-worker-path="//unpkg.com/pdfjs-dist@4.0.269/build/pdf.worker.min.mjs"
-            class="w-full"
-          >
-          </pdf-viewer>
-
-          <div class="pdf-navigation mt-4">
-            <div class="flex items-center justify-center gap-4">
-              <button
-                id="modal-prev-page"
-                class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus h-10 px-4 py-2 gap-1 pl-2.5 hover:bg-bg-secondary text-text-secondary hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <svg
-                  class="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 19l-7-7 7-7"></path>
-                </svg>
-                <span>Previous</span>
-              </button>
-
-              <span
-                id="modal-current-page"
-                class="flex items-center gap-2 px-4 py-2 text-sm"
-              >
-                <span id="modal-current-page-number">1</span>
-                <span>/</span>
-                <span id="modal-total-pages">1</span>
-              </span>
-
-              <button
-                id="modal-next-page"
-                class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus h-10 px-4 py-2 gap-1 pr-2.5 hover:bg-bg-secondary text-text-secondary hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span>Next</span>
-                <svg
-                  class="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 5l7 7-7 7"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
+  </Modal>
 </pdf-modal>
 
 <script
@@ -312,16 +285,11 @@ const { pdfPath, title = "PDF Document" } = Astro.props;
   }
 
   class PDFModal extends HTMLElement {
-    private modal: HTMLElement | null = null;
-    private backdrop: HTMLElement | null = null;
-    private closeButton: HTMLElement | null = null;
+    private baseModal: any = null;
     private pdfViewer: PDFModalViewer | null = null;
 
     constructor() {
       super();
-      this.modal = this.querySelector(".modal-backdrop");
-      this.backdrop = this.querySelector(".modal-backdrop");
-      this.closeButton = this.querySelector(".modal-close");
       this.pdfViewer = this.querySelector("pdf-viewer") as PDFModalViewer;
     }
 
@@ -331,13 +299,17 @@ const { pdfPath, title = "PDF Document" } = Astro.props;
     }
 
     setupEventListeners() {
-      this.backdrop?.addEventListener("click", (e) => {
-        if (e.target === this.backdrop) {
+      // Set up backdrop and close button listeners
+      const backdrop = this.querySelector(".modal-backdrop");
+      const closeButton = this.querySelector(".modal-close");
+
+      backdrop?.addEventListener("click", (e) => {
+        if (e.target === backdrop) {
           this.hide();
         }
       });
 
-      this.closeButton?.addEventListener("click", () => {
+      closeButton?.addEventListener("click", () => {
         this.hide();
       });
 
@@ -349,27 +321,35 @@ const { pdfPath, title = "PDF Document" } = Astro.props;
     }
 
     show() {
-      if (this.modal) {
-        this.modal.style.display = "flex";
+      const backdrop = this.querySelector(".modal-backdrop");
+      if (backdrop) {
+        backdrop.classList.remove("hidden");
+        backdrop.classList.add("flex");
         document.body.style.overflow = "hidden";
-        this.closeButton?.focus();
       }
     }
 
     hide() {
-      if (this.modal) {
-        this.modal.style.display = "none";
+      const backdrop = this.querySelector(".modal-backdrop");
+      if (backdrop) {
+        backdrop.classList.add("hidden");
+        backdrop.classList.remove("flex");
         document.body.style.overflow = "";
       }
     }
 
     isVisible() {
-      return this.modal?.style.display === "flex";
+      const backdrop = this.querySelector(".modal-backdrop");
+      return backdrop?.classList.contains("flex") || false;
     }
   }
 
-  customElements.define("pdf-viewer", PDFModalViewer);
-  customElements.define("pdf-modal", PDFModal);
+  if (!customElements.get("pdf-viewer")) {
+    customElements.define("pdf-viewer", PDFModalViewer);
+  }
+  if (!customElements.get("pdf-modal")) {
+    customElements.define("pdf-modal", PDFModal);
+  }
 
   // Global function to show PDF modal
   window.showPDFModal = (pdfPath: string, title?: string) => {
@@ -382,26 +362,35 @@ const { pdfPath, title = "PDF Document" } = Astro.props;
       modal.setAttribute("data-pdf-path", pdfPath);
       modal.setAttribute("data-title", title || "PDF Document");
 
+      const downloadAction = `
+        <a
+          href="${pdfPath}"
+          download
+          class="bg-transparent border-none text-text-muted cursor-pointer p-2 rounded-md transition-colors duration-200 hover:text-text-primary hover:bg-bg-secondary text-decoration-none flex items-center justify-center"
+          aria-label="Download PDF"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </a>
+      `;
+
       modal.innerHTML = `
-        <div class="modal-backdrop">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h3 class="modal-title">${title || "PDF Document"}</h3>
-              <div class="modal-actions">
-                <a href="${pdfPath}" download class="modal-download" aria-label="Download PDF">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                  </svg>
-                </a>
-                <button class="modal-close" aria-label="Close modal">
+        <div class="modal-backdrop fixed inset-0 bg-black/80 hidden items-center justify-center z-[1000] p-4" id="pdf-backdrop">
+          <div class="modal-content bg-bg-primary rounded-xl w-full relative shadow-2xl overflow-hidden" style="max-width: 900px; max-height: 90vh;">
+            <div class="modal-header flex items-center justify-between p-6 pb-4 border-b border-border-primary sticky top-0 bg-bg-primary z-10">
+              <h3 class="modal-title text-xl font-semibold text-text-primary m-0">${title || "PDF Document"}</h3>
+              <div class="modal-actions flex items-center gap-2">
+                ${downloadAction}
+                <button class="modal-close bg-transparent border-none text-text-muted cursor-pointer p-2 rounded-md transition-colors duration-200 hover:text-text-primary hover:bg-bg-secondary" aria-label="Close modal">
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                   </svg>
                 </button>
               </div>
             </div>
-            <div class="modal-body">
-              <div class="pdf-wrapper">
+            <div class="modal-body p-6">
+              <div class="flex flex-col items-center">
                 <pdf-viewer
                   data-pdf-path="${pdfPath}"
                   data-worker-path="//unpkg.com/pdfjs-dist@4.0.269/build/pdf.worker.min.mjs"
@@ -451,164 +440,3 @@ const { pdfPath, title = "PDF Document" } = Astro.props;
   };
 </script>
 
-<style>
-  .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 1rem;
-  }
-
-  .modal-content {
-    background: var(--bg-primary, #1a1a1a);
-    border-radius: 0.75rem;
-    max-width: 90vw;
-    max-height: 90vh;
-    width: 100%;
-    max-width: 900px;
-    position: relative;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    overflow: hidden;
-  }
-
-  .modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem 1.5rem 1rem;
-    border-bottom: 1px solid var(--border-primary, #333);
-  }
-
-  .modal-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary, #fff);
-    margin: 0;
-  }
-
-  .modal-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .modal-download {
-    background: none;
-    border: none;
-    color: var(--text-muted, #888);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-    transition:
-      color 0.2s,
-      background-color 0.2s;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-download:hover {
-    color: var(--text-primary, #fff);
-    background-color: var(--bg-secondary, #2a2a2a);
-  }
-
-  .modal-close {
-    background: none;
-    border: none;
-    color: var(--text-muted, #888);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-    transition:
-      color 0.2s,
-      background-color 0.2s;
-  }
-
-  .modal-close:hover {
-    color: var(--text-primary, #fff);
-    background-color: var(--bg-secondary, #2a2a2a);
-  }
-
-  .modal-body {
-    padding: 1.5rem 1.5rem 1.5rem;
-    max-height: calc(90vh - 100px);
-    overflow-y: auto;
-  }
-
-  .pdf-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .pdf-navigation {
-    margin-top: 1rem;
-  }
-
-  .flex {
-    display: flex;
-  }
-
-  .items-center {
-    align-items: center;
-  }
-
-  .justify-center {
-    justify-content: center;
-  }
-
-  .gap-4 {
-    gap: 1rem;
-  }
-
-  .gap-2 {
-    gap: 0.5rem;
-  }
-
-  .mt-4 {
-    margin-top: 1rem;
-  }
-
-  .px-4 {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .py-2 {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-  }
-
-  .text-sm {
-    font-size: 0.875rem;
-  }
-
-  @media (max-width: 768px) {
-    .modal-content {
-      margin: 1rem;
-      max-width: calc(100vw - 2rem);
-      max-height: calc(100vh - 2rem);
-    }
-
-    .modal-header {
-      padding: 1rem 1rem 0.75rem;
-    }
-
-    .modal-body {
-      padding: 1rem 1rem 1rem;
-      max-height: calc(100vh - 120px);
-    }
-
-    .modal-title {
-      font-size: 1.125rem;
-    }
-  }
-</style>

@@ -52,7 +52,7 @@ function getYouTubeVideoId(url: string): string | null {
                   View posts
                 </button>
               );
-            } else if (highlight.title.includes("Pyth")) {
+            } else if (highlight.title.includes("Pyth") || highlight.title.includes("Real-Time Data")) {
               // Video demo button for Pyth
               const videoId = getYouTubeVideoId(highlight.url);
               actionElement = (

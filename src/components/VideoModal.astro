@@ -1,4 +1,6 @@
 ---
+import Modal from './Modal.astro';
+
 interface Props {
   videoId: string;
   title?: string;
@@ -8,69 +10,47 @@ const { videoId, title = "Video" } = Astro.props;
 ---
 
 <video-modal data-video-id={videoId} data-title={title}>
-  <div class="modal-backdrop">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">{title}</h3>
-        <button class="modal-close" aria-label="Close modal">
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="video-container">
-          <!-- Iframe will be dynamically loaded when modal opens -->
-        </div>
+  <Modal id="video" title={title} maxWidth="1200px">
+    <div class="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg">
+      <div class="video-container absolute top-0 left-0 w-full h-full">
+        <!-- Iframe will be dynamically loaded when modal opens -->
       </div>
     </div>
-  </div>
+  </Modal>
 </video-modal>
 
 <script>
   class VideoModal extends HTMLElement {
-    private modal: HTMLElement | null = null;
-    private backdrop: HTMLElement | null = null;
-    private closeButton: HTMLElement | null = null;
     private iframe: HTMLIFrameElement | null = null;
     private videoContainer: HTMLElement | null = null;
 
     constructor() {
       super();
-      this.modal = this.querySelector(".modal-backdrop");
-      this.backdrop = this.querySelector(".modal-backdrop");
-      this.closeButton = this.querySelector(".modal-close");
+      console.log('VideoModal constructor called');
       this.videoContainer = this.querySelector(".video-container");
+      console.log('Found video container:', !!this.videoContainer);
     }
 
     connectedCallback() {
       this.setupEventListeners();
-      this.hide(); // Initially hidden
+      this.hide();
     }
 
     setupEventListeners() {
-      // Close on backdrop click
-      this.backdrop?.addEventListener("click", (e) => {
-        if (e.target === this.backdrop) {
+      // Set up backdrop and close button listeners
+      const backdrop = this.querySelector(".modal-backdrop");
+      const closeButton = this.querySelector(".modal-close");
+
+      backdrop?.addEventListener("click", (e) => {
+        if (e.target === backdrop) {
           this.hide();
         }
       });
 
-      // Close on close button click
-      this.closeButton?.addEventListener("click", () => {
+      closeButton?.addEventListener("click", () => {
         this.hide();
       });
 
-      // Close on escape key
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && this.isVisible()) {
           this.hide();
@@ -79,93 +59,152 @@ const { videoId, title = "Video" } = Astro.props;
     }
 
     show() {
-      if (this.modal) {
-        this.modal.style.display = "flex";
+      console.log('VideoModal show() called');
+      const backdrop = this.querySelector(".modal-backdrop");
+      console.log('Found backdrop:', !!backdrop);
+      if (backdrop) {
+        backdrop.classList.remove("hidden");
+        backdrop.classList.add("flex");
         document.body.style.overflow = "hidden";
-        
-        // Create iframe dynamically
+        console.log('About to create iframe');
         this.createIframe();
-
-        // Focus management
-        this.closeButton?.focus();
-      }
-    }
-
-    private createIframe() {
-      if (!this.iframe && this.videoContainer) {
-        const videoId = this.getAttribute("data-video-id");
-        const title = this.getAttribute("data-title") || "Video";
         
-        if (videoId) {
-          this.iframe = document.createElement("iframe");
-          this.iframe.className = "video-iframe";
-          this.iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-          this.iframe.title = title;
-          this.iframe.frameBorder = "0";
-          this.iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-          this.iframe.allowFullscreen = true;
-          
-          this.videoContainer.appendChild(this.iframe);
-        }
+        // Dispatch custom event
+        this.dispatchEvent(new CustomEvent('modal:show'));
       }
     }
 
     hide() {
-      if (this.modal) {
-        this.modal.style.display = "none";
+      const backdrop = this.querySelector(".modal-backdrop");
+      if (backdrop) {
+        backdrop.classList.add("hidden");
+        backdrop.classList.remove("flex");
         document.body.style.overflow = "";
-
-        // Remove iframe to stop video and save resources
-        if (this.iframe && this.videoContainer) {
-          this.videoContainer.removeChild(this.iframe);
-          this.iframe = null;
-        }
+        this.removeIframe();
       }
     }
 
     isVisible() {
-      return this.modal?.style.display === "flex";
+      const backdrop = this.querySelector(".modal-backdrop");
+      return backdrop?.classList.contains("flex") || false;
+    }
+
+    private createIframe() {
+      console.log('createIframe called');
+      console.log('iframe exists:', !!this.iframe);
+      console.log('videoContainer exists:', !!this.videoContainer);
+      
+      if (!this.iframe && this.videoContainer) {
+        const videoId = this.getAttribute("data-video-id");
+        const title = this.getAttribute("data-title") || "Video";
+        
+        console.log('videoId:', videoId, 'title:', title);
+        
+        if (videoId) {
+          this.iframe = document.createElement("iframe");
+          this.iframe.className = "absolute top-0 left-0 w-full h-full rounded-lg";
+          this.iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+          this.iframe.title = title;
+          this.iframe.setAttribute("frameborder", "0");
+          this.iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+          this.iframe.allowFullscreen = true;
+          
+          this.videoContainer.appendChild(this.iframe);
+          console.log('iframe created and appended');
+        }
+      }
+    }
+
+    private removeIframe() {
+      if (this.iframe && this.videoContainer) {
+        this.videoContainer.removeChild(this.iframe);
+        this.iframe = null;
+      }
     }
   }
 
-  customElements.define("video-modal", VideoModal);
+  console.log('Registering VideoModal custom element');
+  if (!customElements.get("video-modal")) {
+    customElements.define("video-modal", VideoModal);
+    console.log('VideoModal custom element registered');
+  } else {
+    console.log('VideoModal custom element already exists');
+  }
 
   // Global function to show video modal
   window.showVideoModal = (videoId: string, title?: string) => {
-    let modal = document.querySelector(
-      `video-modal[data-video-id="${videoId}"]`,
-    ) as VideoModal;
+    console.log('showVideoModal called with:', videoId, title);
+    
+    // Use the existing VideoModal on the page
+    let modal = document.querySelector("video-modal") as VideoModal;
+    console.log('Found modal:', !!modal);
+    console.log('Modal is instance of VideoModal:', modal instanceof VideoModal);
 
-    if (!modal) {
-      // Create modal if it doesn't exist
-      modal = document.createElement("video-modal") as VideoModal;
+    if (modal) {
+      // Update the existing modal with new video data
       modal.setAttribute("data-video-id", videoId);
       modal.setAttribute("data-title", title || "Video");
-
-      modal.innerHTML = `
-        <div class="modal-backdrop">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h3 class="modal-title">${title || "Video"}</h3>
-              <button class="modal-close" aria-label="Close modal">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="video-container">
-                <!-- Iframe will be dynamically loaded when modal opens -->
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      document.body.appendChild(modal);
+      
+      // Update the modal title
+      const titleElement = modal.querySelector(".modal-title");
+      if (titleElement) {
+        titleElement.textContent = title || "Video";
+      }
+      
+      // Force the show by directly manipulating the DOM if the custom element isn't working
+      const backdrop = modal.querySelector(".modal-backdrop");
+      if (backdrop) {
+        backdrop.classList.remove("hidden");
+        backdrop.classList.add("flex");
+        document.body.style.overflow = "hidden";
+        
+        // Manually create iframe
+        const videoContainer = modal.querySelector(".video-container");
+        if (videoContainer) {
+          const existingIframe = videoContainer.querySelector("iframe");
+          if (!existingIframe) {
+            const iframe = document.createElement("iframe");
+            iframe.className = "absolute top-0 left-0 w-full h-full rounded-lg";
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+            iframe.title = title || "Video";
+            iframe.setAttribute("frameborder", "0");
+            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+            iframe.allowFullscreen = true;
+            videoContainer.appendChild(iframe);
+            console.log('Iframe manually created and appended');
+          }
+        }
+        
+        // Setup close functionality
+        const closeButton = modal.querySelector(".modal-close");
+        const hideModal = () => {
+          backdrop.classList.add("hidden");
+          backdrop.classList.remove("flex");
+          document.body.style.overflow = "";
+          // Remove iframe to stop playback
+          const videoContainer = modal.querySelector(".video-container");
+          const iframe = videoContainer?.querySelector("iframe");
+          if (iframe && videoContainer) {
+            videoContainer.removeChild(iframe);
+          }
+        };
+        
+        closeButton?.addEventListener("click", hideModal);
+        backdrop?.addEventListener("click", (e) => {
+          if (e.target === backdrop) {
+            hideModal();
+          }
+        });
+        
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && backdrop.classList.contains("flex")) {
+            hideModal();
+          }
+        });
+      }
+    } else {
+      console.log('No video modal found on page');
     }
-
-    modal.show();
   };
 
   // Declare global function type
@@ -176,102 +215,3 @@ const { videoId, title = "Video" } = Astro.props;
   }
 </script>
 
-<style>
-  .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 1rem;
-  }
-
-  .modal-content {
-    background: var(--bg-primary, #1a1a1a);
-    border-radius: 0.75rem;
-    max-width: 90vw;
-    max-height: 90vh;
-    width: 100%;
-    max-width: 1200px;
-    position: relative;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  }
-
-  .modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem 1.5rem 1rem;
-    border-bottom: 1px solid var(--border-primary, #333);
-  }
-
-  .modal-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary, #fff);
-    margin: 0;
-  }
-
-  .modal-close {
-    background: none;
-    border: none;
-    color: var(--text-muted, #888);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-    transition:
-      color 0.2s,
-      background-color 0.2s;
-  }
-
-  .modal-close:hover {
-    color: var(--text-primary, #fff);
-    background-color: var(--bg-secondary, #2a2a2a);
-  }
-
-  .modal-body {
-    padding: 1.5rem 1.5rem 1.5rem;
-  }
-
-  .video-container {
-    position: relative;
-    width: 100%;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
-    height: 0;
-    overflow: hidden;
-    border-radius: 0.5rem;
-  }
-
-  .video-iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 0.5rem;
-  }
-
-  @media (max-width: 768px) {
-    .modal-content {
-      margin: 1rem;
-      max-width: calc(100vw - 2rem);
-    }
-
-    .modal-header {
-      padding: 1rem 1rem 0.75rem;
-    }
-
-    .modal-body {
-      padding: 1rem 1rem 1rem;
-    }
-
-    .modal-title {
-      font-size: 1.125rem;
-    }
-  }
-</style>

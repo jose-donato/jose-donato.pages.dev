@@ -1,0 +1,147 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  maxWidth?: string;
+  height?: string;
+  showHeader?: boolean;
+  headerActions?: any;
+  titleHtml?: boolean;
+}
+
+const { 
+  id, 
+  title, 
+  maxWidth = "900px", 
+  height = "auto",
+  showHeader = true,
+  headerActions,
+  titleHtml = false
+} = Astro.props;
+---
+
+<div class={`modal-backdrop fixed inset-0 bg-black/80 hidden items-center justify-center z-[1000] p-4`} id={`${id}-backdrop`}>
+  <div 
+    class={`modal-content bg-bg-primary rounded-xl w-full relative shadow-2xl overflow-hidden`}
+    style={`max-width: ${maxWidth}; max-height: 90vh; ${height !== 'auto' ? `height: ${height};` : ''}`}
+  >
+    {showHeader && (
+      <div class="modal-header flex items-center justify-between p-6 pb-4 border-b border-border-primary sticky top-0 bg-bg-primary z-10">
+        <h3 class="modal-title text-xl font-semibold text-text-primary m-0">
+          {titleHtml ? (
+            <Fragment set:html={title} />
+          ) : (
+            title
+          )}
+        </h3>
+        <div class="modal-actions flex items-center gap-2">
+          {headerActions && (
+            <Fragment set:html={headerActions} />
+          )}
+          <button 
+            class="modal-close bg-transparent border-none text-text-muted cursor-pointer p-2 rounded-md transition-colors duration-200 hover:text-text-primary hover:bg-bg-secondary"
+            aria-label="Close modal"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    )}
+    <div class="modal-body p-6">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ id }}>
+  class BaseModal extends HTMLElement {
+    constructor() {
+      super();
+      this.backdrop = this.querySelector('.modal-backdrop');
+      this.closeButton = this.querySelector('.modal-close');
+      this.modal = this.querySelector('.modal-backdrop');
+    }
+
+    connectedCallback() {
+      this.setupEventListeners();
+      this.hide();
+    }
+
+    setupEventListeners() {
+      // Close on backdrop click
+      this.backdrop?.addEventListener('click', (e) => {
+        if (e.target === this.backdrop) {
+          this.hide();
+        }
+      });
+
+      // Close on close button click
+      this.closeButton?.addEventListener('click', () => {
+        this.hide();
+      });
+
+      // Close on escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.isVisible()) {
+          this.hide();
+        }
+      });
+    }
+
+    show() {
+      if (this.modal) {
+        this.modal.classList.remove('hidden');
+        this.modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        this.closeButton?.focus();
+        
+        // Dispatch custom event
+        this.dispatchEvent(new CustomEvent('modal:show'));
+      }
+    }
+
+    hide() {
+      if (this.modal) {
+        this.modal.classList.add('hidden');
+        this.modal.classList.remove('flex');
+        document.body.style.overflow = '';
+        
+        // Dispatch custom event
+        this.dispatchEvent(new CustomEvent('modal:hide'));
+      }
+    }
+
+    isVisible() {
+      return this.modal?.classList.contains('flex');
+    }
+  }
+
+  // Only define if not already defined
+  if (!customElements.get(`${id}-modal`)) {
+    customElements.define(`${id}-modal`, BaseModal);
+  }
+</script>
+
+<style>
+  @media (max-width: 768px) {
+    .modal-content {
+      margin: 0.5rem;
+      max-width: calc(100vw - 1rem) !important;
+      max-height: calc(100vh - 1rem) !important;
+    }
+
+    .modal-header {
+      padding: 1rem 1rem 0.75rem;
+    }
+
+    .modal-body {
+      padding: 1rem;
+    }
+
+    .modal-title {
+      font-size: 1.125rem;
+    }
+  }
+</style>
