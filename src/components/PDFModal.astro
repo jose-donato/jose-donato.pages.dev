@@ -114,7 +114,7 @@ const downloadAction = `
       this.attachShadow({ mode: "open" });
       this.pdfPath = this.getAttribute("data-pdf-path");
       this.workerPath = this.getAttribute("data-worker-path");
-      this.modalId = `modal-${Math.random().toString(36).substr(2, 9)}`;
+      this.modalId = `modal-${Math.random().toString(36).substring(2, 11)}`;
 
       this.canvas = document.createElement("canvas");
       this.canvas.setAttribute("id", "pdf-canvas");
@@ -271,7 +271,12 @@ const downloadAction = `
     }
 
     connectedCallback() {
+      // Don't load PDF automatically - wait for explicit loadPDF() call
+    }
+
+    loadPDF() {
       if (!this.pdfPath || !this.workerPath) return;
+      if (this.loadingTask) return; // Already loading or loaded
 
       if (document.readyState === "loading") {
         window.addEventListener(
@@ -285,7 +290,6 @@ const downloadAction = `
   }
 
   class PDFModal extends HTMLElement {
-    private baseModal: any = null;
     private pdfViewer: PDFModalViewer | null = null;
 
     constructor() {
@@ -326,6 +330,11 @@ const downloadAction = `
         backdrop.classList.remove("hidden");
         backdrop.classList.add("flex");
         document.body.style.overflow = "hidden";
+      }
+
+      // Load PDF when modal is shown
+      if (this.pdfViewer) {
+        this.pdfViewer.loadPDF();
       }
     }
 
@@ -437,5 +446,11 @@ const downloadAction = `
     }
 
     modal.show();
+    
+    // Trigger PDF loading for dynamically created modal
+    const pdfViewer = modal.querySelector("pdf-viewer") as PDFModalViewer;
+    if (pdfViewer) {
+      pdfViewer.loadPDF();
+    }
   };
 </script>
