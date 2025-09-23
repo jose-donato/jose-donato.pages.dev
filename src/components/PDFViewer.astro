@@ -88,11 +88,13 @@ const {
       this.workerPath = this.getAttribute("data-worker-path");
       this.canvas = document.createElement("canvas");
       this.canvas.setAttribute("id", "pdf-canvas");
-      this.canvas.style.width = "100%";
+      this.canvas.style.maxWidth = "100%";
       this.canvas.style.height = "auto";
-      this.canvas.style.border = "1px solid #ddd";
+      this.canvas.style.border = "1px solid #444";
       this.canvas.style.borderRadius = "4px";
       this.canvas.style.direction = "ltr";
+      this.canvas.style.display = "block";
+      this.canvas.style.margin = "0 auto";
 
       const style = document.createElement("style");
       style.textContent = `
@@ -102,7 +104,11 @@ const {
           margin: 0 auto;
         }
         canvas {
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+          max-width: 100%;
+          height: auto !important;
+          display: block;
+          margin: 0 auto;
         }
       `;
 
@@ -113,29 +119,46 @@ const {
       if (!this.pdfDocument) return;
 
       this.currentPage = pageNum;
-
-      // Request the page
       const pdfPage = await this.pdfDocument.getPage(pageNum);
 
-      // Display page with responsive scaling
-      const viewport = pdfPage.getViewport({ scale: 1.0 });
+      // Get the original viewport to maintain aspect ratio
+      const originalViewport = pdfPage.getViewport({ scale: 1.0 });
+
+      // Calculate scale to fit container while maintaining aspect ratio
+      const containerMaxWidth = Math.min(800, window.innerWidth * 0.9);
+      const containerMaxHeight = Math.min(700, window.innerHeight * 0.7);
+
+      const scaleX = containerMaxWidth / originalViewport.width;
+      const scaleY = containerMaxHeight / originalViewport.height;
+      let scale = Math.min(scaleX, scaleY);
+
+      // Increase minimum scale for better quality, especially for small PDFs
+      scale = Math.max(scale, 1.5);
+
+      // Apply device pixel ratio for crisp rendering on high-DPI displays
+      const devicePixelRatio = window.devicePixelRatio || 1;
+      const outputScale = devicePixelRatio;
+      const viewport = pdfPage.getViewport({ scale: scale * outputScale });
+
       const ctx = this.canvas.getContext("2d");
+      if (!this.canvas || !ctx) return;
 
-      if (!this.canvas || !ctx) {
-        return;
-      }
-
-      // Set canvas dimensions to match the viewport
+      // Set the actual canvas size to match the scaled viewport with device pixel ratio
       this.canvas.width = viewport.width;
       this.canvas.height = viewport.height;
 
-      // Clear canvas before rendering
+      // Set the display size to maintain aspect ratio
+      this.canvas.style.width = `${viewport.width / outputScale}px`;
+      this.canvas.style.height = `${viewport.height / outputScale}px`;
+
+      // Scale the context to handle device pixel ratio
+      ctx.scale(outputScale, outputScale);
+
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-      // Render PDF page into canvas context
       const renderTask = pdfPage.render({
         canvasContext: ctx,
-        viewport,
+        viewport: pdfPage.getViewport({ scale }),
       });
 
       await renderTask.promise;
