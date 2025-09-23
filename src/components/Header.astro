@@ -1,9 +1,10 @@
 ---
 import Floater from "./Floater.astro";
 import { Image } from "astro:assets";
+import avatar from "@/images/new_avatar.webp";
 ---
 
-<div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 mb-8">
+<div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 mb-14">
   <div class="flex flex-col flex-1 text-center md:text-left">
     <h1
       class="text-xl sm:text-2xl md:text-3xl tracking-tight font-light mb-4 md:mb-2"
@@ -46,11 +47,9 @@ import { Image } from "astro:assets";
   </div>
   <div class="flex md:min-w-[240px] avatar-container order-first md:order-last">
     <Image
-      src="/avatar.webp"
-      class="h-32 w-32 sm:h-40 sm:w-40 md:h-48 md:w-48 object-cover shadow-2xl ring-2 ring-border-primary/20 avatar-glow mx-auto rounded-lg"
+      src={avatar}
+      class="h-40 w-32 sm:h-48 sm:w-40 md:h-60 md:w-48 object-cover shadow-2xl ring-2 ring-border-primary/20 avatar-glow mx-auto rounded-lg"
       alt="José Donato"
-      width={192}
-      height={192}
     />
   </div>
 </div>
@@ -90,6 +89,6 @@ import { Image } from "astro:assets";
     box-shadow:
       0 8px 25px -8px rgba(0, 0, 0, 0.4),
       0 0 0 1px rgba(255, 255, 255, 0.1),
-      0 0 20px rgba(59, 130, 246, 0.2);
+      0 0 20px rgba(59, 130, 246, 0.1);
   }
 </style>

@@ -1,0 +1,23 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  iconId: string;
+  title: string;
+  className?: string;
+}
+
+const { iconId, title, className } = Astro.props;
+---
+
+<div class="flex items-center gap-3 mb-8">
+  <div
+    class="w-8 h-8 bg-bullish-500/10 rounded-lg flex items-center justify-center"
+  >
+    <Icon
+      id={iconId}
+      className="w-4 h-4 text-bullish-400"
+    />
+  </div>
+  <h2 class={`text-lg font-bold uppercase tracking-widest ${className || ''}`}>{title}</h2>
+</div>

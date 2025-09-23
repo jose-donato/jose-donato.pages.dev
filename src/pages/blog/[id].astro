@@ -13,11 +13,13 @@ const { id = "" } = Astro.params;
 const post = await getEntry("blog", id);
 
 // If no blog post found, check if it's a video
-const video = !post ? socialMediaContent.find(item => item.type === 'youtube' && item.id === id) : null;
+const video = !post
+  ? socialMediaContent.find((item) => item.type === "youtube" && item.id === id)
+  : null;
 
 // If neither found, redirect to blog
 if (!post && !video) {
-  return Astro.redirect('/blog');
+  return Astro.redirect("/blog");
 }
 
 const Content = post ? (await render(post)).Content : null;
@@ -42,7 +44,7 @@ const videoId = video ? extractYouTubeId(video.url) : null;
         <h1
           class="text-4xl md:text-5xl font-bold text-text-primary leading-tight mb-4"
         >
-          {post?.data.title || video?.title || 'Content'}
+          {post?.data.title || video?.title || "Content"}
         </h1>
 
         {
@@ -56,7 +58,11 @@ const videoId = video ? extractYouTubeId(video.url) : null;
 
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-6 text-sm text-text-muted">
-          {(post?.data.date || video?.date) && <time>{post?.data.date || video?.date}</time>}
+          {
+            (post?.data.date || video?.date) && (
+              <time>{post?.data.date || video?.date}</time>
+            )
+          }
           {
             post?.data.readingTime && (
               <>
@@ -117,13 +123,12 @@ const videoId = video ? extractYouTubeId(video.url) : null;
               <iframe
                 class="w-full"
                 src={`https://www.youtube.com/embed/${videoId}?rel=0`}
-                title={video.title || 'YouTube Video'}
+                title={video.title || "YouTube Video"}
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen
                 style="aspect-ratio: 16/9;"
-              >
-              </iframe>
+              ></iframe>
             </div>
           </div>
         ) : hasPDF ? (
@@ -154,7 +159,7 @@ const videoId = video ? extractYouTubeId(video.url) : null;
             stroke-width="2"
             d="M15 19l-7-7 7-7"></path>
         </svg>
-Back to all content
+        Back to all content
       </a>
     </footer>
   </div>
