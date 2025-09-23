@@ -86,18 +86,21 @@ const ogImageUrl = "/og_image.png";
     <ViewTransitions />
     <script is:inline>
       // Handle theme persistence with View Transitions
-      document.addEventListener('astro:before-swap', (ev) => {
-        const theme = localStorage.getItem("theme") ||
-          (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-        ev.newDocument.documentElement.classList.toggle("dark", theme === "dark");
+      document.addEventListener("astro:before-swap", (ev) => {
+        const theme =
+          localStorage.getItem("theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light");
+        ev.newDocument.documentElement.classList.toggle(
+          "dark",
+          theme === "dark",
+        );
       });
     </script>
   </head>
   <body>
-    <!-- Theme toggle in top right -->
-    <div class="fixed top-6 right-6 z-50">
-      <ThemeToggle />
-    </div>
+    <ThemeToggle />
 
     <main
       class="mx-auto max-w-(--breakpoint-md) px-4 sm:px-6 md:px-8 my-12 md:my-20"

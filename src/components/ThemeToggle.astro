@@ -2,20 +2,22 @@
 import Icon from "./Icon.astro";
 ---
 
-<button
-  id="theme-toggle"
-  aria-label="Toggle theme"
-  class="icon-btn hover:scale-110 hover:bg-bg-tertiary items-center justify-center"
->
-  <Icon
-    id="material-symbols-light-mode-outline-rounded"
-    className="h-4 w-4 hidden dark:block"
-  />
-  <Icon
-    id="material-symbols-dark-mode-outline-rounded"
-    className="h-4 w-4 block dark:hidden"
-  />
-</button>
+<div class="fixed top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 z-50">
+  <button
+    id="theme-toggle"
+    aria-label="Toggle theme"
+    class="icon-btn hover:scale-110 hover:bg-bg-tertiary items-center justify-center"
+  >
+    <Icon
+      id="material-symbols-light-mode-outline-rounded"
+      className="h-4 w-4 hidden dark:block"
+    />
+    <Icon
+      id="material-symbols-dark-mode-outline-rounded"
+      className="h-4 w-4 block dark:hidden"
+    />
+  </button>
+</div>
 
 <script>
   function initTheme() {
