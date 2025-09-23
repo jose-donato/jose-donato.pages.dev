@@ -1,6 +1,4 @@
 ---
-import Modal from "./Modal.astro";
-
 interface Props {
   videoId: string;
   title?: string;
@@ -9,37 +7,88 @@ interface Props {
 const { videoId, title = "Video" } = Astro.props;
 ---
 
-<Modal id={`video-${videoId}`} title={title} size="xl">
-  <video-content data-video-id={videoId} data-title={title}>
-    <div class="video-container">
-      <!-- Iframe will be dynamically loaded when modal opens -->
+<video-modal data-video-id={videoId} data-title={title}>
+  <div class="modal-backdrop">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">{title}</h3>
+        <button class="modal-close" aria-label="Close modal">
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="video-container">
+          <!-- Iframe will be dynamically loaded when modal opens -->
+        </div>
+      </div>
     </div>
-  </video-content>
-</Modal>
+  </div>
+</video-modal>
 
 <script>
-  class VideoContent extends HTMLElement {
+  class VideoModal extends HTMLElement {
+    private modal: HTMLElement | null = null;
+    private backdrop: HTMLElement | null = null;
+    private closeButton: HTMLElement | null = null;
     private iframe: HTMLIFrameElement | null = null;
     private videoContainer: HTMLElement | null = null;
-    private modal: HTMLElement | null = null;
 
     constructor() {
       super();
+      this.modal = this.querySelector(".modal-backdrop");
+      this.backdrop = this.querySelector(".modal-backdrop");
+      this.closeButton = this.querySelector(".modal-close");
       this.videoContainer = this.querySelector(".video-container");
-      const videoId = this.getAttribute("data-video-id");
-      this.modal = document.querySelector(`modal-component[data-modal-id="video-${videoId}"]`);
     }
 
     connectedCallback() {
-      // Listen for modal show event to create iframe
-      this.modal?.addEventListener('modal:show', () => {
-        this.createIframe();
+      this.setupEventListeners();
+      this.hide(); // Initially hidden
+    }
+
+    setupEventListeners() {
+      // Close on backdrop click
+      this.backdrop?.addEventListener("click", (e) => {
+        if (e.target === this.backdrop) {
+          this.hide();
+        }
       });
 
-      // Listen for modal hide event to remove iframe
-      this.modal?.addEventListener('modal:hide', () => {
-        this.removeIframe();
+      // Close on close button click
+      this.closeButton?.addEventListener("click", () => {
+        this.hide();
       });
+
+      // Close on escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && this.isVisible()) {
+          this.hide();
+        }
+      });
+    }
+
+    show() {
+      if (this.modal) {
+        this.modal.style.display = "flex";
+        document.body.style.overflow = "hidden";
+        
+        // Create iframe dynamically
+        this.createIframe();
+
+        // Focus management
+        this.closeButton?.focus();
+      }
     }
 
     private createIframe() {
@@ -61,36 +110,43 @@ const { videoId, title = "Video" } = Astro.props;
       }
     }
 
-    private removeIframe() {
-      // Remove iframe to stop video and save resources
-      if (this.iframe && this.videoContainer) {
-        this.videoContainer.removeChild(this.iframe);
-        this.iframe = null;
+    hide() {
+      if (this.modal) {
+        this.modal.style.display = "none";
+        document.body.style.overflow = "";
+
+        // Remove iframe to stop video and save resources
+        if (this.iframe && this.videoContainer) {
+          this.videoContainer.removeChild(this.iframe);
+          this.iframe = null;
+        }
       }
+    }
+
+    isVisible() {
+      return this.modal?.style.display === "flex";
     }
   }
 
-  customElements.define("video-content", VideoContent);
+  customElements.define("video-modal", VideoModal);
 
   // Global function to show video modal
   window.showVideoModal = (videoId: string, title?: string) => {
-    const modalId = `video-${videoId}`;
     let modal = document.querySelector(
-      `modal-component[data-modal-id="${modalId}"]`,
-    );
+      `video-modal[data-video-id="${videoId}"]`,
+    ) as VideoModal;
 
     if (!modal) {
       // Create modal if it doesn't exist
-      const modalElement = document.createElement("modal-component");
-      modalElement.setAttribute("data-modal-id", modalId);
-      
-      modalElement.innerHTML = `
+      modal = document.createElement("video-modal") as VideoModal;
+      modal.setAttribute("data-video-id", videoId);
+      modal.setAttribute("data-title", title || "Video");
+
+      modal.innerHTML = `
         <div class="modal-backdrop">
-          <div class="modal-content" style="max-width: 1200px;">
+          <div class="modal-content">
             <div class="modal-header">
-              <div class="modal-header-content">
-                <h3 class="modal-title">${title || "Video"}</h3>
-              </div>
+              <h3 class="modal-title">${title || "Video"}</h3>
               <button class="modal-close" aria-label="Close modal">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -98,21 +154,18 @@ const { videoId, title = "Video" } = Astro.props;
               </button>
             </div>
             <div class="modal-body">
-              <video-content data-video-id="${videoId}" data-title="${title || "Video"}">
-                <div class="video-container">
-                  <!-- Iframe will be dynamically loaded when modal opens -->
-                </div>
-              </video-content>
+              <div class="video-container">
+                <!-- Iframe will be dynamically loaded when modal opens -->
+              </div>
             </div>
           </div>
         </div>
       `;
 
-      document.body.appendChild(modalElement);
-      modal = modalElement;
+      document.body.appendChild(modal);
     }
 
-    window.showModal(modalId);
+    modal.show();
   };
 
   // Declare global function type
@@ -124,6 +177,67 @@ const { videoId, title = "Video" } = Astro.props;
 </script>
 
 <style>
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+  }
+
+  .modal-content {
+    background: var(--bg-primary, #1a1a1a);
+    border-radius: 0.75rem;
+    max-width: 90vw;
+    max-height: 90vh;
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border-primary, #333);
+  }
+
+  .modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary, #fff);
+    margin: 0;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text-muted, #888);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    transition:
+      color 0.2s,
+      background-color 0.2s;
+  }
+
+  .modal-close:hover {
+    color: var(--text-primary, #fff);
+    background-color: var(--bg-secondary, #2a2a2a);
+  }
+
+  .modal-body {
+    padding: 1.5rem 1.5rem 1.5rem;
+  }
+
   .video-container {
     position: relative;
     width: 100%;
@@ -140,5 +254,24 @@ const { videoId, title = "Video" } = Astro.props;
     width: 100%;
     height: 100%;
     border-radius: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .modal-content {
+      margin: 1rem;
+      max-width: calc(100vw - 2rem);
+    }
+
+    .modal-header {
+      padding: 1rem 1rem 0.75rem;
+    }
+
+    .modal-body {
+      padding: 1rem 1rem 1rem;
+    }
+
+    .modal-title {
+      font-size: 1.125rem;
+    }
   }
 </style>
