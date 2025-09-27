@@ -108,13 +108,6 @@ const isActive = (href: string) => {
       const newHeight = rect.height;
       
       if (animate) {
-        // Temporarily disable transitions to set starting position
-        activeBackground.style.transition = 'none';
-        activeBackground.style.opacity = '1';
-        
-        // Force a reflow
-        activeBackground.offsetHeight;
-        
         // Re-enable transitions
         activeBackground.style.transition = 'all 500ms cubic-bezier(0.25, 0.1, 0.25, 1)';
       }
@@ -128,9 +121,11 @@ const isActive = (href: string) => {
 
     // Get stored previous position for animation
     const storedPosition = localStorage.getItem('floater-nav-position');
+    const wasNavigated = localStorage.getItem('floater-nav-navigated') === 'true';
     let shouldAnimate = false;
     
-    if (storedPosition && activeLink) {
+    // Only animate if this was a navigation (not a refresh) and we have stored position
+    if (wasNavigated && storedPosition && activeLink) {
       try {
         const prevPos = JSON.parse(storedPosition);
         const currentRect = activeLink.getBoundingClientRect();
@@ -147,23 +142,30 @@ const isActive = (href: string) => {
             Math.abs(prevPos.width - currentPos.width) > 1) {
           shouldAnimate = true;
           
-          // Set starting position from stored location
+          // Set starting position from stored location WITHOUT transition
+          activeBackground.style.transition = 'none';
           activeBackground.style.left = `${prevPos.left}px`;
           activeBackground.style.top = `${prevPos.top}px`;
           activeBackground.style.width = `${prevPos.width}px`;
           activeBackground.style.height = `${prevPos.height}px`;
           activeBackground.style.opacity = '1';
+          
+          // Force reflow
+          activeBackground.offsetHeight;
         }
       } catch (e) {
         // Invalid stored data, ignore
       }
     }
 
+    // Clear the navigation flag after checking
+    localStorage.removeItem('floater-nav-navigated');
+
     // Position background on active link
     if (activeLink) {
       if (shouldAnimate) {
         // Small delay to ensure the starting position is set
-        setTimeout(() => positionBackground(activeLink!, true), 100);
+        setTimeout(() => positionBackground(activeLink!, true), 16);
       } else {
         positionBackground(activeLink);
       }
@@ -182,6 +184,8 @@ const isActive = (href: string) => {
             height: rect.height
           };
           localStorage.setItem('floater-nav-position', JSON.stringify(position));
+          // Set flag that this is a navigation, not a refresh
+          localStorage.setItem('floater-nav-navigated', 'true');
         }
       });
     });
