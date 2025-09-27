@@ -33,18 +33,24 @@ const isActive = (href: string) => {
 
 <div class="flex justify-center items-center mb-8 px-4">
   <nav
-    class="flex transition-all ease-in-out gap-2 bg-bg-secondary/50 backdrop-blur-sm px-2 py-2 border border-border-primary/50 rounded-lg overflow-x-auto shadow"
+    id="floater-nav"
+    class="relative flex transition-all ease-in-out gap-2 bg-bg-secondary/50 backdrop-blur-sm px-2 py-2 border border-border-primary/50 rounded-lg overflow-x-auto shadow"
   >
+    <div
+      id="active-background"
+      class="absolute bg-bullish-600/20 rounded-md transition-all duration-300 ease-out pointer-events-none"
+      style="opacity: 0;"
+    ></div>
     {
       LINKS.map((link) => (
         <a
           href={link.href}
+          data-link={link.href}
           class:list={[
-            "text-xs sm:text-sm md:text-base font-semibold uppercase tracking-wide transition-all duration-300 px-6 py-3 relative overflow-hidden whitespace-nowrap rounded-md",
+            "text-xs sm:text-sm md:text-base font-semibold uppercase tracking-wide transition-colors duration-300 px-6 py-3 relative z-10 whitespace-nowrap rounded-md hover:text-text-secondary",
             {
-              "text-text-primary bg-bullish-600/20": isActive(link.href),
-              "text-text-muted hover:text-text-secondary hover:bg-bg-tertiary/50":
-                !isActive(link.href),
+              "text-text-primary": isActive(link.href),
+              "text-text-muted": !isActive(link.href),
             },
           ]}
           title={link.name}
@@ -55,3 +61,139 @@ const isActive = (href: string) => {
     }
   </nav>
 </div>
+
+<script>
+  function initFloaterNav() {
+    const nav = document.getElementById('floater-nav');
+    const activeBackground = document.getElementById('active-background');
+    const links = nav?.querySelectorAll('a[data-link]');
+    
+    if (!nav || !activeBackground || !links) return;
+
+    // Find currently active link based on current pathname
+    const currentPath = window.location.pathname;
+    let activeLink: HTMLElement | null = null;
+    
+    links.forEach((link) => {
+      const href = link.getAttribute('data-link');
+      if (!href) return;
+      
+      const isActive = (() => {
+        if (href === "/") {
+          return currentPath === href;
+        }
+        if (href === "/projects") {
+          return (
+            currentPath === href ||
+            currentPath.startsWith(`${href}/`) ||
+            currentPath.startsWith("/tools")
+          );
+        }
+        return currentPath === href || currentPath.startsWith(`${href}/`);
+      })();
+      
+      if (isActive) {
+        activeLink = link as HTMLElement;
+      }
+    });
+
+    // Position the background on a target element
+    const positionBackground = (target: HTMLElement, animate = false) => {
+      const rect = target.getBoundingClientRect();
+      const navRect = nav.getBoundingClientRect();
+      
+      const newLeft = rect.left - navRect.left;
+      const newTop = rect.top - navRect.top;
+      const newWidth = rect.width;
+      const newHeight = rect.height;
+      
+      if (animate) {
+        // Temporarily disable transitions to set starting position
+        activeBackground.style.transition = 'none';
+        activeBackground.style.opacity = '1';
+        
+        // Force a reflow
+        activeBackground.offsetHeight;
+        
+        // Re-enable transitions
+        activeBackground.style.transition = 'all 300ms ease-out';
+      }
+      
+      activeBackground.style.left = `${newLeft}px`;
+      activeBackground.style.top = `${newTop}px`;
+      activeBackground.style.width = `${newWidth}px`;
+      activeBackground.style.height = `${newHeight}px`;
+      activeBackground.style.opacity = '1';
+    };
+
+    // Get stored previous position for animation
+    const storedPosition = localStorage.getItem('floater-nav-position');
+    let shouldAnimate = false;
+    
+    if (storedPosition && activeLink) {
+      try {
+        const prevPos = JSON.parse(storedPosition);
+        const currentRect = activeLink.getBoundingClientRect();
+        const navRect = nav.getBoundingClientRect();
+        const currentPos = {
+          left: currentRect.left - navRect.left,
+          top: currentRect.top - navRect.top,
+          width: currentRect.width,
+          height: currentRect.height
+        };
+        
+        // Only animate if position actually changed
+        if (Math.abs(prevPos.left - currentPos.left) > 1 || 
+            Math.abs(prevPos.width - currentPos.width) > 1) {
+          shouldAnimate = true;
+          
+          // Set starting position from stored location
+          activeBackground.style.left = `${prevPos.left}px`;
+          activeBackground.style.top = `${prevPos.top}px`;
+          activeBackground.style.width = `${prevPos.width}px`;
+          activeBackground.style.height = `${prevPos.height}px`;
+          activeBackground.style.opacity = '1';
+        }
+      } catch (e) {
+        // Invalid stored data, ignore
+      }
+    }
+
+    // Position background on active link
+    if (activeLink) {
+      if (shouldAnimate) {
+        // Small delay to ensure the starting position is set
+        setTimeout(() => positionBackground(activeLink!, true), 50);
+      } else {
+        positionBackground(activeLink);
+      }
+    }
+
+    // Store position before navigation
+    links.forEach((link) => {
+      link.addEventListener('click', () => {
+        if (activeLink) {
+          const rect = activeLink.getBoundingClientRect();
+          const navRect = nav.getBoundingClientRect();
+          const position = {
+            left: rect.left - navRect.left,
+            top: rect.top - navRect.top,
+            width: rect.width,
+            height: rect.height
+          };
+          localStorage.setItem('floater-nav-position', JSON.stringify(position));
+        }
+      });
+    });
+  }
+
+  // Initialize on page load (works for both initial load and view transitions)
+  document.addEventListener('astro:page-load', initFloaterNav);
+  
+  // Fallback for initial page load if astro:page-load hasn't fired yet
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFloaterNav);
+  } else {
+    initFloaterNav();
+  }
+</script>
